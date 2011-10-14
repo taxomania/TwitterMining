@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,9 +21,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import uk.ac.manchester.cs.patelt9.twitter.TwitterUser;
+
 public class APITest {
     private static final String GET_PUBLIC_TIMELINE_URL =
             "http://api.twitter.com/1/statuses/public_timeline.xml?trim_user=true";
+
+    private static final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
 
     private static HttpResponse getTwitterPosts() {
         final HttpClient client = new DefaultHttpClient();
@@ -82,9 +88,19 @@ public class APITest {
         } // finally
 
         if (userIds == null || tweets == null) return;
+
+        // Links tweets to user through the map
         for (int i = 0; i < userIds.getLength(); i++) {
-            System.out.println(parseUserId(userIds.item(i)) + ": "
-                    + tweets.item(i).getTextContent());
+            final long id = parseUserId(userIds.item(i));
+            final TwitterUser tweeter;
+            if (tweeters.containsKey(id)) {
+                tweeter = tweeters.get(id);
+            } else {
+                tweeter = new TwitterUser(id);
+                tweeters.put(id, tweeter);
+            } // else
+            tweeter.addTweet(tweets.item(i).getTextContent());
+            System.out.println(Long.toString(id) + ": " + tweets.item(i).getTextContent());
         } // for
     } // printTweets(HttpResponse)
 
@@ -92,10 +108,10 @@ public class APITest {
         printTweets(getTwitterPosts());
     } // main(String[])
 
-    private static final String parseUserId(final Node user) {
+    private static final long parseUserId(final Node user) {
         String id = user.getTextContent();
         id = id.replaceAll(" ", "");
-        return id.replaceAll("\n", "");
+        return Long.parseLong(id.replaceAll("\n", ""));
     } // parseUserId(Node)
 
     // This is used to check the xml response from Twitter
