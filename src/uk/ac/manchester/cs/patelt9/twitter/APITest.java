@@ -10,26 +10,26 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicStatusLine;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class APITest {
-    private static final String GET_PUBLIC_TIMELINE_URL =
-            "http://api.twitter.com/1/statuses/public_timeline.xml?trim_user=true";
+    private static final String GET_PUBLIC_TIMELINE_URL = "http://api.twitter.com/1/statuses/public_timeline.xml?trim_user=true";
 
-    public static void main(String[] args) {
+    private static HttpResponse getTwitterPosts() {
         final HttpClient client = new DefaultHttpClient();
-        HttpResponse response = null;
         try {
             final HttpGet request = new HttpGet(GET_PUBLIC_TIMELINE_URL);
             try {
-                response = client.execute(request);
+                return client.execute(request);
             } catch (final ClientProtocolException e) {
                 e.printStackTrace();
             } catch (final IOException e) {
@@ -38,21 +38,32 @@ public class APITest {
         } catch (final IllegalArgumentException e) {
             e.printStackTrace();
         } // catch
+        return null;
+    } // getTwitterPosts()
 
-        if (response == null) return;
+    private static void printTweets(final HttpResponse response) {
+        // Error checking
+        if (response == null){
+            System.err.println("There was a problem making the HTTP request");
+            return;
+        } // if
+        if (response.getStatusLine().getStatusCode() != 200){
+            System.err.println("There was a problem connecting to the server");
+            return;
+        } // if
 
         final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-        NodeList userIds = null, statusTexts = null;
+        NodeList userIds = null, tweets = null;
         InputStream in = null;
         try {
             in = response.getEntity().getContent();
 
-            //printResponse(in);
+            // printResponse(in); // Used for checking format of response
             try {
                 final DocumentBuilder docBuillder = docBuilderFactory.newDocumentBuilder();
                 final Document doc = docBuillder.parse(in);
                 userIds = doc.getElementsByTagName("user");
-                statusTexts = doc.getElementsByTagName("text");
+                tweets = doc.getElementsByTagName("text");
             } catch (final ParserConfigurationException e) {
                 e.printStackTrace();
             } catch (final SAXException e) {
@@ -73,11 +84,15 @@ public class APITest {
 
         for (int i = 0; i < userIds.getLength(); i++) {
             System.out.println(parseUserId(userIds.item(i)) + ": "
-                    + statusTexts.item(i).getTextContent());
+                    + tweets.item(i).getTextContent());
         } // for
+    } // printTweets(HttpResponse)
+
+    public static void main(String[] args) {
+        printTweets(getTwitterPosts());
     } // main(String[])
 
-    private static String parseUserId(final Node user) {
+    private static final String parseUserId(final Node user) {
         String id = user.getTextContent();
         id = id.replaceAll(" ", "");
         return id.replaceAll("\n", "");
