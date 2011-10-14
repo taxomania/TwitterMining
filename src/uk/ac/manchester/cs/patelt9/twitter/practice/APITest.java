@@ -108,6 +108,11 @@ public class APITest {
 
     public static void main(final String[] args) {
         printTweets(getTwitterPosts());
+
+        // Test feature
+        for (TwitterUser t : tweeters.values()){
+            System.out.println(t);
+        }
     } // main(String[])
 
     private static final long parseUserId(final Node user) {
