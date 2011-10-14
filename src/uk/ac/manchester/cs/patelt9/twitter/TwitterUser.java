@@ -24,4 +24,8 @@ public class TwitterUser {
     public List<String> getTweets(){
         return tweets;
     } // getTweets()
+
+    public String toString(){
+        return Long.toString(id) + ": " + tweets.toString();
+    } // toString()
 } // TwitterUser
