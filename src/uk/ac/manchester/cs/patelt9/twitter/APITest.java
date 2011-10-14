@@ -42,11 +42,11 @@ public class APITest {
 
     private static void printTweets(final HttpResponse response) {
         // Error checking
-        if (response == null){
+        if (response == null) {
             System.err.println("There was a problem making the HTTP request");
             return;
         } // if
-        if (response.getStatusLine().getStatusCode() != 200){
+        if (response.getStatusLine().getStatusCode() != 200) {
             System.err.println("There was a problem connecting to the server");
             return;
         } // if
@@ -57,7 +57,7 @@ public class APITest {
         try {
             in = response.getEntity().getContent();
 
-            // printResponse(in); // Used for checking format of response
+            // printXmlResponse(in); // Used for checking format of response
             try {
                 final DocumentBuilder docBuillder = docBuilderFactory.newDocumentBuilder();
                 final Document doc = docBuillder.parse(in);
@@ -68,7 +68,7 @@ public class APITest {
             } catch (final SAXException e) {
                 e.printStackTrace();
             } // catch
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         } // catch
         finally {
@@ -76,18 +76,19 @@ public class APITest {
                 if (in != null) {
                     in.close();
                 } // if
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 e.printStackTrace();
             } // catch
         } // finally
 
+        if (userIds == null || tweets == null) return;
         for (int i = 0; i < userIds.getLength(); i++) {
             System.out.println(parseUserId(userIds.item(i)) + ": "
                     + tweets.item(i).getTextContent());
         } // for
     } // printTweets(HttpResponse)
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         printTweets(getTwitterPosts());
     } // main(String[])
 
@@ -97,8 +98,9 @@ public class APITest {
         return id.replaceAll("\n", "");
     } // parseUserId(Node)
 
+    // This is used to check the xml response from Twitter
     @SuppressWarnings("unused")
-    private static void printResponse(final InputStream in) throws IOException {
+    private static void printXmlResponse(final InputStream in) throws IOException {
         final BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String s;
         while ((s = br.readLine()) != null) {
