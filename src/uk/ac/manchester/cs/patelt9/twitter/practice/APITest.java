@@ -100,6 +100,8 @@ public class APITest {
                 tweeters.put(id, tweeter);
             } // else
             tweeter.addTweet(tweets.item(i).getTextContent());
+
+            // For visualisation only
             System.out.println(Long.toString(id) + ": " + tweets.item(i).getTextContent());
         } // for
     } // printTweets(HttpResponse)
@@ -109,9 +111,7 @@ public class APITest {
     } // main(String[])
 
     private static final long parseUserId(final Node user) {
-        String id = user.getTextContent();
-        id = id.replaceAll(" ", "");
-        return Long.parseLong(id.replaceAll("\n", ""));
+        return Long.parseLong(user.getTextContent().replaceAll(" ", "").replaceAll("\n", ""));
     } // parseUserId(Node)
 
     // This is used to check the xml response from Twitter
