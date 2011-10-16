@@ -2,6 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.practice;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,7 +22,19 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 public class HttpsTest {
+    // URL for Twitter Streaming API sample; 1% of all tweets
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
+
+    private static void printLineBreak() {
+        System.out.println("-----------------------");
+    } // printLineBreak()
+
+    @SuppressWarnings("unused")
+    private static void printHeaders() {
+        printLineBreak();
+        System.out.println("START");
+        printLineBreak();
+    } // printHeaders()
 
     public static void main(final String[] args) {
         new HttpsTest().test();
@@ -38,56 +51,72 @@ public class HttpsTest {
             System.err.println("Error parsing URL");
             return;
         } // catch
+        HttpsURLConnection con = null;
         try {
-            final HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
-            final BufferedReader userPass = new BufferedReader(new FileReader(new File(
-                    "userpass.txt")));
-            final String userPassword = userPass.readLine();
-            final String encoding = new BASE64Encoder().encode(userPassword.getBytes());
-            con.setRequestProperty("Authorization", "Basic " + encoding);
-            con.connect();
-            final BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
-            new Thread() {
-                @Override
-                public void run() {
-                    while (true) {
+            con = (HttpsURLConnection) url.openConnection();
+            BufferedReader userPass = null;
+            try {
+                userPass = new BufferedReader(new FileReader(new File("userpass.txt")));
+                final String userPassword = userPass.readLine();
+                final String encoding = new BASE64Encoder().encode(userPassword.getBytes());
+                con.setRequestProperty("Authorization", "Basic " + encoding);
+                con.connect();
+                final BufferedReader br = new BufferedReader(new InputStreamReader(
+                        con.getInputStream()));
+                new Thread() {
+                    @Override
+                    public void run() {
                         final JsonParser jp = new JsonParser();
-                        final JsonElement je = jp.parse(new JsonReader(br));
-                        if (je.toString().contains("{\"delete\":")) {
-                            System.out.println("Delete tweet");
-                            continue;
-                        } // if
-                        else if (je.isJsonObject()) {
-                            final JsonObject jo = je.getAsJsonObject();
-                            final Long id = jo.getAsJsonObject("user").getAsJsonPrimitive("id_str")
-                                    .getAsLong();
-                            final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                            // System.out.println(Long.toString(id) + ": " + tweet);
+                        while (true) {
+                            final JsonElement je = jp.parse(new JsonReader(br));
+                            // System.out.println(je.toString()); // To see format of JSON response
+                            if (je.toString().contains("{\"delete\":")) {
+                                // System.out.println("Delete tweet");
+                                // TODO: Add in something to delete tweets
+                                continue;
+                            } // if
+                            else if (je.isJsonObject()) {
+                                final JsonObject jo = je.getAsJsonObject();
+                                // System.out.println(jo.getAsJsonObject("user").toString());
+                                final Long id = jo.getAsJsonObject("user")
+                                        .getAsJsonPrimitive("id_str").getAsLong();
+                                final String tweet = jo.getAsJsonPrimitive("text").getAsString();
+                                // System.out.println(Long.toString(id) + ": " + tweet); // Testing
 
-                            final TwitterUser tweeter;
-                            if (tweeters.containsKey(id)) {
-                                tweeter = tweeters.get(id);
-                            } else {
-                                tweeter = new TwitterUser(id);
-                                tweeters.put(id, tweeter);
-                            } // else
-                            tweeter.addTweet(tweet);
-                            System.out.println(tweeters.get(id).toString());
+                                final TwitterUser tweeter;
+                                if (tweeters.containsKey(id)) {
+                                    tweeter = tweeters.get(id);
+                                } else {
+                                    tweeter = new TwitterUser(id);
+                                    tweeters.put(id, tweeter);
+                                } // else
+                                tweeter.addTweet(tweet);
+                                System.out.println(tweeters.get(id).toString()); // Testing maps
 
-                        } // if
+                                // TODO: Add into database
+                            } // if
+                        } // while
 
-                    } // while
-                }
-            }.run();
-
+                    } // run()
+                }.run();
+            } catch (final FileNotFoundException e) {
+                e.printStackTrace();
+                System.err.println("Login file not found");
+            } catch (final IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (userPass != null) {
+                    userPass.close();
+                } // if
+            } // finally
         } catch (final IOException e) {
             e.printStackTrace();
             System.err.println(e.getMessage());
-        } // catch
-        /*
-         * try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); } for
-         * (TwitterUser t : tweeters.values()) { System.out.println(t.toString()); }
-         */
+        } finally { // Unsure how this works with the threads
+            if (con != null) {
+                con.disconnect();
+            } // if
+        } // finally
+
     } // test()
 } // HttpsTest
