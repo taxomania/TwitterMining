@@ -9,11 +9,13 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
+import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.TwitterUser;
 
 import com.google.gson.JsonElement;
@@ -24,6 +26,8 @@ import com.google.gson.stream.JsonReader;
 public class HttpsTest {
     // URL for Twitter Streaming API sample; 1% of all tweets
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
+
+    private volatile LinkedList<JsonElement> elementQueue = new LinkedList<JsonElement>();
 
     private static void printLineBreak() {
         System.out.println("-----------------------");
@@ -40,7 +44,7 @@ public class HttpsTest {
         new HttpsTest().test();
     } // main(String[])
 
-    private volatile Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
+    private final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
 
     private void test() {
         final URL url;
@@ -56,6 +60,7 @@ public class HttpsTest {
             con = (HttpsURLConnection) url.openConnection();
             BufferedReader userPass = null;
             try {
+
                 userPass = new BufferedReader(new FileReader(new File("userpass.txt")));
                 final String userPassword = userPass.readLine();
                 final String encoding = new BASE64Encoder().encode(userPassword.getBytes());
@@ -63,42 +68,87 @@ public class HttpsTest {
                 con.connect();
                 final BufferedReader br = new BufferedReader(new InputStreamReader(
                         con.getInputStream()));
-                new Thread() {
+                Runnable r = new Runnable() {
                     @Override
                     public void run() {
                         final JsonParser jp = new JsonParser();
-                        while (true) {
-                            final JsonElement je = jp.parse(new JsonReader(br));
-                            // System.out.println(je.toString()); // To see format of JSON response
-                            if (je.toString().contains("{\"delete\":")) {
-                                // System.out.println("Delete tweet");
-                                // TODO: Add in something to delete tweets
-                                continue;
-                            } // if
-                            else if (je.isJsonObject()) {
-                                final JsonObject jo = je.getAsJsonObject();
-                                // System.out.println(jo.getAsJsonObject("user").toString());
-                                final Long id = jo.getAsJsonObject("user")
-                                        .getAsJsonPrimitive("id_str").getAsLong();
-                                final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                                // System.out.println(Long.toString(id) + ": " + tweet); // Testing
+                        for (int i = 0; i < 10; i++) {
+                            elementQueue.addLast(jp.parse(new JsonReader(br)));
+                        }
+                    }
+                };
+                /*
+                 * final Thread t = new Thread("RETRIEVE") {
+                 *
+                 * @Override public void run() { final JsonParser jp = new JsonParser(); // while
+                 * (true) { for (int i = 0; i < 100; i++) { queue.add(jp.parse(new JsonReader(br)));
+                 *
+                 * // final JsonElement je = jp.parse(new JsonReader(br)); /*
+                 *
+                 * // System.out.println(je.toString()); // To see format of JSON response if
+                 * (je.toString().contains("{\"delete\":")) { // System.out.println("Delete tweet");
+                 * // TODO: Add in something to delete tweets continue; } // if else if
+                 * (je.isJsonObject()) { final JsonObject jo = je.getAsJsonObject(); //
+                 * System.out.println(jo.getAsJsonObject("user").toString()); final Long id =
+                 * jo.getAsJsonObject("user") .getAsJsonPrimitive("id_str").getAsLong(); final
+                 * String tweet = jo.getAsJsonPrimitive("text").getAsString(); //
+                 * System.out.println(Long.toString(id) + ": " + tweet); // Testing
+                 *
+                 * final TwitterUser tweeter; if (tweeters.containsKey(id)) { tweeter =
+                 * tweeters.get(id); } else { tweeter = new TwitterUser(id); tweeters.put(id,
+                 * tweeter); } // else tweeter.addTweet(tweet); //
+                 * System.out.println(tweeters.get(id).toString()); // Testing maps
+                 *
+                 * // TODO: Add into database } // if
+                 */// } // while
+                /*
+                 * } // run() }; t.run();
+                 */
 
-                                final TwitterUser tweeter;
-                                if (tweeters.containsKey(id)) {
-                                    tweeter = tweeters.get(id);
-                                } else {
-                                    tweeter = new TwitterUser(id);
-                                    tweeters.put(id, tweeter);
-                                } // else
-                                tweeter.addTweet(tweet);
-                                System.out.println(tweeters.get(id).toString()); // Testing maps
+                while (true) {
+                    new Thread(r, "RETRIEVE").run();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
 
-                                // TODO: Add into database
-                            } // if
-                        } // while
+                    // TODO: Disconnect from network every few minutes, to parse data
+                    while (!elementQueue.isEmpty()) {
+                        final JsonElement je = elementQueue.removeFirst();
 
-                    } // run()
-                }.run();
+                        // System.out.println(je.toString()); // To see format of JSON response
+                        if (je.toString().contains("{\"delete\":")) {
+                            // System.out.println("Delete tweet");
+                            // TODO: Add in something to delete tweets
+                            continue;
+                        } // if
+                        else if (je.isJsonObject()) {
+                            final JsonObject jo = je.getAsJsonObject();
+                            // System.out.println(jo.toString());
+                            // System.out.println(jo.getAsJsonObject("user").toString());
+                            final Long id = jo.getAsJsonObject("user").getAsJsonPrimitive("id_str")
+                                    .getAsLong();
+                            final String tweet = jo.getAsJsonPrimitive("text").getAsString();
+                            // System.out.println(Long.toString(id) + ": " + tweet); // Testing
+                            final String createdAt = jo.getAsJsonPrimitive("created_at")
+                                    .getAsString();
+                            // System.out.println(createdAt);
+                            final TwitterUser tweeter;
+                            if (tweeters.containsKey(id)) {
+                                tweeter = tweeters.get(id);
+                            } else {
+                                tweeter = new TwitterUser(id);
+                                tweeters.put(id, tweeter);
+                            } // else
+                            tweeter.addTweet(new Tweet(tweet, createdAt));
+                            System.out.println(tweeters.get(id).toString()); // Testing maps
+
+                            // TODO: Add into database
+                        } // if
+                    } // while
+                }
             } catch (final FileNotFoundException e) {
                 e.printStackTrace();
                 System.err.println("Login file not found");

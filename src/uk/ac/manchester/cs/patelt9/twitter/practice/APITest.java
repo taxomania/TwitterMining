@@ -21,11 +21,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.TwitterUser;
 
 public class APITest {
-    private static final String GET_PUBLIC_TIMELINE_URL =
-            "http://api.twitter.com/1/statuses/public_timeline.xml?trim_user=true";
+    private static final String GET_PUBLIC_TIMELINE_URL = "http://api.twitter.com/1/statuses/public_timeline.xml?trim_user=true";
 
     private static final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
 
@@ -58,7 +58,7 @@ public class APITest {
         } // if
 
         final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-        NodeList userIds = null, tweets = null;
+        NodeList userIds = null, tweets = null, times = null;
         InputStream in = null;
         try {
             in = response.getEntity().getContent();
@@ -69,6 +69,7 @@ public class APITest {
                 final Document doc = docBuillder.parse(in);
                 userIds = doc.getElementsByTagName("user");
                 tweets = doc.getElementsByTagName("text");
+                times = doc.getElementsByTagName("created_at");
             } catch (final ParserConfigurationException e) {
                 e.printStackTrace();
             } catch (final SAXException e) {
@@ -99,10 +100,11 @@ public class APITest {
                 tweeter = new TwitterUser(id);
                 tweeters.put(id, tweeter);
             } // else
-            tweeter.addTweet(tweets.item(i).getTextContent());
+            tweeter.addTweet(new Tweet(tweets.item(i).getTextContent(), times.item(i)
+                    .getTextContent()));
 
             // For visualisation only
-            System.out.println(Long.toString(id) + ": " + tweets.item(i).getTextContent());
+            //System.out.println(Long.toString(id) + ": " + tweets.item(i).getTextContent());
         } // for
     } // printTweets(HttpResponse)
 
@@ -110,7 +112,7 @@ public class APITest {
         printTweets(getTwitterPosts());
 
         // Test feature
-        for (TwitterUser t : tweeters.values()){
+        for (TwitterUser t : tweeters.values()) {
             System.out.println(t);
         }
     } // main(String[])

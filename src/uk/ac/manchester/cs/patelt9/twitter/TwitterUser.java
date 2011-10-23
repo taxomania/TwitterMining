@@ -6,14 +6,14 @@ import java.util.List;
 // This class is used to link tweets to users before adding to a database
 public class TwitterUser {
     private final long id;
-    private final List<String> tweets;
+    private final List<Tweet> tweets;
 
     public TwitterUser(final long id) {
         this.id = id;
-        tweets = new ArrayList<String>();
+        tweets = new ArrayList<Tweet>();
     } // TwitterUser(long)
 
-    public boolean addTweet(final String tweet) {
+    public boolean addTweet(final Tweet tweet) {
         return tweets.add(tweet);
     } // addTweet(String)
 
@@ -21,7 +21,7 @@ public class TwitterUser {
         return id;
     } // getId()
 
-    public List<String> getTweets(){
+    public List<Tweet> getTweets(){
         return tweets;
     } // getTweets()
 
