@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.test;
+package uk.ac.manchester.cs.patelt9.twitter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.sql.Statement;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 public class SqlConnector {
-    private static final String JDBC = "com.mysql.jdbc.Driver";
+    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/Twitter";
     public static final int DB_ERROR = -1;
 
@@ -40,7 +40,7 @@ public class SqlConnector {
 
     private SqlConnector() {
         try {
-            Class.forName(JDBC);
+            Class.forName(JDBC_DRIVER);
             try {
                 con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
                 // @formatter:off

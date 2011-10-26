@@ -1,5 +1,7 @@
 package uk.ac.manchester.cs.patelt9.twitter.test;
 
+import uk.ac.manchester.cs.patelt9.twitter.SqlConnector;
+
 public class Main {
     public static void main(final String[] args){
         SqlConnector sql = SqlConnector.getInstance();
