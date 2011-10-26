@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -26,6 +28,33 @@ import com.google.gson.stream.JsonReader;
 public class HttpsTest {
     // URL for Twitter Streaming API sample; 1% of all tweets
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
+    private static String userPassword = null, encoding = null;
+
+    static {
+        getUserPass();
+    } // static
+
+    private static void getUserPass() {
+        BufferedReader userPass = null;
+        try {
+            userPass = new BufferedReader(new FileReader(new File("userpass.txt")));
+            userPassword = userPass.readLine();
+            encoding = new BASE64Encoder().encode(userPassword.getBytes());
+        } catch (final FileNotFoundException e) {
+            e.printStackTrace();
+            System.err.println("Login file not found");
+        } catch (final IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (userPass != null) {
+                try {
+                    userPass.close();
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                } // catch
+            } // if
+        } // finally
+    } // getUserPass()
 
     private volatile LinkedList<JsonElement> elementQueue = new LinkedList<JsonElement>();
 
@@ -58,12 +87,7 @@ public class HttpsTest {
         HttpsURLConnection con = null;
         try {
             con = (HttpsURLConnection) url.openConnection();
-            BufferedReader userPass = null;
             try {
-
-                userPass = new BufferedReader(new FileReader(new File("userpass.txt")));
-                final String userPassword = userPass.readLine();
-                final String encoding = new BASE64Encoder().encode(userPassword.getBytes());
                 con.setRequestProperty("Authorization", "Basic " + encoding);
                 con.connect();
                 final BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -112,9 +136,8 @@ public class HttpsTest {
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
-                    }
+                    } // catch
 
-                    // TODO: Disconnect from network every few minutes, to parse data
                     while (!elementQueue.isEmpty()) {
                         final JsonElement je = elementQueue.removeFirst();
 
@@ -131,9 +154,9 @@ public class HttpsTest {
                             final Long id = jo.getAsJsonObject("user").getAsJsonPrimitive("id_str")
                                     .getAsLong();
                             final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                            // System.out.println(Long.toString(id) + ": " + tweet); // Testing
-                            final String createdAt = jo.getAsJsonPrimitive("created_at")
-                                    .getAsString();
+                            System.out.println(Long.toString(id) + ": " + tweet); // Testing
+                            final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive(
+                                    "created_at").getAsString());
                             // System.out.println(createdAt);
                             final TwitterUser tweeter;
                             if (tweeters.containsKey(id)) {
@@ -143,22 +166,15 @@ public class HttpsTest {
                                 tweeters.put(id, tweeter);
                             } // else
                             tweeter.addTweet(new Tweet(tweet, createdAt));
-                            System.out.println(tweeters.get(id).toString()); // Testing maps
+                            // System.out.println(tweeters.get(id).toString()); // Testing maps
 
                             // TODO: Add into database
                         } // if
                     } // while
-                }
-            } catch (final FileNotFoundException e) {
-                e.printStackTrace();
-                System.err.println("Login file not found");
+                } // while
             } catch (final IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (userPass != null) {
-                    userPass.close();
-                } // if
-            } // finally
+            } // catch
         } catch (final IOException e) {
             e.printStackTrace();
             System.err.println(e.getMessage());
@@ -169,4 +185,16 @@ public class HttpsTest {
         } // finally
 
     } // test()
+
+    public static String parseCreatedAtForSql(final String date) {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
+        dateFormat.setLenient(false);
+        final SimpleDateFormat sqlFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return sqlFormat.format(dateFormat.parse(date));
+        } catch (final ParseException e) {
+            e.printStackTrace();
+            return null;
+        } // catch
+    } // parseCreatedAtForSql(String)
 } // HttpsTest
