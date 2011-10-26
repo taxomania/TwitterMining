@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.practice;
+package uk.ac.manchester.cs.patelt9.twitter.test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,9 +12,10 @@ import java.sql.Statement;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
-public class JDBCTest {
+public class SqlConnector {
     private static final String JDBC = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/Twitter";
+    public static final int DB_ERROR = -1;
 
     private static String dbUser = null, dbPass = null;
 
@@ -22,40 +23,55 @@ public class JDBCTest {
         getUserPass();
     } // static
 
-    // This method is for testing purposes only
-    private void test() {
+    private Connection con = null;
+    private static SqlConnector mySql = null;
+
+    // Singleton lock on database helper
+    public static SqlConnector getInstance() {
+        if (mySql == null) {
+            mySql = new SqlConnector();
+        }
+        return mySql;
+    } // getInstance()
+
+    private SqlConnector() {
         try {
             Class.forName(JDBC);
-            Connection con = null;
             try {
                 con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
-                final Statement s = con.createStatement();
-                try {
-                    final int i = s.executeUpdate("INSERT INTO user VALUES(default, '251463096');");
-                    System.out.println(Integer.toString(i));
-                } catch (final MySQLIntegrityConstraintViolationException e) {
-                    System.err.println(e.getMessage());
-                } // catch
             } catch (final SQLException e) {
                 e.printStackTrace();
-            } finally {
-                if (con != null) {
-                    try {
-                        con.close();
-                    } catch (final SQLException e) {
-                        e.printStackTrace();
-                    } // catch
-                } // if
-            } // finally
+            } // catch
         } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         } // catch
-    } // test()
+    } // SqlConnector()
 
-    // For testing purposes
-    public static void main(final String[] args) {
-        new JDBCTest().test();
-    } // main(String[])
+    public int insertUser(final long id) {
+        try {
+            final Statement s = con.createStatement();
+            try {
+                return s.executeUpdate("INSERT INTO user VALUES(default, '" + Long.toString(id)
+                        + "');");
+            } catch (final MySQLIntegrityConstraintViolationException e) {
+                System.err.println(e.getMessage());
+                return DB_ERROR;
+            } // catch
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        }
+    } // insertUser(long)
+
+    public void close() {
+        if (con != null) {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } // catch
+        } // if
+    } // close()
 
     private static void getUserPass() {
         BufferedReader userPass = null;
@@ -79,4 +95,4 @@ public class JDBCTest {
         } // finally
     } // getUserPass()
 
-} // JDBCTest
+} // SqlConnector
