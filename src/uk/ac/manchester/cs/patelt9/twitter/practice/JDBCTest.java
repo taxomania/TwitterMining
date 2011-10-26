@@ -15,6 +15,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 public class JDBCTest {
     private static final String JDBC = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/Twitter";
+    public static final int DB_ERROR = -1;
 
     private static String dbUser = null, dbPass = null;
 
@@ -22,10 +23,60 @@ public class JDBCTest {
         getUserPass();
     } // static
 
+    private Connection con = null;
+    private static JDBCTest mySql = null;
+
+    // Singleton lock on database helper
+    public static JDBCTest getInstance() {
+        if (mySql == null) {
+            mySql = new JDBCTest();
+        }
+        return mySql;
+    } // getInstance()
+
+    private JDBCTest() {
+        try {
+            Class.forName(JDBC);
+            try {
+                con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
+            } catch (final SQLException e) {
+                e.printStackTrace();
+            } // catch
+        } catch (final ClassNotFoundException e) {
+            e.printStackTrace();
+        } // catch
+    } // JDBCTest()
+
+    public int insertUser(final long id) {
+        try {
+            final Statement s = con.createStatement();
+            try {
+                return s.executeUpdate("INSERT INTO user VALUES(default, '" + Long.toString(id)
+                        + "');");
+            } catch (final MySQLIntegrityConstraintViolationException e) {
+                System.err.println(e.getMessage());
+                return DB_ERROR;
+            } // catch
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        }
+    } // insertUser(long)
+
+    public void close() {
+        if (con != null) {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } // catch
+        } // if
+    } // close()
+
+    // This method is for testing purposes only
     private void test() {
         try {
             Class.forName(JDBC);
-            Connection con = null;
             try {
                 con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
                 final Statement s = con.createStatement();
@@ -51,6 +102,7 @@ public class JDBCTest {
         } // catch
     } // test()
 
+    // For testing purposes
     public static void main(final String[] args) {
         new JDBCTest().test();
     } // main(String[])
