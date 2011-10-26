@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -18,6 +19,9 @@ public class SqlConnector {
     public static final int DB_ERROR = -1;
 
     private static String dbUser = null, dbPass = null;
+
+    private PreparedStatement insertUser = null;
+    private PreparedStatement insertTweet = null;
 
     static {
         getUserPass();
@@ -39,6 +43,19 @@ public class SqlConnector {
             Class.forName(JDBC);
             try {
                 con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
+                // @formatter:off
+                insertUser = con.prepareStatement(
+                        "INSERT INTO user VALUES(default, " +
+                        "?" +  // Id
+                        ");");
+
+                insertTweet = con.prepareStatement(
+                        "INSERT INTO tweet VALUES(default, " +
+                        "?, " + // Content
+                        "?, " + // Created_at
+                        "?"   + // Id
+                        ");");
+                // @formatter:on
             } catch (final SQLException e) {
                 e.printStackTrace();
             } // catch
@@ -47,13 +64,40 @@ public class SqlConnector {
         } // catch
     } // SqlConnector()
 
+    private int executeUpdate(final PreparedStatement s) {
+        try {
+            return s.executeUpdate();
+        } catch (final MySQLIntegrityConstraintViolationException e) {
+            System.err.println(e.getMessage());
+            return DB_ERROR;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // insert(PreparedStatement)
+
     public int insertUser(final long id) {
-        return insert("INSERT INTO user VALUES(default, '" + Long.toString(id) + "');");
+        try {
+            insertUser.setLong(1, id);
+            return executeUpdate(insertUser);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
     } // insertUser(long)
 
-    private int insert(final String sqlStatement){
-        return executeUpdate(sqlStatement);
-    } // insert
+    public int insertTweet(final long id, final String content, final String createdAt) {
+        insertUser(id);
+        try {
+            insertTweet.setString(1, content);
+            insertTweet.setString(2, createdAt);
+            insertTweet.setLong(3, id);
+            return executeUpdate(insertTweet);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // insertUser(long)
 
     private int executeUpdate(final String sqlStatement) {
         try {
@@ -70,19 +114,13 @@ public class SqlConnector {
         } // catch
     } // insert(String)
 
-    public int insertTweet(final long id, final String content, final String createdAt) {
-        insertUser(id);
-        return insert("INSERT INTO tweet VALUES(default, '" + content + "', '" + createdAt + "', '"
-                + Long.toString(id) + "');");
-    } // insertTweet(long, String, String)
-
     public int deleteAll() {
         final int i = executeUpdate("DELETE FROM tweet");
         final int j = executeUpdate("DELETE FROM user");
-        if (i == DB_ERROR || j == DB_ERROR){
+        if (i == DB_ERROR || j == DB_ERROR) {
             return DB_ERROR;
         } else {
-            return i+j;
+            return i + j;
         } // else
     } // deleteAll()
 
