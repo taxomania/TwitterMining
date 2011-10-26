@@ -154,10 +154,10 @@ public class HttpsPractice {
                             final Long id = jo.getAsJsonObject("user").getAsJsonPrimitive("id_str")
                                     .getAsLong();
                             final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                            System.out.println(Long.toString(id) + ": " + tweet); // Testing
+                            //System.out.println(Long.toString(id) + ": " + tweet); // Testing
                             final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive(
                                     "created_at").getAsString());
-                            // System.out.println(createdAt);
+                            System.out.println(createdAt);
                             final TwitterUser tweeter;
                             if (tweeters.containsKey(id)) {
                                 tweeter = tweeters.get(id);

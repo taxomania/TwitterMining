@@ -30,7 +30,7 @@ public class SqlConnector {
     public static SqlConnector getInstance() {
         if (mySql == null) {
             mySql = new SqlConnector();
-        }
+        } // if
         return mySql;
     } // getInstance()
 
@@ -60,8 +60,25 @@ public class SqlConnector {
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;
-        }
+        } // catch
     } // insertUser(long)
+
+    public int insertTweet(final long id, final String content, final String createdAt) {
+        insertUser(id);
+        try {
+            final Statement s = con.createStatement();
+            try {
+                return s.executeUpdate("INSERT INTO tweet VALUES(default, '" + content + "', '"
+                        + createdAt + "', '"  + Long.toString(id) + "');");
+            } catch (final MySQLIntegrityConstraintViolationException e) {
+                System.err.println(e.getMessage());
+                return DB_ERROR;
+            } // catch
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // insertTweet(long, String, String)
 
     public void close() {
         if (con != null) {
