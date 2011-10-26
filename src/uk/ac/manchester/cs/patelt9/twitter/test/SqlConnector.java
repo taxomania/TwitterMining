@@ -48,11 +48,18 @@ public class SqlConnector {
     } // SqlConnector()
 
     public int insertUser(final long id) {
+        return insert("INSERT INTO user VALUES(default, '" + Long.toString(id) + "');");
+    } // insertUser(long)
+
+    private int insert(final String sqlStatement){
+        return executeUpdate(sqlStatement);
+    } // insert
+
+    private int executeUpdate(final String sqlStatement) {
         try {
             final Statement s = con.createStatement();
             try {
-                return s.executeUpdate("INSERT INTO user VALUES(default, '" + Long.toString(id)
-                        + "');");
+                return s.executeUpdate(sqlStatement);
             } catch (final MySQLIntegrityConstraintViolationException e) {
                 System.err.println(e.getMessage());
                 return DB_ERROR;
@@ -61,24 +68,23 @@ public class SqlConnector {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // insertUser(long)
+    } // insert(String)
 
     public int insertTweet(final long id, final String content, final String createdAt) {
         insertUser(id);
-        try {
-            final Statement s = con.createStatement();
-            try {
-                return s.executeUpdate("INSERT INTO tweet VALUES(default, '" + content + "', '"
-                        + createdAt + "', '"  + Long.toString(id) + "');");
-            } catch (final MySQLIntegrityConstraintViolationException e) {
-                System.err.println(e.getMessage());
-                return DB_ERROR;
-            } // catch
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return DB_ERROR;
-        } // catch
+        return insert("INSERT INTO tweet VALUES(default, '" + content + "', '" + createdAt + "', '"
+                + Long.toString(id) + "');");
     } // insertTweet(long, String, String)
+
+    public int deleteAll() {
+        final int i = executeUpdate("DELETE FROM tweet");
+        final int j = executeUpdate("DELETE FROM user");
+        if (i == DB_ERROR || j == DB_ERROR){
+            return DB_ERROR;
+        } else {
+            return i+j;
+        } // else
+    } // deleteAll()
 
     public void close() {
         if (con != null) {
