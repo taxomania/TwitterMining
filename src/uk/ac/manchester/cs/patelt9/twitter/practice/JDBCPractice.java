@@ -12,7 +12,7 @@ import java.sql.Statement;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
-public class JDBCTest {
+public class JDBCPractice {
     private static final String JDBC = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/Twitter";
 
@@ -54,7 +54,7 @@ public class JDBCTest {
 
     // For testing purposes
     public static void main(final String[] args) {
-        new JDBCTest().test();
+        new JDBCPractice().test();
     } // main(String[])
 
     private static void getUserPass() {

@@ -25,7 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-public class HttpsTest {
+public class HttpsPractice {
     // URL for Twitter Streaming API sample; 1% of all tweets
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
     private static String userPassword = null, encoding = null;
@@ -70,7 +70,7 @@ public class HttpsTest {
     } // printHeaders()
 
     public static void main(final String[] args) {
-        new HttpsTest().test();
+        new HttpsPractice().test();
     } // main(String[])
 
     private final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();

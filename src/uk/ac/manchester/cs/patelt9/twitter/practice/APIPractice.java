@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.TwitterUser;
 
-public class APITest {
+public class APIPractice {
     private static final String GET_PUBLIC_TIMELINE_URL = "http://api.twitter.com/1/statuses/public_timeline.xml?trim_user=true";
 
     private static final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
