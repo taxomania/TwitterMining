@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -99,31 +100,51 @@ public class StreamingApi {
     } // disconnect()
 
     public void streamTweets() {
-        JsonReader jr = null;
-        try {
-            jr = new JsonReader(new BufferedReader(new InputStreamReader(con.getInputStream())));
-            final JsonParser jp = new JsonParser();
-            new Thread() {
-                public void run() {
-                    // parseJsonElements();
-                };
-            }.run();
-            // while (true) {
-            for (int i = 0; i < 10; i++) { // Testing purposes
-                jsonElements.addLast(jp.parse(jr));
-            } // for
-            parseJsonElements();
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (jr != null) {
+        Thread t = new Thread("STREAM") {
+
+            public void run() {
+                JsonReader jr = null;
                 try {
-                    jr.close();
+                    jr = new JsonReader(new BufferedReader(new InputStreamReader(
+                            con.getInputStream())));
+                    final JsonParser jp = new JsonParser();
+                    int i = 0;
+                    while (true) {
+                        // for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
+                        if (i % 200 == 0) System.out.println(i); // counter
+                        jsonElements.addLast(jp.parse(jr));
+                        i++;
+                    } // while
                 } catch (final IOException e) {
                     e.printStackTrace();
-                } // catch
+                } finally {
+                    if (jr != null) {
+                        try {
+                            jr.close();
+                        } catch (final IOException e) {
+                            e.printStackTrace();
+                        } // catch
+                    } // if
+                } // finally
+            } // run()
+        };
+        t.start();
+        // new Thread() {
+        // public void run() {
+        // // parseJsonElements();
+        // };
+        // }.run();
+        final Scanner s = new Scanner(System.in);
+        while (true) {
+            if (s.nextLine().contains("stop")) {
+                t.stop();
+                break;
             } // if
-        } // finally
+        } // while
+
+        System.out.println("Parsing");
+        parseJsonElements();
+
     } // streamTweets()
 
     public LinkedList<JsonElement> getJsonElements() {
@@ -132,13 +153,13 @@ public class StreamingApi {
 
     private LinkedList<JsonElement> jsonElements = new LinkedList<JsonElement>();
 
+    private static final int MAX_TWEETS = 10000;
+
     private void parseJsonElements() {
         final SqlConnector sql = SqlConnector.getInstance();
-        // while (true) {
-        for (int i = 0; i < 10; i++) { // Testing purposes
-
+        while (!jsonElements.isEmpty()) {
+            // for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
             // System.out.println(jsonElements.toString());
-            // System.err.println("B");
             final JsonElement je;
             try {
                 je = jsonElements.removeFirst();
@@ -152,32 +173,14 @@ public class StreamingApi {
                 continue;
             } else if (je.isJsonObject()) {
                 final JsonObject jo = je.getAsJsonObject();
-                // System.out.println(jo.toString());
-
-                // System.out.println(jo.getAsJsonObject("user").toString());
                 final Long id = jo.getAsJsonObject("user").getAsJsonPrimitive("id_str").getAsLong();
                 final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                // System.out.println(Long.toString(id) + ": " + tweet); // Testing
                 final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
                         .getAsString());
 
                 sql.insertTweet(id, tweet, createdAt);
-
-                //
-                // System.out.println(createdAt);
-                // final TwitterUser tweeter;
-                // if (tweeters.containsKey(id)) {
-                // tweeter = tweeters.get(id);
-                // } else {
-                // tweeter = new TwitterUser(id);
-                // tweeters.put(id, tweeter);
-                // } // else
-                // tweeter.addTweet(new Tweet(tweet, createdAt));
-                // System.out.println(tweeters.get(id).toString()); // Testing maps
-
-                // TODO: Add into database
             } // else if
-            // System.out.println(jsonElements.toString());
+              // System.out.println(jsonElements.toString());
         } // while
         sql.close();
     } // parseJsonElements()
