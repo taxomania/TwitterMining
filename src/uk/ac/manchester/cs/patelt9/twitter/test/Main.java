@@ -9,24 +9,13 @@ public class Main {
         stream.streamTweets();
         stream.disconnect();
 
-        final SqlConnector sql = SqlConnector.getInstance();
         if (args.length != 0) {
             if (args[0].equals("delete")) {
+                final SqlConnector sql = SqlConnector.getInstance();
                 System.out.println(sql.deleteAll());
+                sql.close();
                 return;
             } // if
         } // if
-
-        // long id = 251464096;
-        // System.out.println(sql.insertUser(id));
-        // System.out.println(sql.insertUser(id+1));
-        // System.out.println(sql.insertUser(id+2));
-        // String content = "Hello world";
-        // String createdAt = "2011-10-26 14:08:37";
-        // System.out.println(sql.insertTweet(id, content, createdAt));
-        // System.out.println(sql.insertTweet(id+1, content, createdAt));
-        // System.out.println(sql.insertTweet(id+1, "BELUGH", createdAt));
-        // System.out.println(sql.insertTweet(id+2, "BELGH", createdAt));
-        sql.close();
     } // main(String[])
 } // Main
