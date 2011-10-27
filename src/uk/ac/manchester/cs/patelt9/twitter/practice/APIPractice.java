@@ -21,8 +21,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import uk.ac.manchester.cs.patelt9.twitter.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.TwitterUser;
 
 public class APIPractice {
     private static final String GET_PUBLIC_TIMELINE_URL = "http://api.twitter.com/1/statuses/public_timeline.xml?trim_user=true";

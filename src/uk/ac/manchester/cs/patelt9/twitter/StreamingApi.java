@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.test;
+package uk.ac.manchester.cs.patelt9.twitter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,7 +17,6 @@ import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
-import uk.ac.manchester.cs.patelt9.twitter.SqlConnector;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -27,8 +26,9 @@ import com.google.gson.stream.JsonReader;
 public class StreamingApi {
     // URL for Twitter Streaming API sample; 1% of all tweets
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
-    private static String userPassword = null, encoding = null;
+    // private static final int MAX_TWEETS = 10000;
 
+    private static String userPassword = null, encoding = null;
     private static StreamingApi stream = null;
 
     private HttpsURLConnection con = null;
@@ -153,7 +153,6 @@ public class StreamingApi {
 
     private LinkedList<JsonElement> jsonElements = new LinkedList<JsonElement>();
 
-    private static final int MAX_TWEETS = 10000;
 
     private void parseJsonElements() {
         final SqlConnector sql = SqlConnector.getInstance();

@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter;
+package uk.ac.manchester.cs.patelt9.twitter.practice;
 
 public class Tweet {
     private final String text;

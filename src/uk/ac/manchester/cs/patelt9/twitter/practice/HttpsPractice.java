@@ -17,8 +17,6 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
-import uk.ac.manchester.cs.patelt9.twitter.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.TwitterUser;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

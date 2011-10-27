@@ -1,6 +1,7 @@
 package uk.ac.manchester.cs.patelt9.twitter.test;
 
 import uk.ac.manchester.cs.patelt9.twitter.SqlConnector;
+import uk.ac.manchester.cs.patelt9.twitter.StreamingApi;
 
 public class Main {
     public static void main(final String[] args) {
