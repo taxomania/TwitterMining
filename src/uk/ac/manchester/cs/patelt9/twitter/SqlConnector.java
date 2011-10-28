@@ -68,7 +68,7 @@ public class SqlConnector {
         try {
             return s.executeUpdate();
         } catch (final MySQLIntegrityConstraintViolationException e) {
-            System.err.println(e.getMessage());
+            // System.err.println(e.getMessage());
             return DB_ERROR;
         } catch (SQLException e) {
             e.printStackTrace();

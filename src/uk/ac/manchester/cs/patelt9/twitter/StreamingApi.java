@@ -28,11 +28,12 @@ public class StreamingApi {
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
     // To avoid filling JVM heap - This is only used while parsing is done sequentially
     private static final int MAX_TWEETS = 5000;
-    private static final int TWEET_COUNTER_INTERVAL = 200;
+    private static final int TWEET_COUNTER_INTERVAL = 500;
 
     private static String userPassword = null, encoding = null;
     private static StreamingApi stream = null;
 
+    private int count = 0;
     private HttpsURLConnection con = null;
     private volatile Scanner stdInScanner = null;
     private volatile SqlConnector sql = null;
@@ -105,6 +106,7 @@ public class StreamingApi {
     } // connect()
 
     public void close() {
+        System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
         if (stdInScanner != null) {
             stdInScanner.close();
@@ -203,7 +205,6 @@ public class StreamingApi {
     private LinkedList<JsonElement> jsonElements = new LinkedList<JsonElement>();
 
     private void parseJsonElements() {
-        int counter = 0;
         while (!jsonElements.isEmpty()) {
             final JsonElement je;
             try {
@@ -223,10 +224,9 @@ public class StreamingApi {
                 final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
                         .getAsString());
 
-                counter += sql.insertTweet(id, tweet, createdAt);
+                count += sql.insertTweet(id, tweet, createdAt);
             } // else if
         } // while
-        System.out.println(Integer.toString(counter) + " tweets added");
     } // parseJsonElements()
 
     protected static String parseCreatedAtForSql(final String date) {
