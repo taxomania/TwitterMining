@@ -28,14 +28,15 @@ public class StreamingApi {
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
     // To avoid filling JVM heap - This is only used while parsing is done sequentially
     private static final int MAX_TWEETS = 5000;
+    private static final int TWEET_COUNTER_INTERVAL = 200;
 
     private static String userPassword = null, encoding = null;
     private static StreamingApi stream = null;
 
     private HttpsURLConnection con = null;
-    private volatile Scanner in = null;
+    private volatile Scanner stdInScanner = null;
     private volatile SqlConnector sql = null;
-    private volatile JsonReader jr = null;
+    private volatile JsonReader jsonReader = null;
 
     static {
         getUserPass();
@@ -79,42 +80,34 @@ public class StreamingApi {
             } // run()
         }.start();
         connect();
-        in = new Scanner(System.in);
+        stdInScanner = new Scanner(System.in);
     } // StreamingApi()
 
     private void connect() {
         final URL url;
         try {
             url = new URL(TWITTER_STREAM_API);
-        } catch (final MalformedURLException e) {
-            e.printStackTrace();
-            System.err.println("Error parsing URL");
-            return;
-        } // catch
-        try {
-            con = (HttpsURLConnection) url.openConnection();
             try {
-                con.setRequestProperty("Authorization", "Basic " + encoding);
-                con.connect();
+                con = (HttpsURLConnection) url.openConnection();
+                try {
+                    con.setRequestProperty("Authorization", "Basic " + encoding);
+                    con.connect();
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                } // catch
             } catch (final IOException e) {
                 e.printStackTrace();
             } // catch
-        } catch (final IOException e) {
+        } catch (final MalformedURLException e) {
             e.printStackTrace();
+            System.err.println("Error parsing URL");
         } // catch
     } // connect()
 
     public void close() {
-        if (jr != null) {
-            try {
-                jr.close();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            } // catch
-        } // if
         disconnect();
-        if (in != null) {
-            in.close();
+        if (stdInScanner != null) {
+            stdInScanner.close();
         } // if
         if (sql != null) {
             sql.close();
@@ -122,6 +115,13 @@ public class StreamingApi {
     } // close()
 
     private void disconnect() {
+        if (jsonReader != null) {
+            try {
+                jsonReader.close();
+            } catch (final IOException e) {
+                e.printStackTrace();
+            } // catch
+        } // if
         if (con != null) {
             con.disconnect();
         } // if
@@ -140,11 +140,11 @@ public class StreamingApi {
         public void run() {
             final JsonParser jp = new JsonParser();
             // int i = 0;
-            // while (!isInterrupted()) {
+            // while (!isInterrupted()) { // Eventually use this
             for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
                 if (isInterrupted()) break;
-                if (i % 100 == 0) System.out.println(i); // counter
-                jsonElements.addLast(jp.parse(jr));
+                if (i % TWEET_COUNTER_INTERVAL == 0) System.out.println(i); // counter
+                jsonElements.addLast(jp.parse(jsonReader));
                 // i++;
             } // while
         } // run()
@@ -155,7 +155,8 @@ public class StreamingApi {
 
     public void streamTweets() {
         try {
-            jr = new JsonReader(new BufferedReader(new InputStreamReader(con.getInputStream())));
+            jsonReader = new JsonReader(new BufferedReader(new InputStreamReader(
+                    con.getInputStream())));
         } catch (final IOException e) {
             e.printStackTrace();
             return;
@@ -164,7 +165,7 @@ public class StreamingApi {
         new Thread("Scanner") {
             public void run() {
                 while (stillStream) {
-                    String s = in.nextLine();
+                    String s = stdInScanner.nextLine();
                     if (s.contains("stop")) {
                         t.interrupt();
                     } else if (s.contains("exit")) {
@@ -174,15 +175,20 @@ public class StreamingApi {
                 } // while
             } // run()
         }.start();
+
+        // Eventually want to parse elements in separate thread
         // new Thread() {
         // public void run() {
         // parseJsonElements();
         // }
         // }.start();
-        while (true) {
+
+        // Continuously stream
+        while (stillStream) {
             t = new StreamThread();
             t.start();
 
+            // Hold loop until thread has closed, this also needs to allow for parser thread
             while (true) {
                 if (!t.isAlive()) {
                     break;
@@ -191,16 +197,14 @@ public class StreamingApi {
 
             System.out.println("Parsing");
             parseJsonElements();
-            if (!stillStream) break;
         } // while
     } // streamTweets()
 
     private LinkedList<JsonElement> jsonElements = new LinkedList<JsonElement>();
 
     private void parseJsonElements() {
+        int counter = 0;
         while (!jsonElements.isEmpty()) {
-            // for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
-            // System.out.println(jsonElements.toString());
             final JsonElement je;
             try {
                 je = jsonElements.removeFirst();
@@ -219,11 +223,10 @@ public class StreamingApi {
                 final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
                         .getAsString());
 
-                sql.insertTweet(id, tweet, createdAt);
+                counter += sql.insertTweet(id, tweet, createdAt);
             } // else if
-              // System.out.println(jsonElements.toString());
         } // while
-          // sql.close();
+        System.out.println(Integer.toString(counter) + " tweets added");
     } // parseJsonElements()
 
     protected static String parseCreatedAtForSql(final String date) {
