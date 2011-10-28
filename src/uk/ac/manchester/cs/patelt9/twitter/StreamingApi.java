@@ -26,12 +26,16 @@ import com.google.gson.stream.JsonReader;
 public class StreamingApi {
     // URL for Twitter Streaming API sample; 1% of all tweets
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
-    // private static final int MAX_TWEETS = 10000;
+    // To avoid filling JVM heap - This is only used while parsing is done sequentially
+    private static final int MAX_TWEETS = 5000;
 
     private static String userPassword = null, encoding = null;
     private static StreamingApi stream = null;
 
     private HttpsURLConnection con = null;
+    private volatile Scanner in = null;
+    private volatile SqlConnector sql = null;
+    private volatile JsonReader jr = null;
 
     static {
         getUserPass();
@@ -68,7 +72,14 @@ public class StreamingApi {
     } // getInstance()
 
     private StreamingApi() {
+        new Thread() {
+            @Override
+            public void run() {
+                sql = SqlConnector.getInstance();
+            } // run()
+        }.start();
         connect();
+        in = new Scanner(System.in);
     } // StreamingApi()
 
     private void connect() {
@@ -93,69 +104,100 @@ public class StreamingApi {
         } // catch
     } // connect()
 
-    public void disconnect() {
+    public void close() {
+        if (jr != null) {
+            try {
+                jr.close();
+            } catch (final IOException e) {
+                e.printStackTrace();
+            } // catch
+        } // if
+        disconnect();
+        if (in != null) {
+            in.close();
+        } // if
+        if (sql != null) {
+            sql.close();
+        } // if
+    } // close()
+
+    private void disconnect() {
         if (con != null) {
             con.disconnect();
         } // if
     } // disconnect()
 
-    public void streamTweets() {
-        Thread t = new Thread("STREAM") {
+    private class StreamThread extends Thread {
+        public StreamThread() {
+            this("Stream");
+        } // StreamThread()
 
+        public StreamThread(final String s) {
+            super(s);
+        } // StreamThread(String)
+
+        @Override
+        public void run() {
+            final JsonParser jp = new JsonParser();
+            // int i = 0;
+            // while (!isInterrupted()) {
+            for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
+                if (isInterrupted()) break;
+                if (i % 100 == 0) System.out.println(i); // counter
+                jsonElements.addLast(jp.parse(jr));
+                // i++;
+            } // while
+        } // run()
+    } // StreamThread
+
+    private StreamThread t;
+    private volatile boolean stillStream = true;
+
+    public void streamTweets() {
+        try {
+            jr = new JsonReader(new BufferedReader(new InputStreamReader(con.getInputStream())));
+        } catch (final IOException e) {
+            e.printStackTrace();
+            return;
+        } // catch
+
+        new Thread("Scanner") {
             public void run() {
-                JsonReader jr = null;
-                try {
-                    jr = new JsonReader(new BufferedReader(new InputStreamReader(
-                            con.getInputStream())));
-                    final JsonParser jp = new JsonParser();
-                    int i = 0;
-                    while (true) {
-                        // for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
-                        if (i % 200 == 0) System.out.println(i); // counter
-                        jsonElements.addLast(jp.parse(jr));
-                        i++;
-                    } // while
-                } catch (final IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (jr != null) {
-                        try {
-                            jr.close();
-                        } catch (final IOException e) {
-                            e.printStackTrace();
-                        } // catch
-                    } // if
-                } // finally
+                while (stillStream) {
+                    String s = in.nextLine();
+                    if (s.contains("stop")) {
+                        t.interrupt();
+                    } else if (s.contains("exit")) {
+                        t.interrupt();
+                        stillStream = false;
+                    } // else
+                } // while
             } // run()
-        };
-        t.start();
+        }.start();
         // new Thread() {
         // public void run() {
-        // // parseJsonElements();
-        // };
-        // }.run();
-        final Scanner s = new Scanner(System.in);
+        // parseJsonElements();
+        // }
+        // }.start();
         while (true) {
-            if (s.nextLine().contains("stop")) {
-                t.stop();
-                break;
-            } // if
+            t = new StreamThread();
+            t.start();
+
+            while (true) {
+                if (!t.isAlive()) {
+                    break;
+                } // if
+            } // while
+
+            System.out.println("Parsing");
+            parseJsonElements();
+            if (!stillStream) break;
         } // while
-
-        System.out.println("Parsing");
-        parseJsonElements();
-
     } // streamTweets()
-
-    public LinkedList<JsonElement> getJsonElements() {
-        return jsonElements;
-    } // getJsonElements()
 
     private LinkedList<JsonElement> jsonElements = new LinkedList<JsonElement>();
 
-
     private void parseJsonElements() {
-        final SqlConnector sql = SqlConnector.getInstance();
         while (!jsonElements.isEmpty()) {
             // for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
             // System.out.println(jsonElements.toString());
@@ -181,7 +223,7 @@ public class StreamingApi {
             } // else if
               // System.out.println(jsonElements.toString());
         } // while
-        sql.close();
+          // sql.close();
     } // parseJsonElements()
 
     protected static String parseCreatedAtForSql(final String date) {

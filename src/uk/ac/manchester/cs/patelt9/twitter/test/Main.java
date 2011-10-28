@@ -5,10 +5,6 @@ import uk.ac.manchester.cs.patelt9.twitter.StreamingApi;
 
 public class Main {
     public static void main(final String[] args) {
-        final StreamingApi stream = StreamingApi.getInstance();
-        stream.streamTweets();
-        stream.disconnect();
-
         if (args.length != 0) {
             if (args[0].equals("delete")) {
                 final SqlConnector sql = SqlConnector.getInstance();
@@ -16,6 +12,10 @@ public class Main {
                 sql.close();
                 return;
             } // if
-        } // if
+        } else {
+            final StreamingApi stream = StreamingApi.getInstance();
+            stream.streamTweets();
+            stream.close();
+        } // else
     } // main(String[])
 } // Main
