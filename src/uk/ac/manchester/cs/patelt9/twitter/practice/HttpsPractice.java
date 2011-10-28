@@ -148,7 +148,7 @@ public class HttpsPractice {
                         else if (je.isJsonObject()) {
                             final JsonObject jo = je.getAsJsonObject();
                             // System.out.println(jo.toString());
-                            // System.out.println(jo.getAsJsonObject("user").toString());
+                             System.out.println(jo.getAsJsonObject("user").toString());
                             final Long id = jo.getAsJsonObject("user").getAsJsonPrimitive("id_str")
                                     .getAsLong();
                             final String tweet = jo.getAsJsonPrimitive("text").getAsString();

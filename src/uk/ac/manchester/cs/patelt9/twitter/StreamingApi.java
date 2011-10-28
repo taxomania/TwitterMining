@@ -219,12 +219,14 @@ public class StreamingApi {
                 continue;
             } else if (je.isJsonObject()) {
                 final JsonObject jo = je.getAsJsonObject();
-                final Long id = jo.getAsJsonObject("user").getAsJsonPrimitive("id_str").getAsLong();
+                final JsonObject user = jo.getAsJsonObject("user");
+                final Long id = user.getAsJsonPrimitive("id_str").getAsLong();
+                final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
                 final String tweet = jo.getAsJsonPrimitive("text").getAsString();
                 final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
                         .getAsString());
 
-                count += sql.insertTweet(id, tweet, createdAt);
+              //  count += sql.insertTweet(id, screenName, tweet, createdAt);
             } // else if
         } // while
     } // parseJsonElements()

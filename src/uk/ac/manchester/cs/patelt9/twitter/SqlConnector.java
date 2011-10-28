@@ -46,15 +46,16 @@ public class SqlConnector {
                 // @formatter:off
                 insertUser = con.prepareStatement(
                         "INSERT INTO user VALUES(default, " +
-                        "?" +  // Id
+                        "?, " +  // Id
+                        "?"   +  // Username
                         ");");
 
                 insertTweet = con.prepareStatement(
                         "INSERT INTO tweet VALUES(default, " +
                         "?, " + // Content
                         "?, " + // Created_at
-                        "?"   + // Id
-                        ");");
+                        "?, " + // Id
+                        "default);"); // Sentiment
                 // @formatter:on
             } catch (final SQLException e) {
                 e.printStackTrace();
@@ -76,9 +77,10 @@ public class SqlConnector {
         } // catch
     } // insert(PreparedStatement)
 
-    public int insertUser(final long id) {
+    public int insertUser(final long id, final String screenName) {
         try {
             insertUser.setLong(1, id);
+            insertUser.setString(2, screenName);
             return executeUpdate(insertUser);
         } catch (final SQLException e) {
             e.printStackTrace();
@@ -86,8 +88,9 @@ public class SqlConnector {
         } // catch
     } // insertUser(long)
 
-    public int insertTweet(final long id, final String content, final String createdAt) {
-        insertUser(id);
+    public int insertTweet(final long id, final String screenName, final String content,
+            final String createdAt) {
+        insertUser(id, screenName);
         try {
             insertTweet.setString(1, content);
             insertTweet.setString(2, createdAt);
