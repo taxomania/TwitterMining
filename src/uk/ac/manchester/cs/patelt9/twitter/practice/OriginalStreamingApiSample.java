@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter;
+package uk.ac.manchester.cs.patelt9.twitter.practice;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,13 +17,14 @@ import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
+import uk.ac.manchester.cs.patelt9.twitter.SqlConnector;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-public abstract class StreamingApi {
+public class OriginalStreamingApiSample {
     // URL for Twitter Streaming API sample; 1% of all tweets
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
     // To avoid filling JVM heap - This is only used while parsing is done sequentially
@@ -31,6 +32,7 @@ public abstract class StreamingApi {
     private static final int TWEET_COUNTER_INTERVAL = 500;
 
     private static String userPassword = null, encoding = null;
+    private static OriginalStreamingApiSample stream = null;
 
     private int count = 0;
     private HttpsURLConnection con = null;
@@ -64,7 +66,15 @@ public abstract class StreamingApi {
         } // finally
     } // getUserPass()
 
-    protected StreamingApi() {
+    // Singleton lock as you cannot have more than one connection
+    public static OriginalStreamingApiSample getInstance() {
+        if (stream == null) {
+            stream = new OriginalStreamingApiSample();
+        } // if
+        return stream;
+    } // getInstance()
+
+    private OriginalStreamingApiSample() {
         new Thread() {
             @Override
             public void run() {
@@ -75,41 +85,21 @@ public abstract class StreamingApi {
         stdInScanner = new Scanner(System.in);
     } // StreamingApi()
 
-    protected StreamingApi(final String s) {
-        new Thread() {
-            @Override
-            public void run() {
-                sql = SqlConnector.getInstance();
-            } // run()
-        }.start();
-        connect(s);
-        stdInScanner = new Scanner(System.in);
-    } // StreamingApi(String)
-
-    private void connect(final URL url) {
-        System.out.println(url.toString());
+    private void connect() {
+        final URL url;
         try {
-            con = (HttpsURLConnection) url.openConnection();
+            url = new URL(TWITTER_STREAM_API);
             try {
-                con.setRequestProperty("Authorization", "Basic " + encoding);
-                con.connect();
+                con = (HttpsURLConnection) url.openConnection();
+                try {
+                    con.setRequestProperty("Authorization", "Basic " + encoding);
+                    con.connect();
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                } // catch
             } catch (final IOException e) {
                 e.printStackTrace();
             } // catch
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } // catch
-    } // connect(URL)
-
-    private void connect() {
-        connect(TWITTER_STREAM_API);
-    }
-
-    private void connect(final String s) {
-        final URL url;
-        try {
-            url = new URL(s);
-            connect(url);
         } catch (final MalformedURLException e) {
             e.printStackTrace();
             System.err.println("Error parsing URL");
