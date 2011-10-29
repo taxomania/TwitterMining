@@ -2,7 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.test;
 
 import uk.ac.manchester.cs.patelt9.twitter.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.StreamingApi;
-import uk.ac.manchester.cs.patelt9.twitter.StreamingApiSample;
+import uk.ac.manchester.cs.patelt9.twitter.StreamingApiFilter;
 
 public class Main {
     public static void main(final String[] args) {
@@ -14,7 +14,7 @@ public class Main {
                 return;
             } // if
         } else {
-            final StreamingApi stream = StreamingApiSample.getInstance();
+            final StreamingApi stream = StreamingApiFilter.getInstance();
             stream.streamTweets();
             stream.close();
         } // else

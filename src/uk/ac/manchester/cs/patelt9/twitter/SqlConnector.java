@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.mysql.jdbc.MysqlDataTruncation;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 public class SqlConnector {
@@ -96,6 +97,9 @@ public class SqlConnector {
             insertTweet.setString(2, createdAt);
             insertTweet.setLong(3, id);
             return executeUpdate(insertTweet);
+        } catch (final MysqlDataTruncation e){
+            System.err.println(e.getMessage());
+            return DB_ERROR;
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;

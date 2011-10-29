@@ -26,11 +26,11 @@ import com.google.gson.stream.JsonReader;
 public abstract class StreamingApi {
     // To avoid filling JVM heap - This is only used while parsing is done sequentially
     private static final int MAX_TWEETS = 5000;
-    private static final int TWEET_COUNTER_INTERVAL = 500;
 
     private static String userPassword = null, encoding = null;
 
     private int count = 0;
+    private final int counterInterval;
     private HttpsURLConnection con = null;
     private volatile Scanner stdInScanner = null;
     private volatile SqlConnector sql = null;
@@ -62,14 +62,15 @@ public abstract class StreamingApi {
         } // finally
     } // getUserPass()
 
-    protected StreamingApi(final String s) {
+    protected StreamingApi(final String url, final int interval) {
         new Thread() {
             @Override
             public void run() {
                 sql = SqlConnector.getInstance();
             } // run()
         }.start();
-        connect(s);
+        counterInterval = interval;
+        connect(url);
         stdInScanner = new Scanner(System.in);
     } // StreamingApi(String)
 
@@ -139,7 +140,7 @@ public abstract class StreamingApi {
             // while (!isInterrupted()) { // Eventually use this
             for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
                 if (isInterrupted()) break;
-                if (i % TWEET_COUNTER_INTERVAL == 0) System.out.println(i); // counter
+                if (i % counterInterval == 0) System.out.println(i); // counter
                 jsonElements.addLast(jp.parse(jsonReader));
                 // i++;
             } // while

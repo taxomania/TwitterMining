@@ -3,6 +3,7 @@ package uk.ac.manchester.cs.patelt9.twitter;
 public class StreamingApiFilter extends StreamingApi {
     // URL for Twitter Streaming API filter; filter by software here
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/filter.json?track=software";
+    private static final int COUNTER_INTERVAL = 10;
 
     private static StreamingApiFilter stream = null;
 
@@ -16,7 +17,7 @@ public class StreamingApiFilter extends StreamingApi {
     } // getInstance()
 
     private StreamingApiFilter() {
-        super(TWITTER_STREAM_API);
+        super(TWITTER_STREAM_API, COUNTER_INTERVAL);
     } // StreamingApiFilter()
 
     // public StreamingApiFilter(final String s){
