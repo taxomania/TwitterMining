@@ -86,21 +86,16 @@ public class SqlConnector {
         } catch (final MySQLIntegrityConstraintViolationException e) {
             // System.err.println(e.getMessage());
             return DB_ERROR;
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
     } // insert(PreparedStatement)
 
     private int insertUser(final long id, final String screenName) throws SQLException {
-        try {
-            insertUser.setLong(1, id);
-            insertUser.setString(2, screenName);
-            return executeUpdate(insertUser);
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return DB_ERROR;
-        } // catch
+        insertUser.setLong(1, id);
+        insertUser.setString(2, screenName);
+        return executeUpdate(insertUser);
     } // insertUser(long, String)
 
     public int insertTweet(final long id, final String screenName, final String content,

@@ -79,7 +79,7 @@ public abstract class StreamingApi {
     } // StreamingApi(String)
 
     private void connect(final URL url) {
-        System.out.println(url.toString());
+        System.out.println("Connecting to " + url.toString());
         try {
             con = (HttpsURLConnection) url.openConnection();
             try {
@@ -218,7 +218,6 @@ public abstract class StreamingApi {
                     final Long tweetId = jo.getAsJsonObject("delete").getAsJsonObject("status")
                             .getAsJsonPrimitive("id_str").getAsLong();
                     count -= sql.deleteTweet(tweetId);
-                    System.out.println("DELETE");
                 } else {
                     final JsonObject user = jo.getAsJsonObject("user");
                     final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
