@@ -1,8 +1,8 @@
-package uk.ac.manchester.cs.patelt9.twitter.test;
+package uk.ac.manchester.cs.patelt9.twitter;
 
-import uk.ac.manchester.cs.patelt9.twitter.SqlConnector;
-import uk.ac.manchester.cs.patelt9.twitter.StreamingApi;
-import uk.ac.manchester.cs.patelt9.twitter.StreamingApiSample;
+import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
+import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApi;
+import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiSample;
 
 public class Main {
     public static void main(final String[] args) {

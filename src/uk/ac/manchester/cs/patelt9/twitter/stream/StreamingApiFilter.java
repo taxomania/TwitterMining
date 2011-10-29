@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter;
+package uk.ac.manchester.cs.patelt9.twitter.stream;
 
 public class StreamingApiFilter extends StreamingApi {
     // URL for Twitter Streaming API filter; filter by software here

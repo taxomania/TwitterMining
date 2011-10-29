@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter;
+package uk.ac.manchester.cs.patelt9.twitter.stream;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,6 +17,7 @@ import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
+import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter;
+package uk.ac.manchester.cs.patelt9.twitter.data;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -83,6 +83,9 @@ public class SqlConnector {
     private int executeUpdate(final PreparedStatement s) {
         try {
             return s.executeUpdate();
+        } catch (final MysqlDataTruncation e) {
+            System.err.println(e.getMessage());
+            return DB_ERROR;
         } catch (final MySQLIntegrityConstraintViolationException e) {
             // System.err.println(e.getMessage());
             return DB_ERROR;
@@ -186,7 +189,7 @@ public class SqlConnector {
         if (con != null) {
             try {
                 con.close();
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 e.printStackTrace();
             } // catch
         } // if
