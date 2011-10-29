@@ -40,6 +40,10 @@ public abstract class StreamingApi {
         getUserPass();
     } // static
 
+    protected SqlConnector getSqlConnector() {
+        return sql;
+    } // getSqlConnector()
+
     private static void getUserPass() {
         BufferedReader userPass = null;
         try {
@@ -208,23 +212,31 @@ public abstract class StreamingApi {
                 continue;
             } // catch
 
-            if (je.toString().contains("{\"delete\":")) {
-                // System.out.println("Delete tweet");
-                // TODO: Add in something to delete tweets
-                continue;
-            } else if (je.isJsonObject()) {
+            if (je.isJsonObject()) {
                 final JsonObject jo = je.getAsJsonObject();
-                final JsonObject user = jo.getAsJsonObject("user");
-                final Long id = user.getAsJsonPrimitive("id_str").getAsLong();
-                final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
-                final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
-                        .getAsString());
-
-                count += sql.insertTweet(id, screenName, tweet, createdAt);
-            } // else if
+                if (je.toString().contains("{\"delete\":")) {
+                    final Long tweetId = jo.getAsJsonObject("delete").getAsJsonObject("status")
+                            .getAsJsonPrimitive("id_str").getAsLong();
+                    count -= sql.deleteTweet(tweetId);
+                    System.out.println("DELETE");
+                } else {
+                    final JsonObject user = jo.getAsJsonObject("user");
+                    final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
+                    final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
+                    final String tweet = jo.getAsJsonPrimitive("text").getAsString();
+                    final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
+                    final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive(
+                            "created_at").getAsString());
+                    count += addToDb(tweetId, screenName, tweet, createdAt, userId);
+                } // else if
+            } // if
         } // while
     } // parseJsonElements()
+
+    protected int addToDb(final Long tweetId, final String screenName, final String tweet,
+            final String createdAt, final Long userId) {
+        return sql.insertTweet(tweetId, screenName, tweet, createdAt, userId);
+    } // addToDb(Long, String, String, String, Long)
 
     protected static String parseCreatedAtForSql(final String date) {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");

@@ -16,13 +16,15 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
 
 public class SqlConnector {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/Twitter";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining";
     public static final int DB_ERROR = -1;
 
     private static String dbUser = null, dbPass = null;
 
     private PreparedStatement insertUser = null;
+    private PreparedStatement insertFilteredTweet = null;
     private PreparedStatement insertTweet = null;
+    private PreparedStatement deleteTweet = null;
 
     static {
         getUserPass();
@@ -46,17 +48,29 @@ public class SqlConnector {
                 con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
                 // @formatter:off
                 insertUser = con.prepareStatement(
-                        "INSERT INTO user VALUES(default, " +
+                        "INSERT INTO user VALUES(" +
                         "?, " +  // Id
                         "?"   +  // Username
                         ");");
 
-                insertTweet = con.prepareStatement(
-                        "INSERT INTO tweet VALUES(default, " +
-                        "?, " + // Content
+                insertFilteredTweet = con.prepareStatement(
+                        "INSERT INTO tweet VALUES(default, " + // Id
+                        "?, " + // Tweet_Id
+                        "?, " + // Text
                         "?, " + // Created_at
-                        "?, " + // Id
-                        "default);"); // Sentiment
+                        "?, " + // User_Id
+                        "default, default, " + // Sentiment, Sentiment_score,
+                        "?);"); // Keyword
+
+                insertTweet = con.prepareStatement(
+                        "INSERT INTO tweet VALUES(default, " + // Id
+                        "?, " + // Tweet_Id
+                        "?, " + // Text
+                        "?, " + // Created_at
+                        "?, " + // User_Id
+                        "default, default, default);"); // Sentiment, Sentiment_score, Keyword
+
+                deleteTweet = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
                 // @formatter:on
             } catch (final SQLException e) {
                 e.printStackTrace();
@@ -78,7 +92,7 @@ public class SqlConnector {
         } // catch
     } // insert(PreparedStatement)
 
-    public int insertUser(final long id, final String screenName) {
+    private int insertUser(final long id, final String screenName) throws SQLException {
         try {
             insertUser.setLong(1, id);
             insertUser.setString(2, screenName);
@@ -87,24 +101,56 @@ public class SqlConnector {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // insertUser(long)
+    } // insertUser(long, String)
 
     public int insertTweet(final long id, final String screenName, final String content,
-            final String createdAt) {
-        insertUser(id, screenName);
+            final String createdAt, final long userId, final String keyword) {
         try {
-            insertTweet.setString(1, content);
-            insertTweet.setString(2, createdAt);
-            insertTweet.setLong(3, id);
-            return executeUpdate(insertTweet);
-        } catch (final MysqlDataTruncation e){
-            System.err.println(e.getMessage());
-            return DB_ERROR;
+            insertUser(userId, screenName);
+            try {
+                setTweetValues(insertFilteredTweet, id, content, createdAt, userId);
+                insertFilteredTweet.setString(5, keyword);
+                return executeUpdate(insertFilteredTweet);
+            } catch (final MysqlDataTruncation e) {
+                System.err.println(e.getMessage());
+                return DB_ERROR;
+            } catch (final SQLException e) {
+                e.printStackTrace();
+                return DB_ERROR;
+            } // catch
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // insertUser(long)
+    } // insertTweet(long, String, String, String, long, String)
+
+    private void setTweetValues(PreparedStatement s, final long id, final String content,
+            final String createdAt, final long userId) throws SQLException {
+        s.setLong(1, id);
+        s.setString(2, content);
+        s.setString(3, createdAt);
+        s.setLong(4, userId);
+    } // setTweetValues(PreparedStatement, long, String, String, long)
+
+    public int insertTweet(final long id, final String screenName, final String content,
+            final String createdAt, final long userId) {
+        try {
+            insertUser(userId, screenName);
+            try {
+                setTweetValues(insertTweet, id, content, createdAt, userId);
+                return executeUpdate(insertTweet);
+            } catch (final MysqlDataTruncation e) {
+                System.err.println(e.getMessage());
+                return DB_ERROR;
+            } catch (final SQLException e) {
+                e.printStackTrace();
+                return DB_ERROR;
+            } // catch
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // insertTweet(long, String, String, String, long)
 
     private int executeUpdate(final String sqlStatement) {
         try {
@@ -130,6 +176,16 @@ public class SqlConnector {
             return i + j;
         } // else
     } // deleteAll()
+
+    public int deleteTweet(final long tweetId) {
+        try {
+            deleteTweet.setLong(1, tweetId);
+            return executeUpdate(deleteTweet);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // deleteTweet(long)
 
     public void close() {
         if (con != null) {

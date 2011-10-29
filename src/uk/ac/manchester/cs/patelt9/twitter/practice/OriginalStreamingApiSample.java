@@ -227,7 +227,7 @@ public class OriginalStreamingApiSample {
                 final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
                         .getAsString());
 
-                count += sql.insertTweet(id, screenName, tweet, createdAt);
+           //     count += sql.insertTweet(id, screenName, tweet, createdAt);
             } // else if
         } // while
     } // parseJsonElements()
