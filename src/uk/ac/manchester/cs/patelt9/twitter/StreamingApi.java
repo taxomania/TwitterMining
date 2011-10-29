@@ -24,8 +24,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 public abstract class StreamingApi {
-    // URL for Twitter Streaming API sample; 1% of all tweets
-    private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/sample.json";
     // To avoid filling JVM heap - This is only used while parsing is done sequentially
     private static final int MAX_TWEETS = 5000;
     private static final int TWEET_COUNTER_INTERVAL = 500;
@@ -64,17 +62,6 @@ public abstract class StreamingApi {
         } // finally
     } // getUserPass()
 
-    protected StreamingApi() {
-        new Thread() {
-            @Override
-            public void run() {
-                sql = SqlConnector.getInstance();
-            } // run()
-        }.start();
-        connect();
-        stdInScanner = new Scanner(System.in);
-    } // StreamingApi()
-
     protected StreamingApi(final String s) {
         new Thread() {
             @Override
@@ -100,10 +87,6 @@ public abstract class StreamingApi {
             e.printStackTrace();
         } // catch
     } // connect(URL)
-
-    private void connect() {
-        connect(TWITTER_STREAM_API);
-    }
 
     private void connect(final String s) {
         final URL url;

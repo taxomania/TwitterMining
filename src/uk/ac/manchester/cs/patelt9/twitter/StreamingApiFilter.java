@@ -1,7 +1,7 @@
 package uk.ac.manchester.cs.patelt9.twitter;
 
 public class StreamingApiFilter extends StreamingApi {
-    // URL for Twitter Streaming API sample; 1% of all tweets
+    // URL for Twitter Streaming API filter; filter by software here
     private static final String TWITTER_STREAM_API = "https://stream.twitter.com/1/statuses/filter.json?track=software";
 
     private static StreamingApiFilter stream = null;
