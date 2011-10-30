@@ -69,7 +69,8 @@ public class SentimentAnalysis {
                     try {
                         doc = api.TextGetTextSentiment(tweet);
                     } catch (final IllegalArgumentException e) {
-                        e.printStackTrace();
+                        count += sql.executeUpdate("UPDATE tweet SET sentiment='none' WHERE id='"
+                                + id + "';");
                         continue;
                     }
                     final Node sentimentNode = doc.getElementsByTagName("docSentiment").item(0);
