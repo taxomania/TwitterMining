@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import com.mysql.jdbc.MysqlDataTruncation;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -93,7 +93,7 @@ public class SqlConnector {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // insert(PreparedStatement)
+    } // executeUpdate(PreparedStatement)
 
     private int insertUser(final long id, final String screenName) throws SQLException {
         insertUser.setLong(1, id);
@@ -150,29 +150,31 @@ public class SqlConnector {
         } // catch
     } // insertTweet(long, String, String, String, long)
 
-    private int executeUpdate(final String sqlStatement) {
+    public int executeUpdate(final String sqlStatement) {
         try {
-            final Statement s = con.createStatement();
-            try {
-                return s.executeUpdate(sqlStatement);
-            } catch (final MySQLIntegrityConstraintViolationException e) {
-                System.err.println(e.getMessage());
-                return DB_ERROR;
-            } // catch
+            return con.createStatement().executeUpdate(sqlStatement);
+        } catch (final MySQLIntegrityConstraintViolationException e) {
+            System.err.println(e.getMessage());
+            return DB_ERROR;
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // insert(String)
+    } // executeUpdate(String)
+
+    public ResultSet executeQuery(final String sqlStatement) {
+        try {
+            return con.createStatement().executeQuery(sqlStatement);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return null;
+        } // catch
+    } // executeQuery(String)
 
     public int deleteAll() {
         final int i = executeUpdate("DELETE FROM tweet");
         final int j = executeUpdate("DELETE FROM user");
-        if (i == DB_ERROR || j == DB_ERROR) {
-            return DB_ERROR;
-        } else {
-            return i + j;
-        } // else
+        return (i == DB_ERROR || j == DB_ERROR) ? DB_ERROR : i+j;
     } // deleteAll()
 
     public int deleteTweet(final long tweetId) {
