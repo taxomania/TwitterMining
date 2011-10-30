@@ -4,6 +4,7 @@ import uk.ac.manchester.cs.patelt9.twitter.data.SentimentAnalysis;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApi;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilter;
+import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiSample;
 
 public class Main {
     public static void main(final String[] args) {
@@ -18,9 +19,18 @@ public class Main {
                 sa.loadDataSet();
                 sa.analyseSentiment();
                 sa.close();
-            } // else if
+            } else {
+                final StreamingApi stream;
+                if (args[0].equals("sample")) {
+                    stream = StreamingApiSample.getInstance();
+                } else {
+                    stream = StreamingApiFilter.getInstance(args[0]);
+                } // else
+                stream.streamTweets();
+                stream.close();
+            } // else
         } else {
-            final StreamingApi stream = StreamingApiFilter.getInstance("app");
+            final StreamingApi stream = StreamingApiFilter.getInstance();
             stream.streamTweets();
             stream.close();
         } // else
