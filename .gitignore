@@ -3,3 +3,4 @@ bin/
 twitter4j.properties
 userpass.txt
 sqluserpass.txt
+alchemyapikey.txt
