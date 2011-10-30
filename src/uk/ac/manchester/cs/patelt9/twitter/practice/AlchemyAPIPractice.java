@@ -31,9 +31,9 @@ public class AlchemyAPIPractice {
             return;
         } // catch
         final SqlConnector sql = SqlConnector.getInstance();
-        final ResultSet res = sql
-                .executeQuery("SELECT t.text, t.id FROM user u, tweet t WHERE u.id = t.user_id AND u.username='taxomania';");
         try {
+            final ResultSet res = sql
+                    .executeQuery("SELECT t.text, t.id FROM user u, tweet t WHERE u.id = t.user_id AND u.username='taxomania';");
             res.beforeFirst();
             while (res.next()) {
                 final String tweet = res.getString(1);

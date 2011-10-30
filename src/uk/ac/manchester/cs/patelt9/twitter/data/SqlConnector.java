@@ -162,19 +162,14 @@ public class SqlConnector {
         } // catch
     } // executeUpdate(String)
 
-    public ResultSet executeQuery(final String sqlStatement) {
-        try {
-            return con.createStatement().executeQuery(sqlStatement);
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return null;
-        } // catch
+    public ResultSet executeQuery(final String sqlStatement) throws SQLException {
+        return con.createStatement().executeQuery(sqlStatement);
     } // executeQuery(String)
 
     public int deleteAll() {
         final int i = executeUpdate("DELETE FROM tweet");
         final int j = executeUpdate("DELETE FROM user");
-        return (i == DB_ERROR || j == DB_ERROR) ? DB_ERROR : i+j;
+        return (i == DB_ERROR || j == DB_ERROR) ? DB_ERROR : i + j;
     } // deleteAll()
 
     public int deleteTweet(final long tweetId) {
@@ -195,6 +190,7 @@ public class SqlConnector {
                 e.printStackTrace();
             } // catch
         } // if
+        mySql = null;
     } // close()
 
     private static void getUserPass() {
