@@ -63,14 +63,20 @@ public class SentimentAnalysis {
             while (res.next()) {
                 final String tweet = res.getString(1);
                 final Long id = res.getLong(2);
+                // System.out.println(id + ": " + tweet);
                 try {
-                    final Document doc = api.TextGetTextSentiment(tweet);
+                    final Document doc;
+                    try {
+                        doc = api.TextGetTextSentiment(tweet);
+                    } catch (final IllegalArgumentException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
                     final Node sentimentNode = doc.getElementsByTagName("docSentiment").item(0);
                     if (sentimentNode != null && sentimentNode.getNodeType() == Node.ELEMENT_NODE) {
                         final Element sent = (Element) sentimentNode;
                         final String sentiment = sent.getElementsByTagName("type").item(0)
                                 .getTextContent();
-                        // System.out.println(id + ": " + tweet);
                         // System.out.println(sentiment);
                         if (!sentiment.equals("neutral")) {
                             final String sentimentScore = sent.getElementsByTagName("score")
