@@ -1,13 +1,13 @@
 package uk.ac.manchester.cs.patelt9.twitter;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.sql.SQLException;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.SentimentAnalysis;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApi;
-import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilter;
-import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiPost;
+import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilterPost;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiSample;
 
 public class Main {
@@ -41,8 +41,17 @@ public class Main {
                     if (args[0].equals("sample")) {
                         stream = StreamingApiSample.getInstance();
                     } else {
-                        stream = StreamingApiFilter.getInstance(args[0]);
+                        stream = StreamingApiFilterPost.getInstance(args);
                     } // else
+                    try {
+                        stream.connect();
+                    } catch (final MalformedURLException e) {
+                        System.err.println("Error parsing URL");
+                        System.exit(1);
+                    } catch (final IOException e) {
+                        System.err.println("Could not connect to server");
+                        System.exit(1);
+                    } // catch
                     stream.streamTweets();
                     stream.close();
                 } catch (final SQLException e) {
@@ -52,7 +61,16 @@ public class Main {
             } // else
         } else {
             try {
-                final StreamingApiPost stream = StreamingApiPost.getInstance();
+                final StreamingApiFilterPost stream = StreamingApiFilterPost.getInstance();
+                try {
+                    stream.connect();
+                } catch (final MalformedURLException e) {
+                    System.err.println("Error parsing URL");
+                    System.exit(1);
+                } catch (final IOException e) {
+                    System.err.println("Could not connect to server");
+                    System.exit(1);
+                } // catch
                 stream.streamTweets();
                 stream.close();
             } catch (final SQLException e) {

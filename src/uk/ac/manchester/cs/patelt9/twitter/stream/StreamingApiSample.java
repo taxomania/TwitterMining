@@ -17,8 +17,7 @@ public class StreamingApiSample extends StreamingApi {
         return stream;
     } // getInstance()
 
-    private StreamingApiSample() throws SQLException{
+    private StreamingApiSample() throws SQLException {
         super(TWITTER_STREAM_API, COUNTER_INTERVAL);
     } // StreamingApiSample()
-
 } // StreamingApiSample

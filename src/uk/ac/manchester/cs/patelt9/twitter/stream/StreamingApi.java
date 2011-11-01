@@ -32,6 +32,7 @@ public abstract class StreamingApi {
     private static String userPassword = null, encoding = null;
 
     private int count = 0;
+    private final String urlString;
     private final int counterInterval;
     private HttpsURLConnection con = null;
     private volatile Scanner stdInScanner = null;
@@ -45,6 +46,10 @@ public abstract class StreamingApi {
     protected SqlConnector getSqlConnector() {
         return sql;
     } // getSqlConnector()
+
+    protected HttpsURLConnection getConnection() {
+        return con;
+    } // getConnection()
 
     private static void getUserPass() {
         BufferedReader userPass = null;
@@ -71,26 +76,16 @@ public abstract class StreamingApi {
     protected StreamingApi(final String url, final int interval) throws SQLException {
         sql = SqlConnector.getInstance();
         counterInterval = interval;
-        connect(url);
+        urlString = url;
         stdInScanner = new Scanner(System.in);
     } // StreamingApi(String)
 
-    private void connect(final URL url) {
-        System.out.println("Connecting to " + url.toString());
-        try {
-            con = (HttpsURLConnection) url.openConnection();
-            try {
-                con.setRequestProperty("Authorization", "Basic " + encoding);
-                con.connect();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            } // catch
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } // catch
-    } // connect(URL)
+    // Public interface for setting up connection
+    public void connect() throws IOException, MalformedURLException {
+        connect(urlString);
+    } // connect()
 
-    private void connect(final String s) {
+    private void connect(final String s) throws IOException, MalformedURLException {
         final URL url;
         try {
             url = new URL(s);
@@ -99,7 +94,19 @@ public abstract class StreamingApi {
             e.printStackTrace();
             System.err.println("Error parsing URL");
         } // catch
-    } // connect()
+    } // connect(String)
+
+    private void connect(final URL url) throws IOException {
+        System.out.println("Connecting to " + url.toString());
+        con = (HttpsURLConnection) url.openConnection();
+        con.setRequestProperty("Authorization", "Basic " + encoding);
+        connect(con);
+    } // connect(URL)
+
+    // This is to be overridden by subclasses implementing HTTPS POST
+    protected void connect(final HttpsURLConnection con) throws IOException {
+        con.connect();
+    } // connect(HttpsURLConnection)
 
     public void close() {
         System.out.println(Integer.toString(count) + " tweets added");
