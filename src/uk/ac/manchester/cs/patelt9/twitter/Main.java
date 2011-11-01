@@ -27,7 +27,7 @@ public class Main {
                     sa.loadDataSet();
                     sa.analyseSentiment();
                     sa.close();
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     System.err.println("Could not connect to database");
                 } catch (final IOException e) {
                     System.err.println("Could not find API key");
