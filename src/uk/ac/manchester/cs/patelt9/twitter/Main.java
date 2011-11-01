@@ -7,6 +7,7 @@ import uk.ac.manchester.cs.patelt9.twitter.data.SentimentAnalysis;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApi;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilter;
+import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiPost;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiSample;
 
 public class Main {
@@ -19,8 +20,8 @@ public class Main {
                     sql.close();
                 } catch (final SQLException e) {
                     System.err.println("Failed to delete tables");
+                    System.exit(1);
                 } // catch
-                return;
             } else if (args[0].equals("analyse")) {
                 try {
                     final SentimentAnalysis sa = SentimentAnalysis.getInstance();
@@ -29,9 +30,11 @@ public class Main {
                     sa.close();
                 } catch (final SQLException e) {
                     System.err.println("Could not connect to database");
+                    System.exit(1);
                 } catch (final IOException e) {
                     System.err.println("Could not find API key");
-                }
+                    System.exit(1);
+                } // catch
             } else {
                 try {
                     final StreamingApi stream;
@@ -44,15 +47,17 @@ public class Main {
                     stream.close();
                 } catch (final SQLException e) {
                     System.err.println("Could not connect to database");
+                    System.exit(1);
                 } // catch
             } // else
         } else {
             try {
-                final StreamingApi stream = StreamingApiFilter.getInstance();
+                final StreamingApiPost stream = StreamingApiPost.getInstance();
                 stream.streamTweets();
                 stream.close();
             } catch (final SQLException e) {
                 System.err.println("Could not connect to database");
+                System.exit(1);
             } // catch
         } // else
     } // main(String[])
