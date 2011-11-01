@@ -23,20 +23,16 @@ public class SentimentAnalysis {
     private volatile SqlConnector sql = null;
     private int count = 0;
 
-    private static SentimentAnalysis sa;
+    private static SentimentAnalysis sa = null;
 
-    public static SentimentAnalysis getInstance() {
+    public static SentimentAnalysis getInstance() throws IOException, SQLException {
         if (sa == null) {
-            try {
-                sa = new SentimentAnalysis();
-            } catch (final IOException e) {
-                e.printStackTrace();
-            } // catch
+            sa = new SentimentAnalysis();
         } // if
         return sa;
     } // getInstance()
 
-    private SentimentAnalysis() throws IOException {
+    private SentimentAnalysis() throws IOException, SQLException {
         api = AlchemyAPI.GetInstanceFromFile("alchemyapikey.txt");
         sql = SqlConnector.getInstance();
     } // SentimentAnalysis()

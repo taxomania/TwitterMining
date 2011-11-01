@@ -30,8 +30,8 @@ public class AlchemyAPIPractice {
             e.printStackTrace();
             return;
         } // catch
-        final SqlConnector sql = SqlConnector.getInstance();
         try {
+            final SqlConnector sql = SqlConnector.getInstance();
             final ResultSet res = sql
                     .executeQuery("SELECT t.text, t.id FROM user u, tweet t WHERE u.id = t.user_id AND u.username='taxomania';");
             res.beforeFirst();
@@ -54,6 +54,7 @@ public class AlchemyAPIPractice {
                                 + "' WHERE id='" + id + "';")
                                 + " rows updated");
                     } // if
+                    sql.close();
                 } catch (final XPathExpressionException e) {
                     e.printStackTrace();
                 } catch (final IOException e) {
@@ -67,6 +68,5 @@ public class AlchemyAPIPractice {
         } catch (final SQLException e) {
             e.printStackTrace();
         } // catch
-        sql.close();
     } // main(String)
 } // AlchemyAPIPractice

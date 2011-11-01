@@ -34,47 +34,43 @@ public class SqlConnector {
     private static SqlConnector mySql = null;
 
     // Singleton lock on database helper
-    public static SqlConnector getInstance() {
+    public static SqlConnector getInstance() throws SQLException {
         if (mySql == null) {
             mySql = new SqlConnector();
         } // if
         return mySql;
     } // getInstance()
 
-    private SqlConnector() {
+    private SqlConnector() throws SQLException {
         try {
             Class.forName(JDBC_DRIVER);
-            try {
-                con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
-                // @formatter:off
-                insertUser = con.prepareStatement(
-                        "INSERT INTO user VALUES(" +
-                        "?, " +  // Id
-                        "?"   +  // Username
-                        ");");
+            con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
+            // @formatter:off
+            insertUser = con.prepareStatement(
+                    "INSERT INTO user VALUES(" +
+                    "?, " +  // Id
+                    "?"   +  // Username
+                    ");");
 
-                insertFilteredTweet = con.prepareStatement(
-                        "INSERT INTO tweet VALUES(default, " + // Id
-                        "?, " + // Tweet_Id
-                        "?, " + // Text
-                        "?, " + // Created_at
-                        "?, " + // User_Id
-                        "default, default, " + // Sentiment, Sentiment_score,
-                        "?);"); // Keyword
+            insertFilteredTweet = con.prepareStatement(
+                    "INSERT INTO tweet VALUES(default, " + // Id
+                    "?, " + // Tweet_Id
+                    "?, " + // Text
+                    "?, " + // Created_at
+                    "?, " + // User_Id
+                    "default, default, " + // Sentiment, Sentiment_score,
+                    "?);"); // Keyword
 
-                insertTweet = con.prepareStatement(
-                        "INSERT INTO tweet VALUES(default, " + // Id
-                        "?, " + // Tweet_Id
-                        "?, " + // Text
-                        "?, " + // Created_at
-                        "?, " + // User_Id
-                        "default, default, default);"); // Sentiment, Sentiment_score, Keyword
+            insertTweet = con.prepareStatement(
+                    "INSERT INTO tweet VALUES(default, " + // Id
+                    "?, " + // Tweet_Id
+                    "?, " + // Text
+                    "?, " + // Created_at
+                    "?, " + // User_Id
+                    "default, default, default);"); // Sentiment, Sentiment_score, Keyword
 
-                deleteTweet = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
-                // @formatter:on
-            } catch (final SQLException e) {
-                e.printStackTrace();
-            } // catch
+            deleteTweet = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
+            // @formatter:on
         } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         } // catch

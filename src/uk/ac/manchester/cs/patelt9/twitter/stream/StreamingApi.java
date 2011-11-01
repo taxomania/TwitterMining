@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
@@ -67,13 +68,8 @@ public abstract class StreamingApi {
         } // finally
     } // getUserPass()
 
-    protected StreamingApi(final String url, final int interval) {
-        new Thread() {
-            @Override
-            public void run() {
-                sql = SqlConnector.getInstance();
-            } // run()
-        }.start();
+    protected StreamingApi(final String url, final int interval) throws SQLException {
+        sql = SqlConnector.getInstance();
         counterInterval = interval;
         connect(url);
         stdInScanner = new Scanner(System.in);
