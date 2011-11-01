@@ -86,14 +86,8 @@ public abstract class StreamingApi {
     } // connect()
 
     private void connect(final String s) throws IOException, MalformedURLException {
-        final URL url;
-        try {
-            url = new URL(s);
-            connect(url);
-        } catch (final MalformedURLException e) {
-            e.printStackTrace();
-            System.err.println("Error parsing URL");
-        } // catch
+        final URL url = new URL(s);
+        connect(url);
     } // connect(String)
 
     private void connect(final URL url) throws IOException {
