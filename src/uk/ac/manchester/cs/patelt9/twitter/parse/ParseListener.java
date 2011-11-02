@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.listener;
+package uk.ac.manchester.cs.patelt9.twitter.parse;
 
 import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 
