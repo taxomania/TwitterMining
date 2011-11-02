@@ -23,7 +23,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-public abstract class StreamingApi {
+public abstract class StreamingApi implements ParseListener {
     private static String userPassword = null, encoding = null;
 
     private int count = 0;
@@ -36,20 +36,18 @@ public abstract class StreamingApi {
 
     private ParseThread parseThread = null;
 
-    private final ParseListener parseListener = new ParseListener() {
-        @Override
-        public void onParseComplete(final Tweet t) {
-            // System.out.println(Thread.currentThread().getName());
-            count += addToDb(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
-                    t.getUserId());
-        } // onParseComplete(Tweet)
+    @Override
+    public void onParseComplete(final Tweet t) {
+        // System.out.println(Thread.currentThread().getName());
+        count += addToDb(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
+                t.getUserId());
+    } // onParseComplete(Tweet)
 
-        @Override
-        public void onParseComplete(final long id) {
-            // System.out.println(Thread.currentThread().getName());
-            count -= sql.deleteTweet(id);
-        } // onParseComplete(long)
-    };
+    @Override
+    public void onParseComplete(final long id) {
+        // System.out.println(Thread.currentThread().getName());
+        count -= sql.deleteTweet(id);
+    } // onParseComplete(long)
 
     static {
         getUserPass();
@@ -118,7 +116,7 @@ public abstract class StreamingApi {
         if (parseThread != null) {
             try {
                 parseThread.join();
-                parseThread.removeListener(parseListener);
+                parseThread.removeListener(this);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } // catch
@@ -183,7 +181,7 @@ public abstract class StreamingApi {
     public void onJsonReadComplete(final JsonObject jo) {
         // System.out.println(Thread.currentThread().getName());
         parseThread = new ParseThread(jo);
-        parseThread.addListener(parseListener);
+        parseThread.addListener(this);
         parseThread.start();
     } // onJsonReadComplete(JsonObject)
 
