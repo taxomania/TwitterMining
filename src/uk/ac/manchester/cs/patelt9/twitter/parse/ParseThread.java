@@ -26,26 +26,39 @@ public class ParseThread extends Thread {
         parse();
     } // run()
 
-    private final Set<ParseListener> listeners = new HashSet<ParseListener>();
+    public interface ParseListener {
+        void onParseComplete(Tweet t);
+        void onParseComplete(long id);
+    } // ParseListener
+
+    private static final Set<ParseListener> listeners = new HashSet<ParseListener>();
 
     protected final void notifyListeners(final Tweet t) {
-        for (final ParseListener listener : listeners) {
-            listener.onParseComplete(t);
-        } // for
+        synchronized (listeners) {
+            for (final ParseListener listener : listeners) {
+                listener.onParseComplete(t);
+            } // for
+        } // synchronized
     } // notifyListeners(Tweet)
 
     protected final void notifyListeners(final long id) {
-        for (final ParseListener listener : listeners) {
-            listener.onParseComplete(id);
-        } // for
+        synchronized (listeners) {
+            for (final ParseListener listener : listeners) {
+                listener.onParseComplete(id);
+            } // for
+        } // synchronized
     } // notifyListeners(long)
 
     public final void addListener(final ParseListener listener) {
-        listeners.add(listener);
+        synchronized (listeners) {
+            listeners.add(listener);
+        } // synchronized
     } // addListener(ParseListener)
 
     public final void removeListener(final ParseListener listener) {
-        listeners.remove(listener);
+        synchronized (listeners) {
+            listeners.remove(listener);
+        } // synchronized
     } // removeListener(ParseListener)
 
     protected void parse() {

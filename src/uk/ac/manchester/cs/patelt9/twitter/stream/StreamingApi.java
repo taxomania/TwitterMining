@@ -16,8 +16,8 @@ import javax.net.ssl.HttpsURLConnection;
 import sun.misc.BASE64Encoder;
 import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
-import uk.ac.manchester.cs.patelt9.twitter.parse.ParseListener;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread;
+import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread.ParseListener;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
