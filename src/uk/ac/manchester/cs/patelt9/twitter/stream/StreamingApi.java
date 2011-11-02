@@ -11,8 +11,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -26,9 +24,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 public abstract class StreamingApi {
-    // To avoid filling JVM heap - This is only used while parsing is done sequentially
-    private static final int MAX_TWEETS = 5000;
-
     private static String userPassword = null, encoding = null;
 
     private int count = 0;
@@ -86,8 +81,7 @@ public abstract class StreamingApi {
     } // connect()
 
     private void connect(final String s) throws IOException, MalformedURLException {
-        final URL url = new URL(s);
-        connect(url);
+        connect(new URL(s));
     } // connect(String)
 
     private void connect(final URL url) throws IOException {
@@ -102,7 +96,8 @@ public abstract class StreamingApi {
         con.connect();
     } // connect(HttpsURLConnection)
 
-    public void close() {
+    // All streams closed internally
+    private void close() {
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
         if (stdInScanner != null) {
@@ -137,20 +132,26 @@ public abstract class StreamingApi {
 
         @Override
         public void run() {
+            System.out.println("Started");
             final JsonParser jp = new JsonParser();
-            // int i = 0;
-            // while (!isInterrupted()) { // Eventually use this
-            for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
-                if (isInterrupted()) break;
-                if (i % counterInterval == 0) System.out.println(i); // counter
-                jsonElements.addLast(jp.parse(jsonReader));
-                // i++;
+            for (int i = 1; !isInterrupted(); i++) {
+                if (i % counterInterval == 0) {
+                    System.out.println(i);
+                } else if (i == Integer.MAX_VALUE) {
+                    i = 1;
+                } // else if
+                final JsonElement je = jp.parse(jsonReader);
+                new Thread() {
+                    @Override
+                    public void run() {
+                        count += parseJsonElement(je);
+                    } // run()
+                }.start();
             } // while
         } // run()
     } // StreamThread
 
     private StreamThread t;
-    private volatile boolean stillStream = true;
 
     public void streamTweets() {
         try {
@@ -163,72 +164,50 @@ public abstract class StreamingApi {
 
         new Thread("Scanner") {
             public void run() {
-                while (stillStream) {
-                    String s = stdInScanner.nextLine();
-                    if (s.contains("stop")) {
-                        t.interrupt();
-                    } else if (s.contains("exit")) {
-                        t.interrupt();
-                        stillStream = false;
-                    } // else
-                } // while
+                if (stdInScanner.nextLine().contains("exit")) {
+                    t.interrupt();
+                } // if
             } // run()
         }.start();
 
-        // Eventually want to parse elements in separate thread
-        // new Thread() {
-        // public void run() {
-        // parseJsonElements();
-        // }
-        // }.start();
+        t = new StreamThread();
+        t.start();
 
-        // Continuously stream
-        while (stillStream) {
-            t = new StreamThread();
-            t.start();
-
-            // Hold loop until thread has closed, this also needs to allow for parser thread
-            while (true) {
-                if (!t.isAlive()) {
-                    break;
-                } // if
-            } // while
-
-            System.out.println("Parsing");
-            parseJsonElements();
-        } // while
+        // Hold loop until thread has closed, this also needs to allow for parser thread
+        try {
+            t.join();
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        } // catch
+   //     close();
     } // streamTweets()
 
-    private LinkedList<JsonElement> jsonElements = new LinkedList<JsonElement>();
-
-    private void parseJsonElements() {
-        while (!jsonElements.isEmpty()) {
-            final JsonElement je;
-            try {
-                je = jsonElements.removeFirst();
-            } catch (final NoSuchElementException e) {
-                continue;
-            } // catch
-
-            if (je.isJsonObject()) {
-                final JsonObject jo = je.getAsJsonObject();
-                if (je.toString().contains("{\"delete\":")) {
-                    final Long tweetId = jo.getAsJsonObject("delete").getAsJsonObject("status")
-                            .getAsJsonPrimitive("id_str").getAsLong();
-                    count -= sql.deleteTweet(tweetId);
-                } else {
-                    final JsonObject user = jo.getAsJsonObject("user");
+    private int parseJsonElement(final JsonElement je) {
+        if (je.isJsonObject()) {
+            final JsonObject jo = je.getAsJsonObject();
+            if (je.toString().contains("{\"delete\":")) {
+                final Long tweetId = jo.getAsJsonObject("delete").getAsJsonObject("status")
+                        .getAsJsonPrimitive("id_str").getAsLong();
+                return sql.deleteTweet(tweetId) * -1;
+            } else {
+                final JsonObject user = jo.getAsJsonObject("user");
+                try { // This is only being used to find a rare bug
                     final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
                     final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
                     final String tweet = jo.getAsJsonPrimitive("text").getAsString();
                     final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
                     final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive(
                             "created_at").getAsString());
-                    count += addToDb(tweetId, screenName, tweet, createdAt, userId);
-                } // else if
-            } // if
-        } // while
-    } // parseJsonElements()
+                    return addToDb(tweetId, screenName, tweet, createdAt, userId);
+                } catch (final NullPointerException e) {
+                    e.printStackTrace();
+                    System.err.println(jo.toString());
+                    System.err.println(user.toString());
+                } // catch
+            } // else if
+        } // if
+        return 0;
+    } // parseJsonElement(JsonElement)
 
     protected int addToDb(final Long tweetId, final String screenName, final String tweet,
             final String createdAt, final Long userId) {
