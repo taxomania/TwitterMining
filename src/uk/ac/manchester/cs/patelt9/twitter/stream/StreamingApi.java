@@ -11,23 +11,24 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
-import uk.ac.manchester.cs.patelt9.twitter.ParseListener;
-import uk.ac.manchester.cs.patelt9.twitter.StreamListener;
-import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 public abstract class StreamingApi {
+    // To avoid filling JVM heap - This is only used while parsing is done sequentially
+    private static final int MAX_TWEETS = 5000;
+
     private static String userPassword = null, encoding = null;
 
     private int count = 0;
@@ -85,7 +86,8 @@ public abstract class StreamingApi {
     } // connect()
 
     private void connect(final String s) throws IOException, MalformedURLException {
-        connect(new URL(s));
+        final URL url = new URL(s);
+        connect(url);
     } // connect(String)
 
     private void connect(final URL url) throws IOException {
@@ -100,15 +102,14 @@ public abstract class StreamingApi {
         con.connect();
     } // connect(HttpsURLConnection)
 
-    // All streams closed internally
-    private void close() {
+    public void close() {
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
         if (stdInScanner != null) {
             stdInScanner.close();
         } // if
         if (sql != null) {
-            //sql.close();
+            sql.close();
         } // if
     } // close()
 
@@ -125,70 +126,6 @@ public abstract class StreamingApi {
         } // if
     } // disconnect()
 
-    private final class TweetParseListener implements ParseListener {
-        @Override
-        public void onParseComplete(final Tweet t) {
-            count += addToDb(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
-                    t.getUserId());
-        } // onParseComplete(Tweet)
-
-        @Override
-        public void onParseComplete(final long id) {
-            count += sql.deleteTweet(id);
-        } // onParseComplete(long)
-    } // TweetParseListener
-
-    private final class TweetReadListener implements StreamListener {
-        @Override
-        public void onJsonReadComplete(final JsonObject jo) {
-            final ParseThread parse = new ParseThread(jo);
-            parse.addListener(new TweetParseListener());
-            parse.start();
-        } // onJsonReadComplete(JsonObject)
-    } // TweetReadListener
-
-    private class ParseThread extends Thread {
-        private final JsonObject jo;
-
-        public ParseThread(final JsonObject jo) {
-            this("Parse", jo);
-        } // ParseThread()
-
-        public ParseThread(final String s, final JsonObject jo) {
-            super(s);
-            this.jo = jo;
-        } // ParseThread(String)
-
-        @Override
-        public void run() {
-            // throwJsonObject(jo);
-            if (isTweetJsonObject(jo)) {
-                notifyListeners(getTweet(jo));
-            } else {
-                notifyListeners(getDeleteStatusId(jo));
-            } // else
-              // count += parseJsonObject(jo);
-        } // run()
-
-        Set<ParseListener> listeners = new HashSet<ParseListener>();
-
-        public void notifyListeners(final Tweet t) {
-            for (final ParseListener listener : listeners) {
-                listener.onParseComplete(t);
-            } // for
-        } // notifyListeners(Tweet)
-
-        public void notifyListeners(final long id) {
-            for (final ParseListener listener : listeners) {
-                listener.onParseComplete(id);
-            } // for
-        } // notifyListeners(long)
-
-        public void addListener(final ParseListener listener) {
-            listeners.add(listener);
-        } // addListener(ParseListener)
-    } // ParseThread
-
     private class StreamThread extends Thread {
         public StreamThread() {
             this("Stream");
@@ -200,32 +137,20 @@ public abstract class StreamingApi {
 
         @Override
         public void run() {
-            System.out.println("Started");
             final JsonParser jp = new JsonParser();
-            for (int i = 1; !isInterrupted(); i++) {
-                if (i % counterInterval == 0) {
-                    System.out.println(i);
-                } else if (i == Integer.MAX_VALUE) {
-                    i = 1;
-                } // else if
-                notifyListeners(jp.parse(jsonReader).getAsJsonObject());
+            // int i = 0;
+            // while (!isInterrupted()) { // Eventually use this
+            for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
+                if (isInterrupted()) break;
+                if (i % counterInterval == 0) System.out.println(i); // counter
+                jsonElements.addLast(jp.parse(jsonReader));
+                // i++;
             } // while
         } // run()
-
-        Set<StreamListener> listeners = new HashSet<StreamListener>();
-
-        public void notifyListeners(final JsonObject jo) {
-            for (final StreamListener listener : listeners) {
-                listener.onJsonReadComplete(jo);
-            } // for
-        } // notifyListeners(JsonObject)
-
-        public void addListener(final StreamListener listener) {
-            listeners.add(listener);
-        } // addListener(StreamListener)
     } // StreamThread
 
     private StreamThread t;
+    private volatile boolean stillStream = true;
 
     public void streamTweets() {
         try {
@@ -238,80 +163,72 @@ public abstract class StreamingApi {
 
         new Thread("Scanner") {
             public void run() {
-                if (stdInScanner.nextLine().contains("exit")) {
-                    t.interrupt();
-                } // if
+                while (stillStream) {
+                    String s = stdInScanner.nextLine();
+                    if (s.contains("stop")) {
+                        t.interrupt();
+                    } else if (s.contains("exit")) {
+                        t.interrupt();
+                        stillStream = false;
+                    } // else
+                } // while
             } // run()
         }.start();
 
-        t = new StreamThread();
-        t.addListener(new TweetReadListener());
-        t.start();
+        // Eventually want to parse elements in separate thread
+        // new Thread() {
+        // public void run() {
+        // parseJsonElements();
+        // }
+        // }.start();
 
-        // Hold loop until thread has closed, this also needs to allow for parser thread
-        try {
-            t.join();
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
-        } // catch
-        close();
+        // Continuously stream
+        while (stillStream) {
+            t = new StreamThread();
+            t.start();
+
+            // Hold loop until thread has closed, this also needs to allow for parser thread
+            while (true) {
+                if (!t.isAlive()) {
+                    break;
+                } // if
+            } // while
+
+            System.out.println("Parsing");
+            parseJsonElements();
+        } // while
     } // streamTweets()
 
-    private boolean isTweetJsonObject(final JsonObject jo) {
-        if (jo.toString().contains("{\"delete\":")) {
-            return false;
-        } else {
-            return true;
-        } // else
-    } // isTweetJsonObject(JsonObject)
+    private LinkedList<JsonElement> jsonElements = new LinkedList<JsonElement>();
 
-    private int parseTweetJsonObject(final JsonObject jo) {
-        final JsonObject user = jo.getAsJsonObject("user");
-        try { // This is only being used to find a rare bug
-            final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
-            final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
-            final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-            final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
-            final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
-                    .getAsString());
-            return addToDb(tweetId, screenName, tweet, createdAt, userId);
-        } catch (final NullPointerException e) {
-            e.printStackTrace();
-            System.err.println(jo.toString());
-            System.err.println(user.toString());
-            return 0;
-        } // catch
-    } // parseTweetJsonObject(JsonObject)
+    private void parseJsonElements() {
+        while (!jsonElements.isEmpty()) {
+            final JsonElement je;
+            try {
+                je = jsonElements.removeFirst();
+            } catch (final NoSuchElementException e) {
+                continue;
+            } // catch
 
-    // Want to use this to enable callback to main thread for sql tasks
-    private Tweet getTweet(final JsonObject jo) {
-        final JsonObject user = jo.getAsJsonObject("user");
-        final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
-        final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
-        final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-        final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
-        final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
-                .getAsString());
-        return new Tweet(tweetId, userId, screenName, tweet, createdAt);
-    } // getTweet(JsonObject)
-
-    private int parseDeleteJsonObject(final JsonObject jo) {
-        return sql.deleteTweet(getDeleteStatusId(jo)) * -1;
-    } // parseDeleteJsonObject(JsonObject)
-
-    // Want to use this to enable callback to main thread for sql tasks
-    private long getDeleteStatusId(final JsonObject jo) {
-        return jo.getAsJsonObject("delete").getAsJsonObject("status").getAsJsonPrimitive("id_str")
-                .getAsLong();
-    } // getDeleteStatusId(JsonObject)
-
-    private int parseJsonObject(final JsonObject jo) {
-        if (isTweetJsonObject(jo)) {
-            return parseTweetJsonObject(jo);
-        } else {
-            return parseDeleteJsonObject(jo);
-        } // else if
-    } // parseJsonObject(JsonObject)
+            if (je.isJsonObject()) {
+                final JsonObject jo = je.getAsJsonObject();
+                if (je.toString().contains("{\"delete\":")) {
+                    final Long tweetId = jo.getAsJsonObject("delete").getAsJsonObject("status")
+                            .getAsJsonPrimitive("id_str").getAsLong();
+                    count -= sql.deleteTweet(tweetId);
+                } else {
+                    final JsonObject user = jo.getAsJsonObject("user");
+                    final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
+                    final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
+                    final String tweet = jo.getAsJsonPrimitive("text").getAsString();
+                    final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
+                    final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive(
+                            "created_at").getAsString());
+                    count += addToDb(tweetId, screenName, tweet, createdAt, userId);
+                } // else if
+            } // if
+        } // while
+    } // parseJsonElements()
 
     protected int addToDb(final Long tweetId, final String screenName, final String tweet,
             final String createdAt, final Long userId) {
