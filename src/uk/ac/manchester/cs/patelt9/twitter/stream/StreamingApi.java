@@ -9,26 +9,21 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
+import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
+import uk.ac.manchester.cs.patelt9.twitter.parse.ParseListener;
+import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 public abstract class StreamingApi {
-    // To avoid filling JVM heap - This is only used while parsing is done sequentially
-    private static final int MAX_TWEETS = 5000;
-
     private static String userPassword = null, encoding = null;
 
     private int count = 0;
@@ -38,6 +33,23 @@ public abstract class StreamingApi {
     private volatile Scanner stdInScanner = null;
     private volatile SqlConnector sql = null;
     private volatile JsonReader jsonReader = null;
+
+    private ParseThread parseThread = null;
+
+    private final ParseListener parseListener = new ParseListener() {
+        @Override
+        public void onParseComplete(final Tweet t) {
+            // System.out.println(Thread.currentThread().getName());
+            count += addToDb(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
+                    t.getUserId());
+        } // onParseComplete(Tweet)
+
+        @Override
+        public void onParseComplete(final long id) {
+            // System.out.println(Thread.currentThread().getName());
+            count -= sql.deleteTweet(id);
+        } // onParseComplete(long)
+    };
 
     static {
         getUserPass();
@@ -86,8 +98,7 @@ public abstract class StreamingApi {
     } // connect()
 
     private void connect(final String s) throws IOException, MalformedURLException {
-        final URL url = new URL(s);
-        connect(url);
+        connect(new URL(s));
     } // connect(String)
 
     private void connect(final URL url) throws IOException {
@@ -102,7 +113,16 @@ public abstract class StreamingApi {
         con.connect();
     } // connect(HttpsURLConnection)
 
-    public void close() {
+    // All streams closed internally
+    private void close() {
+        if (parseThread != null) {
+            try {
+                parseThread.join();
+                parseThread.removeListener(parseListener);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } // catch
+        } // if
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
         if (stdInScanner != null) {
@@ -126,30 +146,6 @@ public abstract class StreamingApi {
         } // if
     } // disconnect()
 
-    private class StreamThread extends Thread {
-        public StreamThread() {
-            this("Stream");
-        } // StreamThread()
-
-        public StreamThread(final String s) {
-            super(s);
-        } // StreamThread(String)
-
-        @Override
-        public void run() {
-            final JsonParser jp = new JsonParser();
-            // int i = 0;
-            // while (!isInterrupted()) { // Eventually use this
-            for (int i = 0; i < MAX_TWEETS; i++) { // Testing purposes
-                if (isInterrupted()) break;
-                if (i % counterInterval == 0) System.out.println(i); // counter
-                jsonElements.addLast(jp.parse(jsonReader));
-                // i++;
-            } // while
-        } // run()
-    } // StreamThread
-
-    private StreamThread t;
     private volatile boolean stillStream = true;
 
     public void streamTweets() {
@@ -163,87 +159,36 @@ public abstract class StreamingApi {
 
         new Thread("Scanner") {
             public void run() {
-                while (stillStream) {
-                    String s = stdInScanner.nextLine();
-                    if (s.contains("stop")) {
-                        t.interrupt();
-                    } else if (s.contains("exit")) {
-                        t.interrupt();
-                        stillStream = false;
-                    } // else
-                } // while
+                if (stdInScanner.nextLine().contains("exit")) {
+                    stillStream = false;
+                } // if
             } // run()
         }.start();
+        // System.out.println(Thread.currentThread().getName());
 
-        // Eventually want to parse elements in separate thread
-        // new Thread() {
-        // public void run() {
-        // parseJsonElements();
-        // }
-        // }.start();
+        System.out.println("Started");
+        final JsonParser jp = new JsonParser();
+        for (int i = 1; stillStream; i++) {
+            if (i % counterInterval == 0) {
+                System.out.println(i);
+            } else if (i == Integer.MAX_VALUE) {
+                i = 1;
+            } // else if
+            onJsonReadComplete(jp.parse(jsonReader).getAsJsonObject());
+        } // for
 
-        // Continuously stream
-        while (stillStream) {
-            t = new StreamThread();
-            t.start();
-
-            // Hold loop until thread has closed, this also needs to allow for parser thread
-            while (true) {
-                if (!t.isAlive()) {
-                    break;
-                } // if
-            } // while
-
-            System.out.println("Parsing");
-            parseJsonElements();
-        } // while
+        close();
     } // streamTweets()
 
-    private LinkedList<JsonElement> jsonElements = new LinkedList<JsonElement>();
-
-    private void parseJsonElements() {
-        while (!jsonElements.isEmpty()) {
-            final JsonElement je;
-            try {
-                je = jsonElements.removeFirst();
-            } catch (final NoSuchElementException e) {
-                continue;
-            } // catch
-
-            if (je.isJsonObject()) {
-                final JsonObject jo = je.getAsJsonObject();
-                if (je.toString().contains("{\"delete\":")) {
-                    final Long tweetId = jo.getAsJsonObject("delete").getAsJsonObject("status")
-                            .getAsJsonPrimitive("id_str").getAsLong();
-                    count -= sql.deleteTweet(tweetId);
-                } else {
-                    final JsonObject user = jo.getAsJsonObject("user");
-                    final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
-                    final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
-                    final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                    final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
-                    final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive(
-                            "created_at").getAsString());
-                    count += addToDb(tweetId, screenName, tweet, createdAt, userId);
-                } // else if
-            } // if
-        } // while
-    } // parseJsonElements()
+    public void onJsonReadComplete(final JsonObject jo) {
+        // System.out.println(Thread.currentThread().getName());
+        parseThread = new ParseThread(jo);
+        parseThread.addListener(parseListener);
+        parseThread.start();
+    } // onJsonReadComplete(JsonObject)
 
     protected int addToDb(final Long tweetId, final String screenName, final String tweet,
             final String createdAt, final Long userId) {
         return sql.insertTweet(tweetId, screenName, tweet, createdAt, userId);
     } // addToDb(Long, String, String, String, Long)
-
-    protected static String parseCreatedAtForSql(final String date) {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy");
-        dateFormat.setLenient(false);
-        final SimpleDateFormat sqlFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            return sqlFormat.format(dateFormat.parse(date));
-        } catch (final ParseException e) {
-            e.printStackTrace();
-            return null;
-        } // catch
-    } // parseCreatedAtForSql(String)
 } // StreamingApi
