@@ -53,7 +53,6 @@ public class Main {
                         System.exit(1);
                     } // catch
                     stream.streamTweets();
-                    stream.close();
                 } catch (final SQLException e) {
                     System.err.println("Could not connect to database");
                     System.exit(1);
@@ -72,7 +71,6 @@ public class Main {
                     System.exit(1);
                 } // catch
                 stream.streamTweets();
-                stream.close();
             } catch (final SQLException e) {
                 System.err.println("Could not connect to database");
                 System.exit(1);
