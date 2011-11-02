@@ -11,15 +11,15 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashSet;
 import java.util.Scanner;
-import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
 import uk.ac.manchester.cs.patelt9.twitter.ParseListener;
+import uk.ac.manchester.cs.patelt9.twitter.ParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.StreamListener;
+import uk.ac.manchester.cs.patelt9.twitter.StreamThread;
 import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 
@@ -108,7 +108,7 @@ public abstract class StreamingApi {
             stdInScanner.close();
         } // if
         if (sql != null) {
-            // sql.close();
+            sql.close();
         } // if
     } // close()
 
@@ -128,105 +128,38 @@ public abstract class StreamingApi {
     private final class TweetParseListener implements ParseListener {
         @Override
         public void onParseComplete(final Tweet t) {
-            System.out.println(Thread.currentThread().getName() + "TW");
+            // System.out.println(Thread.currentThread().getName());
             count += addToDb(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
                     t.getUserId());
         } // onParseComplete(Tweet)
 
         @Override
         public void onParseComplete(final long id) {
-            System.out.println(Thread.currentThread().getName() + "DE");
+            // System.out.println(Thread.currentThread().getName());
             count += sql.deleteTweet(id);
         } // onParseComplete(long)
     } // TweetParseListener
 
-    private final class TweetReadListener implements StreamListener {
+    private ParseThread p;
+
+    private final class TweetStreamListener implements StreamListener {
         @Override
         public void onJsonReadComplete(final JsonObject jo) {
             System.out.println(Thread.currentThread().getName() + "READ");
-            final ParseThread parse = new ParseThread(jo);
-            parse.addListener(new TweetParseListener());
-            parse.start();
+            p = new ParseThread(jo) {
+                @Override
+                protected void parse() {
+                    if (isTweetJsonObject(jo)) {
+                        notifyListeners(getTweet(jo));
+                    } else {
+                        notifyListeners(getDeleteStatusId(jo));
+                    } // else
+                } // parse()
+            };
+            p.addListener(new TweetParseListener());
+            p.start();
         } // onJsonReadComplete(JsonObject)
     } // TweetReadListener
-
-    private class ParseThread extends Thread {
-        private final JsonObject jo;
-
-        public ParseThread(final JsonObject jo) {
-            this("Parse", jo);
-        } // ParseThread()
-
-        public ParseThread(final String s, final JsonObject jo) {
-            super(s);
-            this.jo = jo;
-        } // ParseThread(String)
-
-        @Override
-        public void run() {
-            // throwJsonObject(jo);
-            if (isTweetJsonObject(jo)) {
-                notifyListeners(getTweet(jo));
-            } else {
-                notifyListeners(getDeleteStatusId(jo));
-            } // else
-              // count += parseJsonObject(jo);
-        } // run()
-
-        Set<ParseListener> listeners = new HashSet<ParseListener>();
-
-        public void notifyListeners(final Tweet t) {
-            for (final ParseListener listener : listeners) {
-                listener.onParseComplete(t);
-            } // for
-        } // notifyListeners(Tweet)
-
-        public void notifyListeners(final long id) {
-            for (final ParseListener listener : listeners) {
-                listener.onParseComplete(id);
-            } // for
-        } // notifyListeners(long)
-
-        public void addListener(final ParseListener listener) {
-            listeners.add(listener);
-        } // addListener(ParseListener)
-    } // ParseThread
-
-    private class StreamThread extends Thread {
-        public StreamThread() {
-            this("Stream");
-        } // StreamThread()
-
-        public StreamThread(final String s) {
-            super(s);
-        } // StreamThread(String)
-
-        @Override
-        public void run() {
-            System.out.println("Started");
-            final JsonParser jp = new JsonParser();
-            for (int i = 1; !isInterrupted(); i++) {
-                if (i % counterInterval == 0) {
-                    System.out.println(i);
-                } else if (i == Integer.MAX_VALUE) {
-                    i = 1;
-                } // else if
-                notifyListeners(jp.parse(jsonReader).getAsJsonObject());
-            } // for
-        } // run()
-
-        Set<StreamListener> listeners = new HashSet<StreamListener>();
-
-        public void notifyListeners(final JsonObject jo) {
-            for (final StreamListener listener : listeners) {
-                listener.onJsonReadComplete(jo);
-            } // for
-        } // notifyListeners(JsonObject)
-
-        public void addListener(final StreamListener listener) {
-            listeners.add(listener);
-        } // addListener(StreamListener)
-    } // StreamThread
 
     private StreamThread t;
 
@@ -247,14 +180,28 @@ public abstract class StreamingApi {
             } // run()
         }.start();
         System.out.println(Thread.currentThread().getName());
-        t = new StreamThread();
-        t.addListener(new TweetReadListener());
+        t = new StreamThread() {
+            @Override
+            protected void parse() {
+                System.out.println("Started");
+                final JsonParser jp = new JsonParser();
+                for (int i = 1; !isInterrupted(); i++) {
+                    if (i % counterInterval == 0) {
+                        System.out.println(i);
+                    } else if (i == Integer.MAX_VALUE) {
+                        i = 1;
+                    } // else if
+                    notifyListeners(jp.parse(jsonReader).getAsJsonObject());
+                } // for
+            } // parse()
+        };
+        t.addListener(new TweetStreamListener());
         t.start();
 
         // Hold loop until thread has closed, this also needs to allow for parser thread
-
         try {
             t.join();
+            p.join();
         } catch (final InterruptedException e) {
             e.printStackTrace();
         } // catch
