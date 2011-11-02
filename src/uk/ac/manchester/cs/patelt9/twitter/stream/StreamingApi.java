@@ -33,6 +33,7 @@ public abstract class StreamingApi implements ParseListener {
     private volatile Scanner stdInScanner = null;
     private volatile SqlConnector sql = null;
     private volatile JsonReader jsonReader = null;
+    private volatile boolean stillStream = true;
 
     private ParseThread parseThread = null;
 
@@ -143,8 +144,6 @@ public abstract class StreamingApi implements ParseListener {
             con.disconnect();
         } // if
     } // disconnect()
-
-    private volatile boolean stillStream = true;
 
     public void streamTweets() {
         try {

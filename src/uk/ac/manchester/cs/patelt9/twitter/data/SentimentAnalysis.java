@@ -59,7 +59,7 @@ public class SentimentAnalysis {
             while (res.next()) {
                 final String tweet = res.getString(1);
                 final Long id = res.getLong(2);
-                // System.out.println(id + ": " + tweet);
+                System.out.println(id + ": " + tweet);
                 try {
                     final Document doc;
                     try {
@@ -68,17 +68,28 @@ public class SentimentAnalysis {
                         count += sql.executeUpdate("UPDATE tweet SET sentiment='none' WHERE id='"
                                 + id + "';");
                         continue;
-                    }
+                    } catch (final SAXException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (final XPathExpressionException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (final ParserConfigurationException e) {
+                        e.printStackTrace();
+                        continue;
+                    } // catch
+
                     final Node sentimentNode = doc.getElementsByTagName("docSentiment").item(0);
+                    System.out.println(sentimentNode.getTextContent());
                     if (sentimentNode != null && sentimentNode.getNodeType() == Node.ELEMENT_NODE) {
                         final Element sent = (Element) sentimentNode;
                         final String sentiment = sent.getElementsByTagName("type").item(0)
                                 .getTextContent();
-                        // System.out.println(sentiment);
+                        System.out.println(sentiment);
                         if (!sentiment.equals("neutral")) {
                             final String sentimentScore = sent.getElementsByTagName("score")
                                     .item(0).getTextContent();
-                            // System.out.println(sentimentScore);
+                            System.out.println(sentimentScore);
                             count += sql.executeUpdate("UPDATE tweet SET sentiment='" + sentiment
                                     + "', sentiment_score='" + sentimentScore + "' WHERE id='" + id
                                     + "';");
@@ -87,14 +98,9 @@ public class SentimentAnalysis {
                                     + "' WHERE id='" + id + "';");
                         } // else
                     } // if
-                } catch (final XPathExpressionException e) {
-                    e.printStackTrace();
                 } catch (final IOException e) {
-                    // e.printStackTrace();
-                } catch (final SAXException e) {
-                    e.printStackTrace();
-                } catch (final ParserConfigurationException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
+                    break;
                 } // catch
             } // while
         } catch (final DOMException e) {
