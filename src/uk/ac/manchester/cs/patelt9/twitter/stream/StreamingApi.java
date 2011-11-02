@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -18,11 +17,9 @@ import java.util.Set;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import quicktime.app.actions.NotifyListener;
-
 import sun.misc.BASE64Encoder;
-import uk.ac.manchester.cs.patelt9.twitter.JsonObjectThrowable;
 import uk.ac.manchester.cs.patelt9.twitter.ParseListener;
+import uk.ac.manchester.cs.patelt9.twitter.StreamListener;
 import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 
@@ -111,7 +108,7 @@ public abstract class StreamingApi {
             stdInScanner.close();
         } // if
         if (sql != null) {
-           // sql.close();
+            //sql.close();
         } // if
     } // close()
 
@@ -128,19 +125,7 @@ public abstract class StreamingApi {
         } // if
     } // disconnect()
 
-    private final class ExceptionHandler implements UncaughtExceptionHandler {
-        @Override
-        public void uncaughtException(Thread t, Throwable e) {
-            if (e instanceof TweetThrowable) {
-                System.out.println(((TweetThrowable) e).getTweet().getId());
-            } else if (e instanceof DeleteThrowable) {
-                System.out.println(((DeleteThrowable) e).getId());
-            }
-        } // uncaughtException(Thread, Throwable)
-    } // ExceptionHandler
-
     private final class TweetParseListener implements ParseListener {
-
         @Override
         public void onParseComplete(final Tweet t) {
             count += addToDb(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
@@ -149,9 +134,18 @@ public abstract class StreamingApi {
 
         @Override
         public void onParseComplete(final long id) {
-            count -= sql.deleteTweet(id);
+            count += sql.deleteTweet(id);
         } // onParseComplete(long)
     } // TweetParseListener
+
+    private final class TweetReadListener implements StreamListener {
+        @Override
+        public void onJsonReadComplete(final JsonObject jo) {
+            final ParseThread parse = new ParseThread(jo);
+            parse.addListener(new TweetParseListener());
+            parse.start();
+        } // onJsonReadComplete(JsonObject)
+    } // TweetReadListener
 
     private class ParseThread extends Thread {
         private final JsonObject jo;
@@ -214,40 +208,24 @@ public abstract class StreamingApi {
                 } else if (i == Integer.MAX_VALUE) {
                     i = 1;
                 } // else if
-                final JsonObject jo = jp.parse(jsonReader).getAsJsonObject();
-                final ParseThread parse = new ParseThread(jo);
-                parse.addListener(new TweetParseListener());
-                parse.setUncaughtExceptionHandler(new ExceptionHandler());
-                parse.start();
+                notifyListeners(jp.parse(jsonReader).getAsJsonObject());
             } // while
         } // run()
+
+        Set<StreamListener> listeners = new HashSet<StreamListener>();
+
+        public void notifyListeners(final JsonObject jo) {
+            for (final StreamListener listener : listeners) {
+                listener.onJsonReadComplete(jo);
+            } // for
+        } // notifyListeners(JsonObject)
+
+        public void addListener(final StreamListener listener) {
+            listeners.add(listener);
+        } // addListener(StreamListener)
     } // StreamThread
 
     private StreamThread t;
-
-    private final class TweetThrowable extends JsonObjectThrowable {
-        private final Tweet tweet;
-
-        public TweetThrowable(final Tweet t) {
-            tweet = t;
-        } // TweetThrowable(Tweet)
-
-        public Tweet getTweet() {
-            return tweet;
-        } // getTweet()
-    } // TweetThrowable
-
-    private final class DeleteThrowable extends JsonObjectThrowable {
-        private final long id;
-
-        public DeleteThrowable(final long id) {
-            this.id = id;
-        } // DeleteThrowable(long)
-
-        public long getId() {
-            return id;
-        } // getId()
-    } // DeleteThrowable
 
     public void streamTweets() {
         try {
@@ -267,6 +245,7 @@ public abstract class StreamingApi {
         }.start();
 
         t = new StreamThread();
+        t.addListener(new TweetReadListener());
         t.start();
 
         // Hold loop until thread has closed, this also needs to allow for parser thread
@@ -304,10 +283,6 @@ public abstract class StreamingApi {
         } // catch
     } // parseTweetJsonObject(JsonObject)
 
-    private void throwTweet(final JsonObject jo) throws TweetThrowable {
-        throw new TweetThrowable(getTweet(jo));
-    } // throwTweet(JsonObject)
-
     // Want to use this to enable callback to main thread for sql tasks
     private Tweet getTweet(final JsonObject jo) {
         final JsonObject user = jo.getAsJsonObject("user");
@@ -324,23 +299,11 @@ public abstract class StreamingApi {
         return sql.deleteTweet(getDeleteStatusId(jo)) * -1;
     } // parseDeleteJsonObject(JsonObject)
 
-    private void throwDeleteStatusId(final JsonObject jo) throws DeleteThrowable {
-        throw new DeleteThrowable(getDeleteStatusId(jo));
-    } // throwDeleteStatusId(JsonObject)
-
     // Want to use this to enable callback to main thread for sql tasks
     private long getDeleteStatusId(final JsonObject jo) {
         return jo.getAsJsonObject("delete").getAsJsonObject("status").getAsJsonPrimitive("id_str")
                 .getAsLong();
     } // getDeleteStatusId(JsonObject)
-
-    private void throwJsonObject(final JsonObject jo) throws JsonObjectThrowable {
-        if (isTweetJsonObject(jo)) {
-            throwTweet(jo);
-        } else {
-            throwDeleteStatusId(jo);
-        } // else
-    } // throwJsonObject(JsonObject)
 
     private int parseJsonObject(final JsonObject jo) {
         if (isTweetJsonObject(jo)) {
