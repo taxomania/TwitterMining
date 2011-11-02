@@ -216,25 +216,6 @@ public abstract class StreamingApi {
         } // else
     } // isTweetJsonObject(JsonObject)
 
-    private int parseTweetJsonObject(final JsonObject jo) {
-        final JsonObject user = jo.getAsJsonObject("user");
-        try { // This is only being used to find a rare bug
-            final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
-            final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
-            final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-            final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
-            final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
-                    .getAsString());
-            return addToDb(tweetId, screenName, tweet, createdAt, userId);
-        } catch (final NullPointerException e) {
-            e.printStackTrace();
-            System.err.println(jo.toString());
-            System.err.println(user.toString());
-            return 0;
-        } // catch
-    } // parseTweetJsonObject(JsonObject)
-
-    // Want to use this to enable callback to main thread for sql tasks
     private Tweet getTweet(final JsonObject jo) {
         final JsonObject user = jo.getAsJsonObject("user");
         final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
@@ -246,23 +227,11 @@ public abstract class StreamingApi {
         return new Tweet(tweetId, userId, screenName, tweet, createdAt);
     } // getTweet(JsonObject)
 
-    private int parseDeleteJsonObject(final JsonObject jo) {
-        return sql.deleteTweet(getDeleteStatusId(jo)) * -1;
-    } // parseDeleteJsonObject(JsonObject)
-
     // Want to use this to enable callback to main thread for sql tasks
     private long getDeleteStatusId(final JsonObject jo) {
         return jo.getAsJsonObject("delete").getAsJsonObject("status").getAsJsonPrimitive("id_str")
                 .getAsLong();
     } // getDeleteStatusId(JsonObject)
-
-    private int parseJsonObject(final JsonObject jo) {
-        if (isTweetJsonObject(jo)) {
-            return parseTweetJsonObject(jo);
-        } else {
-            return parseDeleteJsonObject(jo);
-        } // else if
-    } // parseJsonObject(JsonObject)
 
     protected int addToDb(final Long tweetId, final String screenName, final String tweet,
             final String createdAt, final Long userId) {
