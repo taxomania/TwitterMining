@@ -28,21 +28,21 @@ public abstract class ParseThread extends Thread {
 
     protected abstract void parse();
 
-    Set<ParseListener> listeners = new HashSet<ParseListener>();
+    private final Set<ParseListener> listeners = new HashSet<ParseListener>();
 
-    public void notifyListeners(final Tweet t) {
+    protected final void notifyListeners(final Tweet t) {
         for (final ParseListener listener : listeners) {
             listener.onParseComplete(t);
         } // for
     } // notifyListeners(Tweet)
 
-    public void notifyListeners(final long id) {
+    protected final void notifyListeners(final long id) {
         for (final ParseListener listener : listeners) {
             listener.onParseComplete(id);
         } // for
     } // notifyListeners(long)
 
-    public void addListener(final ParseListener listener) {
+    public final void addListener(final ParseListener listener) {
         listeners.add(listener);
     } // addListener(ParseListener)
 } // ParseThread

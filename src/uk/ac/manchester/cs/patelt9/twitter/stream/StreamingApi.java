@@ -145,7 +145,7 @@ public abstract class StreamingApi {
     private final class TweetStreamListener implements StreamListener {
         @Override
         public void onJsonReadComplete(final JsonObject jo) {
-            System.out.println(Thread.currentThread().getName() + "READ");
+            // System.out.println(Thread.currentThread().getName());
             p = new ParseThread(jo) {
                 @Override
                 protected void parse() {
@@ -179,7 +179,7 @@ public abstract class StreamingApi {
                 } // if
             } // run()
         }.start();
-        System.out.println(Thread.currentThread().getName());
+        // System.out.println(Thread.currentThread().getName());
         t = new StreamThread() {
             @Override
             protected void parse() {

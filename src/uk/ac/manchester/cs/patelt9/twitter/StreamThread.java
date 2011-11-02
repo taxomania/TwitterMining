@@ -21,15 +21,15 @@ public abstract class StreamThread extends Thread {
 
     protected abstract void parse();
 
-    Set<StreamListener> listeners = new HashSet<StreamListener>();
+    private final Set<StreamListener> listeners = new HashSet<StreamListener>();
 
-    public void notifyListeners(final JsonObject jo) {
+    protected final void notifyListeners(final JsonObject jo) {
         for (final StreamListener listener : listeners) {
             listener.onJsonReadComplete(jo);
         } // for
     } // notifyListeners(JsonObject)
 
-    public void addListener(final StreamListener listener) {
+    public final void addListener(final StreamListener listener) {
         listeners.add(listener);
     } // addListener(StreamListener)
 } // StreamThread
