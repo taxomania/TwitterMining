@@ -1,18 +1,17 @@
-package uk.ac.manchester.cs.patelt9.twitter.thread;
+package uk.ac.manchester.cs.patelt9.twitter.practice;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import uk.ac.manchester.cs.patelt9.twitter.listener.StreamListener;
 
 import com.google.gson.JsonObject;
 
-public abstract class StreamThread extends Thread {
-    public StreamThread() {
+public abstract class StreamThreadPractice extends Thread {
+    public StreamThreadPractice() {
         this("Stream");
     } // StreamThread()
 
-    public StreamThread(final String s) {
+    public StreamThreadPractice(final String s) {
         super(s);
     } // StreamThread(String)
 
@@ -23,19 +22,19 @@ public abstract class StreamThread extends Thread {
 
     protected abstract void parse();
 
-    private final Set<StreamListener> listeners = new HashSet<StreamListener>();
+    private final Set<StreamListenerPractice> listeners = new HashSet<StreamListenerPractice>();
 
     protected final void notifyListeners(final JsonObject jo) {
-        for (final StreamListener listener : listeners) {
+        for (final StreamListenerPractice listener : listeners) {
             listener.onJsonReadComplete(jo);
         } // for
     } // notifyListeners(JsonObject)
 
-    public final void addListener(final StreamListener listener) {
+    public final void addListener(final StreamListenerPractice listener) {
         listeners.add(listener);
     } // addListener(StreamListener)
 
-    public final void removeListener(final StreamListener listener) {
+    public final void removeListener(final StreamListenerPractice listener) {
         listeners.remove(listener);
     } // removeListener(StreamListener)
 } // StreamThread
