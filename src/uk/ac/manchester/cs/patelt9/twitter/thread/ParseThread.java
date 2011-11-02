@@ -48,4 +48,8 @@ public abstract class ParseThread extends Thread {
     public final void addListener(final ParseListener listener) {
         listeners.add(listener);
     } // addListener(ParseListener)
+
+    public final void removeListener(final ParseListener listener) {
+        listeners.remove(listener);
+    } // removeListener(ParseListener)
 } // ParseThread

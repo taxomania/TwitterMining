@@ -34,5 +34,9 @@ public abstract class StreamThread extends Thread {
     public final void addListener(final StreamListener listener) {
         listeners.add(listener);
     } // addListener(StreamListener)
+
+    public final void removeListener(final StreamListener listener) {
+        listeners.remove(listener);
+    } // removeListener(StreamListener)
 } // StreamThread
 
