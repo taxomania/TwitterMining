@@ -1,7 +1,9 @@
-package uk.ac.manchester.cs.patelt9.twitter;
+package uk.ac.manchester.cs.patelt9.twitter.thread;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import uk.ac.manchester.cs.patelt9.twitter.listener.StreamListener;
 
 import com.google.gson.JsonObject;
 

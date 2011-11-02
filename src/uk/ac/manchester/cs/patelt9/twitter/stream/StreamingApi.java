@@ -16,12 +16,12 @@ import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
-import uk.ac.manchester.cs.patelt9.twitter.ParseListener;
-import uk.ac.manchester.cs.patelt9.twitter.ParseThread;
-import uk.ac.manchester.cs.patelt9.twitter.StreamListener;
-import uk.ac.manchester.cs.patelt9.twitter.StreamThread;
 import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
+import uk.ac.manchester.cs.patelt9.twitter.listener.ParseListener;
+import uk.ac.manchester.cs.patelt9.twitter.listener.StreamListener;
+import uk.ac.manchester.cs.patelt9.twitter.thread.ParseThread;
+import uk.ac.manchester.cs.patelt9.twitter.thread.StreamThread;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -180,6 +180,8 @@ public abstract class StreamingApi {
             } // run()
         }.start();
         // System.out.println(Thread.currentThread().getName());
+
+        // I could move this to the main thread
         t = new StreamThread() {
             @Override
             protected void parse() {
@@ -227,7 +229,6 @@ public abstract class StreamingApi {
         return new Tweet(tweetId, userId, screenName, tweet, createdAt);
     } // getTweet(JsonObject)
 
-    // Want to use this to enable callback to main thread for sql tasks
     private long getDeleteStatusId(final JsonObject jo) {
         return jo.getAsJsonObject("delete").getAsJsonObject("status").getAsJsonPrimitive("id_str")
                 .getAsLong();
