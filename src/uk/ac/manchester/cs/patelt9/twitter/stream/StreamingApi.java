@@ -18,7 +18,6 @@ import javax.net.ssl.HttpsURLConnection;
 import sun.misc.BASE64Encoder;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
@@ -104,7 +103,7 @@ public abstract class StreamingApi {
             stdInScanner.close();
         } // if
         if (sql != null) {
-            sql.close();
+            // sql.close();
         } // if
     } // close()
 
@@ -140,11 +139,11 @@ public abstract class StreamingApi {
                 } else if (i == Integer.MAX_VALUE) {
                     i = 1;
                 } // else if
-                final JsonElement je = jp.parse(jsonReader);
+                final JsonObject jo = jp.parse(jsonReader).getAsJsonObject();
                 new Thread() {
                     @Override
                     public void run() {
-                        count += parseJsonElement(je);
+                        count += parseJsonObject(jo);
                     } // run()
                 }.start();
             } // while
@@ -179,35 +178,48 @@ public abstract class StreamingApi {
         } catch (final InterruptedException e) {
             e.printStackTrace();
         } // catch
-   //     close();
+        close();
     } // streamTweets()
 
-    private int parseJsonElement(final JsonElement je) {
-        if (je.isJsonObject()) {
-            final JsonObject jo = je.getAsJsonObject();
-            if (je.toString().contains("{\"delete\":")) {
-                final Long tweetId = jo.getAsJsonObject("delete").getAsJsonObject("status")
-                        .getAsJsonPrimitive("id_str").getAsLong();
-                return sql.deleteTweet(tweetId) * -1;
-            } else {
-                final JsonObject user = jo.getAsJsonObject("user");
-                try { // This is only being used to find a rare bug
-                    final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
-                    final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
-                    final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                    final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
-                    final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive(
-                            "created_at").getAsString());
-                    return addToDb(tweetId, screenName, tweet, createdAt, userId);
-                } catch (final NullPointerException e) {
-                    e.printStackTrace();
-                    System.err.println(jo.toString());
-                    System.err.println(user.toString());
-                } // catch
-            } // else if
-        } // if
-        return 0;
-    } // parseJsonElement(JsonElement)
+    private boolean isTweetJsonObject(final JsonObject jo) {
+        if (jo.toString().contains("{\"delete\":")) {
+            return false;
+        } else {
+            return true;
+        } // else
+    } // isTweetJsonObject(JsonObject)
+
+    private int parseTweetJsonObject(final JsonObject jo) {
+        final JsonObject user = jo.getAsJsonObject("user");
+        try { // This is only being used to find a rare bug
+            final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
+            final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
+            final String tweet = jo.getAsJsonPrimitive("text").getAsString();
+            final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
+            final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
+                    .getAsString());
+            return addToDb(tweetId, screenName, tweet, createdAt, userId);
+        } catch (final NullPointerException e) {
+            e.printStackTrace();
+            System.err.println(jo.toString());
+            System.err.println(user.toString());
+            return 0;
+        } // catch
+    } // parseTweetJsonObject(JsonObject)
+
+    private int parseDeleteJsonObject(final JsonObject jo) {
+        return sql.deleteTweet(jo.getAsJsonObject("delete").getAsJsonObject("status")
+                .getAsJsonPrimitive("id_str").getAsLong())
+                * -1;
+    } // parseDeleteJsonObject(JsonObject)
+
+    private int parseJsonObject(final JsonObject jo) {
+        if (isTweetJsonObject(jo)) {
+            return parseTweetJsonObject(jo);
+        } else {
+            return parseDeleteJsonObject(jo);
+        } // else if
+    } // parseJsonObject(JsonObject)
 
     protected int addToDb(final Long tweetId, final String screenName, final String tweet,
             final String createdAt, final Long userId) {
