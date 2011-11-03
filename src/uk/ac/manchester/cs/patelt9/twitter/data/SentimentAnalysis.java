@@ -79,7 +79,7 @@ public class SentimentAnalysis implements ParseListener {
     public void analyseSentiment() {
         System.out.println("Analysing tweet sentiment");
         final boolean isScanner = scanner != null;
-        if (isScanner){
+        if (isScanner()) {
             scanner.start();
         } // if
         try {
@@ -120,28 +120,31 @@ public class SentimentAnalysis implements ParseListener {
         } catch (final SQLException e) {
             e.printStackTrace();
         } // catch
-        close();
-        if (isScanner) {
-            closeSql();
-        } // if
     } // analyseSentiment()
 
     private void updateError(final long id) {
         count += sql.updateSentiment("error", id);
     } // updateError(long)
 
+    private boolean isScanner() {
+        return scanner != null;
+    } // isScanner()
+
     public void close() {
-        if (parseThread != null) {
-            try {
-                parseThread.join();
+        if (isScanner()) {
+            if (parseThread != null) {
+                try {
+                    parseThread.join();
+                } catch (final InterruptedException e) {
+                    e.printStackTrace();
+                } // catch
                 parseThread.removeListener(this);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            } // catch
-        } // if
-        if (scanner != null && scanner.isAlive()) {
-            scanner.interrupt();
-            scanner = null;
+            } // if
+            if (scanner != null && scanner.isAlive()) {
+                scanner.interrupt();
+                scanner = null;
+            } // if
+            sql.close();
         } // if
         System.out.println(Integer.toString(count) + " tweets analysed");
         sa = null;

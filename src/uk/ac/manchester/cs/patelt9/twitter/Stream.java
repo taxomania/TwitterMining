@@ -32,7 +32,7 @@ public class Stream {
         } else {
             return StreamingApiFilterPost.getInstance(sql);
         } // else
-    } // getStream(String[])
+    } // getStream(String[], SqlConnector)
 
     public static void main(final String[] args) {
         final StreamingApi stream;
