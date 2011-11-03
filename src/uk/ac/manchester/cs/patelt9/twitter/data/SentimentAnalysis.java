@@ -105,8 +105,10 @@ public class SentimentAnalysis implements ParseListener {
                 } catch (final IOException e) {
                     if (e.getMessage().contains("limit")) {
                         System.out.println(e.getMessage());
-                        scanner.interrupt();
-                        return;
+                        if (isScanner()) {
+                            scanner.interrupt();
+                        } // if
+                        break;
                     } else {
                         updateError(id);
                         continue;
