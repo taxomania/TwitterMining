@@ -14,6 +14,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.SqlThread;
+import uk.ac.manchester.cs.patelt9.twitter.data.SqlThread.SqlTaskCompleteListener;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
@@ -23,7 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-public abstract class StreamingApi implements ParseListener {
+public abstract class StreamingApi implements ParseListener, SqlTaskCompleteListener {
     private static String userPassword = null, encoding = null;
 
     private int count = 0;
@@ -36,20 +38,38 @@ public abstract class StreamingApi implements ParseListener {
     private volatile boolean stillStream = true;
 
     private StreamParseThread parseThread = null;
+    private SqlThread sqlThread = null;
     private ScannerThread scanner = null;
 
     @Override
     public void onParseComplete(final Tweet t) {
-        // System.out.println(Thread.currentThread().getName());
-        count += addToDb(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
-                t.getUserId());
+        sqlThread = new SqlThread() {
+            @Override
+            protected void performTask() {
+                notifyListeners(addToDb(t.getId(), t.getScreenName(), t.getTweet(),
+                        t.getCreatedAt(), t.getUserId()));
+            } // performTask();
+        };
+        sqlThread.addListener(this);
+        sqlThread.start();
     } // onParseComplete(Tweet)
 
     @Override
     public void onParseComplete(final long id) {
-        // System.out.println(Thread.currentThread().getName());
-        count -= sql.deleteTweet(id);
+        sqlThread = new SqlThread() {
+            @Override
+            protected void performTask() {
+                notifyListeners(sql.deleteTweet(id));
+            } // performTask();
+        };
+        sqlThread.addListener(this);
+        sqlThread.start();
     } // onParseComplete(long)
+
+    @Override
+    public void onSqlTaskComplete(final int rowsAffected) {
+        count += rowsAffected;
+    } // onSqlTaskComplete(int)
 
     static {
         getUserPass();

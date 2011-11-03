@@ -205,7 +205,7 @@ public class SqlConnector {
     public int deleteTweet(final long tweetId) {
         try {
             deleteTweet.setLong(1, tweetId);
-            return executeUpdate(deleteTweet);
+            return executeUpdate(deleteTweet) * -1;
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;

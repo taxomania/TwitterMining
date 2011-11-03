@@ -10,20 +10,24 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import uk.ac.manchester.cs.patelt9.twitter.data.SqlThread.SqlTaskCompleteListener;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListener;
 
 import com.alchemyapi.api.AlchemyAPI;
 
-public class SentimentAnalysis implements ParseListener {
+public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener {
     private static final String DEFAULT_QUERY = "SELECT text, id FROM tweet WHERE sentiment IS NULL LIMIT 30000;";
 
     private final AlchemyAPI api;
     private ResultSet res;
     private volatile SqlConnector sql = null;
+    private volatile boolean stillAnalyse = true;
     private int count = 0;
     private ScannerThread scanner = null;
+    private SqlThread sqlThread = null;
+    private SentimentParseThread parseThread = null;
 
     private static SentimentAnalysis sa = null;
 
@@ -72,9 +76,6 @@ public class SentimentAnalysis implements ParseListener {
             e.printStackTrace();
         } // catch
     } // loadDataSet(String)
-
-    private SentimentParseThread parseThread = null;
-    private volatile boolean stillAnalyse = true;
 
     public void analyseSentiment() {
         System.out.println("Analysing tweet sentiment");
@@ -141,11 +142,19 @@ public class SentimentAnalysis implements ParseListener {
                 } // catch
                 parseThread.removeListener(this);
             } // if
-            if (scanner != null && scanner.isAlive()) {
+            if (scanner.isAlive()) {
                 scanner.interrupt();
                 scanner = null;
             } // if
             sql.close();
+        } // if
+        if (sqlThread != null) {
+            try {
+                sqlThread.join();
+            } catch (final InterruptedException e) {
+                e.printStackTrace();
+            } // catch
+            sqlThread.removeListener(this);
         } // if
         System.out.println(Integer.toString(count) + " tweets analysed");
         sa = null;
@@ -159,11 +168,30 @@ public class SentimentAnalysis implements ParseListener {
 
     @Override
     public void onParseComplete(final long id, final String sentiment) {
-        count += sql.updateSentiment(sentiment, id);
+        sqlThread = new SqlThread() {
+            @Override
+            protected void performTask() {
+                notifyListeners(sql.updateSentiment(sentiment, id));
+            } // performTask();
+        };
+        sqlThread.addListener(this);
+        sqlThread.start();
     } // onParseComplete(long, String)
 
     @Override
     public void onParseComplete(final long id, final String sentiment, final String sentimentScore) {
-        count += sql.updateSentimentScore(sentiment, sentimentScore, id);
+        sqlThread = new SqlThread() {
+            @Override
+            protected void performTask() {
+                notifyListeners(sql.updateSentimentScore(sentiment, sentimentScore, id));
+            } // performTask();
+        };
+        sqlThread.addListener(this);
+        sqlThread.start();
     } // onParseComplete(long, String, String)
+
+    @Override
+    public void onSqlTaskComplete(final int rowsAffected) {
+        count += rowsAffected;
+    } // onSqlTaskComplete(int)
 } // SentimentAnalysis
