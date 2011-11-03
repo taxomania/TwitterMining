@@ -16,10 +16,13 @@ public abstract class ScannerThread extends Thread {
 
     @Override
     public final void run() {
-        if (scanner.nextLine().contains("exit")) {
-            performTask();
-            scanner.close();
-        } // if
+        while (true) {
+            if (scanner.nextLine().contains("exit")) {
+                performTask();
+                break;
+            } // if
+        } // while
+        scanner.close();
     } // run()
 
     protected abstract void performTask();
