@@ -6,6 +6,8 @@ import java.sql.SQLException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
+
 public class StreamingApiFilterPost extends StreamingApiFilter {
     private static final int COUNTER_INTERVAL = 200;
     private static final String QUERY_PREFIX = "track=";
@@ -23,14 +25,34 @@ public class StreamingApiFilterPost extends StreamingApiFilter {
         return getInstance(new String[] { "software", "app" });
     } // getInstance()
 
+    public static StreamingApiFilterPost getInstance(final SqlConnector sql) {
+        return getInstance(sql, new String[] { "software", "app" });
+    } // getInstance(SqlConnector)
+
+    public static StreamingApiFilterPost getInstance(final SqlConnector sql, final String[] keywords) {
+        if (stream == null) {
+            stream = new StreamingApiFilterPost(sql, keywords);
+        } // if
+        return stream;
+    } // getInstance(SqlConnector, String[])
+
+    private StreamingApiFilterPost(final SqlConnector sql, final String[] keywords) {
+        super(sql, COUNTER_INTERVAL);
+        setKeyword(keywords);
+    } // StreamingApiFilterPost(SqlConnector, String[])
+
     private StreamingApiFilterPost(final String[] keywords) throws SQLException {
         super(COUNTER_INTERVAL);
+        setKeyword(keywords);
+    } // StreamingApiFilterPost(String[])
+
+    private void setKeyword(final String[] keywords) {
         final int queryArgs = keywords.length;
         for (int i = 0; i < queryArgs - 1; i++) {
             keyword = keyword.concat(keywords[i] + ",");
         } // for
         keyword = keyword.concat(keywords[queryArgs - 1]);
-    } // StreamingApiFilterPost(String[])
+    } // setKeyword(String[])
 
     @Override
     protected void connect(final HttpsURLConnection con) throws IOException {

@@ -34,9 +34,21 @@ public class SentimentAnalysis implements ParseListener {
         return sa;
     } // getInstance()
 
-    private SentimentAnalysis() throws IOException, SQLException {
+    public static SentimentAnalysis getInstance(final SqlConnector sql) throws IOException,
+            SQLException {
+        if (sa == null) {
+            sa = new SentimentAnalysis(sql);
+        } // if
+        return sa;
+    } // getInstance()
+
+    private SentimentAnalysis(final SqlConnector sql) throws IOException {
         api = AlchemyAPI.GetInstanceFromFile("alchemyapikey.txt");
-        sql = SqlConnector.getInstance();
+        this.sql = sql;
+    } // SentimentAnalysis(SqlConnector)
+
+    private SentimentAnalysis() throws IOException, SQLException {
+        this(SqlConnector.getInstance());
         scanner = new ScannerThread() {
             @Override
             protected void performTask() {
@@ -66,7 +78,10 @@ public class SentimentAnalysis implements ParseListener {
 
     public void analyseSentiment() {
         System.out.println("Analysing tweet sentiment");
-        scanner.start();
+        final boolean isScanner = scanner != null;
+        if (isScanner){
+            scanner.start();
+        } // if
         try {
             res.beforeFirst();
             while (stillAnalyse && res.next()) {
@@ -102,17 +117,20 @@ public class SentimentAnalysis implements ParseListener {
                 parseThread.addListener(this);
                 parseThread.start();
             } // while
-            close();
         } catch (final SQLException e) {
             e.printStackTrace();
         } // catch
+        close();
+        if (isScanner) {
+            closeSql();
+        } // if
     } // analyseSentiment()
 
     private void updateError(final long id) {
         count += sql.updateSentiment("error", id);
     } // updateError(long)
 
-    private void close() {
+    public void close() {
         if (parseThread != null) {
             try {
                 parseThread.join();
@@ -121,16 +139,19 @@ public class SentimentAnalysis implements ParseListener {
                 e.printStackTrace();
             } // catch
         } // if
-        if (scanner != null && scanner.isAlive()){
+        if (scanner != null && scanner.isAlive()) {
             scanner.interrupt();
             scanner = null;
         } // if
         System.out.println(Integer.toString(count) + " tweets analysed");
+        sa = null;
+    } // close()
+
+    public void closeSql() {
         if (sql != null) {
             sql.close();
         } // if
-        sa = null;
-    } // close()
+    } // closeSql()
 
     @Override
     public void onParseComplete(final long id, final String sentiment) {

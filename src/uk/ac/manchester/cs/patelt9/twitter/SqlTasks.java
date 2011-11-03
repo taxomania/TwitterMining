@@ -9,10 +9,15 @@ public class SqlTasks {
         final SqlConnector sql;
         try {
             sql = SqlConnector.getInstance();
+            delete(args, sql);
         } catch (final SQLException e) {
             System.err.println("Failed to connect to database");
             return;
         } // catch
+        sql.close();
+    } // main(String[])
+
+    public static void delete(final String[] args, final SqlConnector sql) {
         if (args != null && args.length != 0) {
             if (args[0].equals("delete")) {
                 System.out.println(sql.deleteAll() + " rows deleted");
@@ -20,6 +25,5 @@ public class SqlTasks {
         } else {
             System.out.println(sql.deleteError() + " tweets deleted");
         } // else
-        sql.close();
-    } // main(String[])
+    } // delete(args)
 } // SqlTasks
