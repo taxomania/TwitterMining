@@ -78,7 +78,6 @@ public class SentimentAnalysis implements ParseListener {
 
     public void analyseSentiment() {
         System.out.println("Analysing tweet sentiment");
-        final boolean isScanner = scanner != null;
         if (isScanner()) {
             scanner.start();
         } // if
