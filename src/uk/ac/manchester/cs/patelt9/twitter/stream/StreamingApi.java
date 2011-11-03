@@ -194,7 +194,7 @@ public abstract class StreamingApi implements ParseListener {
             streamTweet();
         } // for
 
-        // close();
+        close();
         if (isScanner()) {
             closeSql();
         } // if

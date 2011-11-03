@@ -9,8 +9,6 @@ import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApi;
-import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilterPost;
-import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiSample;
 
 public class RunAll {
     public static void main(final String[] args) {
@@ -52,21 +50,14 @@ public class RunAll {
         final StreamingApi stream;
         private StreamParseThread p = null;
 
-        public StreamThread(final String[] args, final SqlConnector sql) {
+        public StreamThread(final String[] args, final SqlConnector sql) throws SQLException {
             this("Stream", args, sql);
         } // StreamThread(String[], SqlConnector)
 
-        public StreamThread(final String s, final String[] args, final SqlConnector sql) {
+        public StreamThread(final String s, final String[] args, final SqlConnector sql)
+                throws SQLException {
             super(s);
-            if (args.length != 0) {
-                if (args[0].equals("sample")) {
-                    stream = StreamingApiSample.getInstance(sql);
-                } else {
-                    stream = StreamingApiFilterPost.getInstance(sql, args);
-                } // else
-            } else {
-                stream = StreamingApiFilterPost.getInstance(sql);
-            } // else
+            stream = Stream.getStream(args);
         } // StreamThread(String, String[], SqlConnector)
 
         public final void run() {
