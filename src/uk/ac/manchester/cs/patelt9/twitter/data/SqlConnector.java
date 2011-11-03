@@ -36,7 +36,7 @@ public class SqlConnector {
     private static SqlConnector mySql = null;
 
     // Singleton lock on database helper
-    public static SqlConnector getInstance() throws SQLException {
+    public static synchronized SqlConnector getInstance() throws SQLException {
         if (mySql == null) {
             mySql = new SqlConnector();
         } // if
@@ -192,7 +192,7 @@ public class SqlConnector {
         return con.createStatement().executeQuery(sqlStatement);
     } // executeQuery(String)
 
-    public int deleteError(){
+    public int deleteError() {
         return executeUpdate("DELETE FROM tweet WHERE sentiment='error';");
     } // deleteError()
 

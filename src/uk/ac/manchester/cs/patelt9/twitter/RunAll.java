@@ -57,7 +57,7 @@ public class RunAll {
         public StreamThread(final String s, final String[] args, final SqlConnector sql)
                 throws SQLException {
             super(s);
-            stream = Stream.getStream(args);
+            stream = Stream.getStream(args, sql);
         } // StreamThread(String, String[], SqlConnector)
 
         public final void run() {
