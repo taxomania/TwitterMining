@@ -212,7 +212,7 @@ public class SqlConnector {
         } // catch
     } // deleteTweet(long)
 
-    public void close() {
+    public synchronized void close() {
         if (con != null) {
             try {
                 con.close();
