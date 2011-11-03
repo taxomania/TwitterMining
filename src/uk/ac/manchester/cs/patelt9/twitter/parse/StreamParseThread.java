@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
-import uk.ac.manchester.cs.patelt9.twitter.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 
 import com.google.gson.JsonObject;
 

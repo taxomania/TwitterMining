@@ -11,7 +11,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import uk.ac.manchester.cs.patelt9.twitter.ScannerThread;
+import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListener;
 
