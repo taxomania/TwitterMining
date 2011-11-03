@@ -226,7 +226,6 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
     } // streamTweets()
 
     private StreamParseThread onJsonReadComplete(final JsonObject jo) {
-        // System.out.println(Thread.currentThread().getName());
         parseThread = new StreamParseThread(jo);
         parseThread.addListener(this);
         parseThread.start();

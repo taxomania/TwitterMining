@@ -124,16 +124,11 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
         } // catch
     } // analyseSentiment()
 
-    private void updateError(final long id) {
-        count += sql.updateSentiment("error", id);
-    } // updateError(long)
-
     private boolean isScanner() {
         return scanner != null;
     } // isScanner()
 
     public void close() {
-
         if (parseThread != null) {
             try {
                 parseThread.join();
@@ -192,6 +187,17 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
         sqlThread.addListener(this);
         sqlThread.start();
     } // onParseComplete(long, String, String)
+
+    private void updateError(final long id) {
+        sqlThread = new SqlThread() {
+            @Override
+            protected void performTask() {
+                notifyListeners(sql.updateSentiment("error", id));
+            } // performTask();
+        };
+        sqlThread.addListener(this);
+        sqlThread.start();
+    } // updateError(long)
 
     @Override
     public void onSqlTaskComplete(final int rowsAffected) {
