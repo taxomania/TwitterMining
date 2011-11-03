@@ -82,7 +82,7 @@ public class SqlConnector {
         } // catch
     } // SqlConnector()
 
-    private int executeUpdate(final PreparedStatement s) {
+    private synchronized int executeUpdate(final PreparedStatement s) {
         try {
             return s.executeUpdate();
         } catch (final MysqlDataTruncation e) {
@@ -103,8 +103,8 @@ public class SqlConnector {
         return executeUpdate(insertUser);
     } // insertUser(long, String)
 
-    public int insertTweet(final long id, final String screenName, final String content,
-            final String createdAt, final long userId, final String keyword) {
+    public int insertTweet(final long id, final String screenName,
+            final String content, final String createdAt, final long userId, final String keyword) {
         try {
             insertUser(userId, screenName);
             try {
@@ -143,8 +143,8 @@ public class SqlConnector {
         } // catch
     } // updateSentiment(String, long)
 
-    public int updateSentimentScore(final String sentiment, final String sentimentScore,
-            final long id) {
+    public synchronized int updateSentimentScore(final String sentiment,
+            final String sentimentScore, final long id) {
         try {
             updateSentimentScore.setString(1, sentiment);
             updateSentimentScore.setDouble(2, Double.parseDouble(sentimentScore));
@@ -156,8 +156,8 @@ public class SqlConnector {
         } // catch
     } // updateSentiment(String, String, long)
 
-    public int insertTweet(final long id, final String screenName, final String content,
-            final String createdAt, final long userId) {
+    public int insertTweet(final long id, final String screenName,
+            final String content, final String createdAt, final long userId) {
         try {
             insertUser(userId, screenName);
             try {
@@ -176,7 +176,7 @@ public class SqlConnector {
         } // catch
     } // insertTweet(long, String, String, String, long)
 
-    public int executeUpdate(final String sqlStatement) {
+    public synchronized int executeUpdate(final String sqlStatement) {
         try {
             return con.createStatement().executeUpdate(sqlStatement);
         } catch (final MySQLIntegrityConstraintViolationException e) {
@@ -212,7 +212,7 @@ public class SqlConnector {
         } // catch
     } // deleteTweet(long)
 
-    public void close() {
+    public synchronized void close() {
         if (con != null) {
             try {
                 con.close();
