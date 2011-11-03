@@ -133,22 +133,22 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
     } // isScanner()
 
     public void close() {
+
+        if (parseThread != null) {
+            try {
+                parseThread.join();
+            } catch (final InterruptedException e) {
+                e.printStackTrace();
+            } // catch
+            parseThread.removeListener(this);
+        } // if
         if (isScanner()) {
-            if (parseThread != null) {
-                try {
-                    parseThread.join();
-                } catch (final InterruptedException e) {
-                    e.printStackTrace();
-                } // catch
-                parseThread.removeListener(this);
-            } // if
             if (scanner.isAlive()) {
                 scanner.interrupt();
                 scanner = null;
             } // if
-            sql.close();
         } // if
-        if (sqlThread != null) {
+        if (sqlThread != null && sqlThread.isAlive()) {
             try {
                 sqlThread.join();
             } catch (final InterruptedException e) {
@@ -156,11 +156,14 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
             } // catch
             sqlThread.removeListener(this);
         } // if
+        if (isScanner()) {
+            closeSql();
+        } // if
         System.out.println(Integer.toString(count) + " tweets analysed");
         sa = null;
     } // close()
 
-    public void closeSql() {
+    private void closeSql() {
         if (sql != null) {
             sql.close();
         } // if

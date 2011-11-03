@@ -103,8 +103,8 @@ public class SqlConnector {
         return executeUpdate(insertUser);
     } // insertUser(long, String)
 
-    public int insertTweet(final long id, final String screenName,
-            final String content, final String createdAt, final long userId, final String keyword) {
+    public int insertTweet(final long id, final String screenName, final String content,
+            final String createdAt, final long userId, final String keyword) {
         try {
             insertUser(userId, screenName);
             try {
@@ -156,8 +156,8 @@ public class SqlConnector {
         } // catch
     } // updateSentiment(String, String, long)
 
-    public int insertTweet(final long id, final String screenName,
-            final String content, final String createdAt, final long userId) {
+    public int insertTweet(final long id, final String screenName, final String content,
+            final String createdAt, final long userId) {
         try {
             insertUser(userId, screenName);
             try {
@@ -212,7 +212,7 @@ public class SqlConnector {
         } // catch
     } // deleteTweet(long)
 
-    public synchronized void close() {
+    public void close() {
         if (con != null) {
             try {
                 con.close();

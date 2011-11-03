@@ -116,6 +116,7 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
         this(SqlConnector.getInstance(), url, interval);
         scanner = new ScannerThread() {
             protected void performTask() {
+                System.out.println("A");
                 stillStream = false;
             } // performTask()
         };
@@ -160,13 +161,21 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
                 scanner.interrupt();
                 scanner = null;
             } // if
+            closeSql();
         } // if
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
     } // close()
 
-    public void closeSql() {
+    private void closeSql() {
         if (sql != null) {
+            if (sqlThread != null && sqlThread.isAlive()) {
+                try {
+                    sqlThread.join();
+                } catch (final InterruptedException e) {
+                    e.printStackTrace();
+                } // catch
+            } // if
             sql.close();
         } // if
     } // closeSql()
@@ -215,9 +224,6 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
         } // for
 
         close();
-        if (isScanner()) {
-            closeSql();
-        } // if
     } // streamTweets()
 
     private StreamParseThread onJsonReadComplete(final JsonObject jo) {
