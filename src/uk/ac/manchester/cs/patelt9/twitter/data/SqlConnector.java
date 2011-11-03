@@ -25,6 +25,8 @@ public class SqlConnector {
     private PreparedStatement insertFilteredTweet = null;
     private PreparedStatement insertTweet = null;
     private PreparedStatement deleteTweet = null;
+    private PreparedStatement updateSentiment = null;
+    private PreparedStatement updateSentimentScore = null;
 
     static {
         getUserPass();
@@ -70,6 +72,10 @@ public class SqlConnector {
                     "default, default, default);"); // Sentiment, Sentiment_score, Keyword
 
             deleteTweet = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
+
+            updateSentiment = con.prepareStatement("UPDATE tweet SET sentiment=? WHERE id=?;");
+            updateSentimentScore = con.prepareStatement("UPDATE tweet SET sentiment=?, " +
+                    "sentiment_score=? WHERE id=?;");
             // @formatter:on
         } catch (final ClassNotFoundException e) {
             e.printStackTrace();
@@ -125,6 +131,30 @@ public class SqlConnector {
         s.setString(3, createdAt);
         s.setLong(4, userId);
     } // setTweetValues(PreparedStatement, long, String, String, long)
+
+    public int updateSentiment(final String sentiment, final long id) {
+        try {
+            updateSentiment.setString(1, sentiment);
+            updateSentiment.setLong(2, id);
+            return executeUpdate(updateSentiment);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // updateSentiment(String, long)
+
+    public int updateSentimentScore(final String sentiment, final String sentimentScore,
+            final long id) {
+        try {
+            updateSentimentScore.setString(1, sentiment);
+            updateSentimentScore.setDouble(2, Double.parseDouble(sentimentScore));
+            updateSentimentScore.setLong(3, id);
+            return executeUpdate(updateSentimentScore);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // updateSentiment(String, String, long)
 
     public int insertTweet(final long id, final String screenName, final String content,
             final String createdAt, final long userId) {

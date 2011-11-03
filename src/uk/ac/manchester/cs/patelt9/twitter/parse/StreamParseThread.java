@@ -9,14 +9,14 @@ import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 
 import com.google.gson.JsonObject;
 
-public class ParseThread extends Thread {
+public class StreamParseThread extends Thread {
     private final JsonObject jo;
 
-    public ParseThread(final JsonObject jo) {
+    public StreamParseThread(final JsonObject jo) {
         this("Parse", jo);
     } // ParseThread()
 
-    public ParseThread(final String s, final JsonObject jo) {
+    public StreamParseThread(final String s, final JsonObject jo) {
         super(s);
         this.jo = jo;
     } // ParseThread(String)

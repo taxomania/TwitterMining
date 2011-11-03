@@ -28,7 +28,6 @@ public class SentimentParseThread extends Thread {
 
     public interface ParseListener {
         void onParseComplete(long id, String sentiment);
-
         void onParseComplete(long id, String sentiment, String score);
     } // ParseListener
 
@@ -64,15 +63,12 @@ public class SentimentParseThread extends Thread {
 
     protected void parse() {
         final Node sentimentNode = doc.getElementsByTagName("docSentiment").item(0);
-        System.out.println(sentimentNode.getTextContent());
         if (sentimentNode != null && sentimentNode.getNodeType() == Node.ELEMENT_NODE) {
             final Element sent = (Element) sentimentNode;
             final String sentiment = sent.getElementsByTagName("type").item(0).getTextContent();
-            System.out.println(sentiment);
             if (!sentiment.equals("neutral")) {
                 final String sentimentScore = sent.getElementsByTagName("score").item(0)
                         .getTextContent();
-                System.out.println(sentimentScore);
                 notifyListeners(sentiment, sentimentScore);
             } else {
                 notifyListeners(sentiment);

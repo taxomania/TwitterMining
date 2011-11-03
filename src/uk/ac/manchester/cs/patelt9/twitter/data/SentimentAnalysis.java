@@ -60,6 +60,7 @@ public class SentimentAnalysis implements ParseListener {
     private volatile boolean stillAnalyse = true;
 
     public void analyseSentiment() {
+        System.out.println("Analysing tweet sentiment");
         try {
             new ScannerThread() {
                 @Override
@@ -89,7 +90,6 @@ public class SentimentAnalysis implements ParseListener {
                         e.printStackTrace();
                         continue;
                     } // catch
-                    System.out.println(Thread.currentThread().getName());
                     parseThread = new SentimentParseThread(id, doc);
                     parseThread.addListener(this);
                     parseThread.start();
@@ -106,9 +106,8 @@ public class SentimentAnalysis implements ParseListener {
         } // catch
     } // analyseSentiment()
 
-    private void updateError(final long id){
-        count += sql.executeUpdate("UPDATE tweet SET sentiment='error' WHERE id='"
-                + id + "';");
+    private void updateError(final long id) {
+        count += sql.updateSentiment("error", id);
     } // updateError(long)
 
     private void close() {
@@ -120,7 +119,7 @@ public class SentimentAnalysis implements ParseListener {
                 e.printStackTrace();
             } // catch
         } // if
-        System.out.println(Integer.toString(count));
+        System.out.println(Integer.toString(count) + " tweets analysed");
         if (sql != null) {
             sql.close();
         } // if
@@ -129,15 +128,11 @@ public class SentimentAnalysis implements ParseListener {
 
     @Override
     public void onParseComplete(final long id, final String sentiment) {
-        System.out.println(Thread.currentThread().getName());
-        count += sql.executeUpdate("UPDATE tweet SET sentiment='" + sentiment + "' WHERE id='" + id
-                + "';");
+        count += sql.updateSentiment(sentiment, id);
     } // onParseComplete(long, String)
 
     @Override
     public void onParseComplete(final long id, final String sentiment, final String sentimentScore) {
-        System.out.println(Thread.currentThread().getName());
-        count += sql.executeUpdate("UPDATE tweet SET sentiment='" + sentiment
-                + "', sentiment_score='" + sentimentScore + "' WHERE id='" + id + "';");
+        count += sql.updateSentimentScore(sentiment, sentimentScore, id);
     } // onParseComplete(long, String, String)
 } // SentimentAnalysis

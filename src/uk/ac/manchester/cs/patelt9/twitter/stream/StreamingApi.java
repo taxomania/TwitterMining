@@ -16,8 +16,8 @@ import sun.misc.BASE64Encoder;
 import uk.ac.manchester.cs.patelt9.twitter.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
-import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread;
-import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread.ParseListener;
+import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
+import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -34,7 +34,7 @@ public abstract class StreamingApi implements ParseListener {
     private volatile JsonReader jsonReader = null;
     private volatile boolean stillStream = true;
 
-    private ParseThread parseThread = null;
+    private StreamParseThread parseThread = null;
 
     @Override
     public void onParseComplete(final Tweet t) {
@@ -172,7 +172,7 @@ public abstract class StreamingApi implements ParseListener {
 
     private void onJsonReadComplete(final JsonObject jo) {
         // System.out.println(Thread.currentThread().getName());
-        parseThread = new ParseThread(jo);
+        parseThread = new StreamParseThread(jo);
         parseThread.addListener(this);
         parseThread.start();
     } // onJsonReadComplete(JsonObject)
