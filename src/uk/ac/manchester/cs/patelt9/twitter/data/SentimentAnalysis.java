@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -61,46 +60,46 @@ public class SentimentAnalysis implements ParseListener {
 
     public void analyseSentiment() {
         System.out.println("Analysing tweet sentiment");
+        new ScannerThread() {
+            @Override
+            protected void performTask() {
+                stillAnalyse = false;
+            } // performTask()
+        }.start();
         try {
-            new ScannerThread() {
-                @Override
-                protected void performTask() {
-                    stillAnalyse = false;
-                } // performTask()
-            }.start();
             res.beforeFirst();
             while (stillAnalyse && res.next()) {
                 final String tweet = res.getString(1);
                 final Long id = res.getLong(2);
                 // System.out.println(id + ": " + tweet);
+                final Document doc;
                 try {
-                    final Document doc;
-                    try {
-                        doc = api.TextGetTextSentiment(tweet);
-                    } catch (final IllegalArgumentException e) {
-                        updateError(id);
-                        continue;
-                    } catch (final SAXException e) {
-                        e.printStackTrace();
-                        continue;
-                    } catch (final XPathExpressionException e) {
-                        e.printStackTrace();
-                        continue;
-                    } catch (final ParserConfigurationException e) {
-                        e.printStackTrace();
-                        continue;
-                    } // catch
-                    parseThread = new SentimentParseThread(id, doc);
-                    parseThread.addListener(this);
-                    parseThread.start();
-                } catch (final IOException e) {
+                    doc = api.TextGetTextSentiment(tweet);
+                } catch (final IllegalArgumentException e) {
                     updateError(id);
                     continue;
+                } catch (final SAXException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final XPathExpressionException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final ParserConfigurationException e) {
+                    e.printStackTrace();
+                    continue;
+                } catch (final IOException e) {
+                    if (e.getMessage().contains("limit")) {
+                        System.out.println(e.getMessage());
+                    } else {
+                        updateError(id);
+                    } // else
+                    continue;
                 } // catch
+                parseThread = new SentimentParseThread(id, doc);
+                parseThread.addListener(this);
+                parseThread.start();
             } // while
             close();
-        } catch (final DOMException e) {
-            e.printStackTrace();
         } catch (final SQLException e) {
             e.printStackTrace();
         } // catch
