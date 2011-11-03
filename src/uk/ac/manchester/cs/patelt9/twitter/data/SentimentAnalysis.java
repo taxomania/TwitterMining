@@ -9,14 +9,16 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import uk.ac.manchester.cs.patelt9.twitter.ScannerThread;
+import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
+import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListener;
 
 import com.alchemyapi.api.AlchemyAPI;
 
-public class SentimentAnalysis {
-    private static final String DEFAULT_QUERY = "SELECT text, id FROM tweet WHERE sentiment IS NULL LIMIT 1000;";
+public class SentimentAnalysis implements ParseListener {
+    private static final String DEFAULT_QUERY = "SELECT text, id FROM tweet WHERE sentiment IS NULL LIMIT 30000;";
 
     private final AlchemyAPI api;
     private ResultSet res;
@@ -35,6 +37,7 @@ public class SentimentAnalysis {
     private SentimentAnalysis() throws IOException, SQLException {
         api = AlchemyAPI.GetInstanceFromFile("alchemyapikey.txt");
         sql = SqlConnector.getInstance();
+
     } // SentimentAnalysis()
 
     private void setRes(final ResultSet res) {
@@ -53,20 +56,28 @@ public class SentimentAnalysis {
         } // catch
     } // loadDataSet(String)
 
+    private SentimentParseThread parseThread = null;
+    private volatile boolean stillAnalyse = true;
+
     public void analyseSentiment() {
         try {
+            new ScannerThread() {
+                @Override
+                protected void performTask() {
+                    stillAnalyse = false;
+                } // performTask()
+            }.start();
             res.beforeFirst();
-            while (res.next()) {
+            while (stillAnalyse && res.next()) {
                 final String tweet = res.getString(1);
                 final Long id = res.getLong(2);
-                System.out.println(id + ": " + tweet);
+                // System.out.println(id + ": " + tweet);
                 try {
                     final Document doc;
                     try {
                         doc = api.TextGetTextSentiment(tweet);
                     } catch (final IllegalArgumentException e) {
-                        count += sql.executeUpdate("UPDATE tweet SET sentiment='none' WHERE id='"
-                                + id + "';");
+                        updateError(id);
                         continue;
                     } catch (final SAXException e) {
                         e.printStackTrace();
@@ -78,43 +89,55 @@ public class SentimentAnalysis {
                         e.printStackTrace();
                         continue;
                     } // catch
-
-                    final Node sentimentNode = doc.getElementsByTagName("docSentiment").item(0);
-                    System.out.println(sentimentNode.getTextContent());
-                    if (sentimentNode != null && sentimentNode.getNodeType() == Node.ELEMENT_NODE) {
-                        final Element sent = (Element) sentimentNode;
-                        final String sentiment = sent.getElementsByTagName("type").item(0)
-                                .getTextContent();
-                        System.out.println(sentiment);
-                        if (!sentiment.equals("neutral")) {
-                            final String sentimentScore = sent.getElementsByTagName("score")
-                                    .item(0).getTextContent();
-                            System.out.println(sentimentScore);
-                            count += sql.executeUpdate("UPDATE tweet SET sentiment='" + sentiment
-                                    + "', sentiment_score='" + sentimentScore + "' WHERE id='" + id
-                                    + "';");
-                        } else {
-                            count += sql.executeUpdate("UPDATE tweet SET sentiment='" + sentiment
-                                    + "' WHERE id='" + id + "';");
-                        } // else
-                    } // if
+                    System.out.println(Thread.currentThread().getName());
+                    parseThread = new SentimentParseThread(id, doc);
+                    parseThread.addListener(this);
+                    parseThread.start();
                 } catch (final IOException e) {
-                    System.out.println(e.getMessage());
-                    break;
+                    updateError(id);
+                    continue;
                 } // catch
             } // while
+            close();
         } catch (final DOMException e) {
             e.printStackTrace();
         } catch (final SQLException e) {
             e.printStackTrace();
         } // catch
-    }// analyseSentiment()
+    } // analyseSentiment()
 
-    public void close() {
+    private void updateError(final long id){
+        count += sql.executeUpdate("UPDATE tweet SET sentiment='error' WHERE id='"
+                + id + "';");
+    } // updateError(long)
+
+    private void close() {
+        if (parseThread != null) {
+            try {
+                parseThread.join();
+                parseThread.removeListener(this);
+            } catch (final InterruptedException e) {
+                e.printStackTrace();
+            } // catch
+        } // if
         System.out.println(Integer.toString(count));
         if (sql != null) {
             sql.close();
         } // if
         sa = null;
     } // close()
+
+    @Override
+    public void onParseComplete(final long id, final String sentiment) {
+        System.out.println(Thread.currentThread().getName());
+        count += sql.executeUpdate("UPDATE tweet SET sentiment='" + sentiment + "' WHERE id='" + id
+                + "';");
+    } // onParseComplete(long, String)
+
+    @Override
+    public void onParseComplete(final long id, final String sentiment, final String sentimentScore) {
+        System.out.println(Thread.currentThread().getName());
+        count += sql.executeUpdate("UPDATE tweet SET sentiment='" + sentiment
+                + "', sentiment_score='" + sentimentScore + "' WHERE id='" + id + "';");
+    } // onParseComplete(long, String, String)
 } // SentimentAnalysis

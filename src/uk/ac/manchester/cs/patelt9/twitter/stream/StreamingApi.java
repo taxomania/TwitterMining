@@ -9,11 +9,11 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
+import uk.ac.manchester.cs.patelt9.twitter.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread;
@@ -30,7 +30,6 @@ public abstract class StreamingApi implements ParseListener {
     private final String urlString;
     private final int counterInterval;
     private HttpsURLConnection con = null;
-    private volatile Scanner stdInScanner = null;
     private volatile SqlConnector sql = null;
     private volatile JsonReader jsonReader = null;
     private volatile boolean stillStream = true;
@@ -88,7 +87,6 @@ public abstract class StreamingApi implements ParseListener {
         sql = SqlConnector.getInstance();
         counterInterval = interval;
         urlString = url;
-        stdInScanner = new Scanner(System.in);
     } // StreamingApi(String)
 
     // Public interface for setting up connection
@@ -118,15 +116,12 @@ public abstract class StreamingApi implements ParseListener {
             try {
                 parseThread.join();
                 parseThread.removeListener(this);
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 e.printStackTrace();
             } // catch
         } // if
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
-        if (stdInScanner != null) {
-            stdInScanner.close();
-        } // if
         if (sql != null) {
             sql.close();
         } // if
@@ -154,12 +149,10 @@ public abstract class StreamingApi implements ParseListener {
             return;
         } // catch
 
-        new Thread("Scanner") {
-            public void run() {
-                if (stdInScanner.nextLine().contains("exit")) {
-                    stillStream = false;
-                } // if
-            } // run()
+        new ScannerThread() {
+            protected void performTask() {
+                stillStream = false;
+            } // performTask()
         }.start();
         // System.out.println(Thread.currentThread().getName());
 
@@ -177,7 +170,7 @@ public abstract class StreamingApi implements ParseListener {
         close();
     } // streamTweets()
 
-    public void onJsonReadComplete(final JsonObject jo) {
+    private void onJsonReadComplete(final JsonObject jo) {
         // System.out.println(Thread.currentThread().getName());
         parseThread = new ParseThread(jo);
         parseThread.addListener(this);

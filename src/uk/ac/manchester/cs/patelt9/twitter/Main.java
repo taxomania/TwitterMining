@@ -27,7 +27,6 @@ public class Main {
                     final SentimentAnalysis sa = SentimentAnalysis.getInstance();
                     sa.loadDataSet();
                     sa.analyseSentiment();
-                    sa.close();
                 } catch (final SQLException e) {
                     System.err.println("Could not connect to database");
                     System.exit(1);
