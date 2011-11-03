@@ -16,10 +16,20 @@ public class Main {
             if (args[0].equals("delete")) {
                 try {
                     final SqlConnector sql = SqlConnector.getInstance();
-                    System.out.println(sql.deleteAll());
+                    System.out.println(sql.deleteAll() + " rows deleted");
                     sql.close();
                 } catch (final SQLException e) {
                     System.err.println("Failed to delete tables");
+                    System.exit(1);
+                } // catch
+            } else if (args[0].equals("error")) { // Delete all tweets returning error from
+                                                  // sentiment analysis
+                try {
+                    final SqlConnector sql = SqlConnector.getInstance();
+                    System.out.println(sql.deleteError() + " tweets deleted");
+                    sql.close();
+                } catch (final SQLException e) {
+                    System.err.println("Failed to delete tweets");
                     System.exit(1);
                 } // catch
             } else if (args[0].equals("analyse")) {

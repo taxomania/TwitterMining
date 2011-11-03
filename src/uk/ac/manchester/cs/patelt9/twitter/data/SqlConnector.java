@@ -192,6 +192,10 @@ public class SqlConnector {
         return con.createStatement().executeQuery(sqlStatement);
     } // executeQuery(String)
 
+    public int deleteError(){
+        return executeUpdate("DELETE FROM tweet WHERE sentiment='error';");
+    } // deleteError()
+
     public int deleteAll() {
         final int i = executeUpdate("DELETE FROM tweet");
         final int j = executeUpdate("DELETE FROM user");
