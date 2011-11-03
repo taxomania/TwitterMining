@@ -17,7 +17,6 @@ public class AnalyseSentiment {
                 @Override
                 protected void performTask() {
                     sa.close();
-                    SqlTasks.delete(null, sql);
                     sql.close();
                     System.exit(0);
                 } // performTask()

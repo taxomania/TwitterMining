@@ -92,7 +92,7 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
                 try {
                     doc = api.TextGetTextSentiment(tweet);
                 } catch (final IllegalArgumentException e) {
-                    updateError(id);
+                    deleteError(id);
                     continue;
                 } catch (final SAXException e) {
                     e.printStackTrace();
@@ -111,7 +111,7 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
                         } // if
                         break;
                     } else {
-                        updateError(id);
+                        deleteError(id);
                         continue;
                     } // else
                 } // catch
@@ -164,6 +164,11 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
         } // if
     } // closeSql()
 
+    private void startSqlThread(){
+        sqlThread.addListener(this);
+        sqlThread.start();
+    } // startSqlThread()
+
     @Override
     public void onParseComplete(final long id, final String sentiment) {
         sqlThread = new SqlThread() {
@@ -172,8 +177,7 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
                 notifyListeners(sql.updateSentiment(sentiment, id));
             } // performTask();
         };
-        sqlThread.addListener(this);
-        sqlThread.start();
+        startSqlThread();
     } // onParseComplete(long, String)
 
     @Override
@@ -184,20 +188,18 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
                 notifyListeners(sql.updateSentimentScore(sentiment, sentimentScore, id));
             } // performTask();
         };
-        sqlThread.addListener(this);
-        sqlThread.start();
+        startSqlThread();
     } // onParseComplete(long, String, String)
 
-    private void updateError(final long id) {
+    private void deleteError(final long id) {
         sqlThread = new SqlThread() {
             @Override
             protected void performTask() {
-                notifyListeners(sql.updateSentiment("error", id));
+                notifyListeners(sql.deleteTweet(id));
             } // performTask();
         };
-        sqlThread.addListener(this);
-        sqlThread.start();
-    } // updateError(long)
+        startSqlThread();
+    } // deleteError(long)
 
     @Override
     public void onSqlTaskComplete(final int rowsAffected) {
