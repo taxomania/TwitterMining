@@ -116,7 +116,6 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
         this(SqlConnector.getInstance(), url, interval);
         scanner = new ScannerThread() {
             protected void performTask() {
-                System.out.println("A");
                 stillStream = false;
             } // performTask()
         };
