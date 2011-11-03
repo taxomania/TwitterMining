@@ -12,7 +12,7 @@ import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApi;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilterPost;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiSample;
 
-public class AnalyseSentiment {
+public class RunAll {
     public static void main(final String[] args) {
         final SqlConnector sql;
         try {
