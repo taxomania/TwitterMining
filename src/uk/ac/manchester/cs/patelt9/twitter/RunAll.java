@@ -29,7 +29,6 @@ public class RunAll {
                     } catch (final InterruptedException e) {
                         e.printStackTrace();
                     } // catch
-                    SqlTasks.delete(null, sql);
                     sql.close();
                     System.exit(0);
                 } // performTask()
