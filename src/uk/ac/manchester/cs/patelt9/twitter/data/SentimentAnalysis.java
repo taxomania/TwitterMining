@@ -23,6 +23,7 @@ public class SentimentAnalysis implements ParseListener {
     private ResultSet res;
     private volatile SqlConnector sql = null;
     private int count = 0;
+    private ScannerThread scanner = null;
 
     private static SentimentAnalysis sa = null;
 
@@ -36,7 +37,12 @@ public class SentimentAnalysis implements ParseListener {
     private SentimentAnalysis() throws IOException, SQLException {
         api = AlchemyAPI.GetInstanceFromFile("alchemyapikey.txt");
         sql = SqlConnector.getInstance();
-
+        scanner = new ScannerThread() {
+            @Override
+            protected void performTask() {
+                stillAnalyse = false;
+            } // performTask()
+        };
     } // SentimentAnalysis()
 
     private void setRes(final ResultSet res) {
@@ -60,12 +66,7 @@ public class SentimentAnalysis implements ParseListener {
 
     public void analyseSentiment() {
         System.out.println("Analysing tweet sentiment");
-        new ScannerThread() {
-            @Override
-            protected void performTask() {
-                stillAnalyse = false;
-            } // performTask()
-        }.start();
+        scanner.start();
         try {
             res.beforeFirst();
             while (stillAnalyse && res.next()) {
@@ -90,10 +91,12 @@ public class SentimentAnalysis implements ParseListener {
                 } catch (final IOException e) {
                     if (e.getMessage().contains("limit")) {
                         System.out.println(e.getMessage());
+                        scanner.interrupt();
+                        return;
                     } else {
                         updateError(id);
+                        continue;
                     } // else
-                    continue;
                 } // catch
                 parseThread = new SentimentParseThread(id, doc);
                 parseThread.addListener(this);
@@ -117,6 +120,10 @@ public class SentimentAnalysis implements ParseListener {
             } catch (final InterruptedException e) {
                 e.printStackTrace();
             } // catch
+        } // if
+        if (scanner != null && scanner.isAlive()){
+            scanner.interrupt();
+            scanner = null;
         } // if
         System.out.println(Integer.toString(count) + " tweets analysed");
         if (sql != null) {

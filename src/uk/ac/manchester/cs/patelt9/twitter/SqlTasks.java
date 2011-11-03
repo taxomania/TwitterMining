@@ -13,7 +13,7 @@ public class SqlTasks {
             System.err.println("Failed to connect to database");
             return;
         } // catch
-        if (args.length != 0) {
+        if (args != null && args.length != 0) {
             if (args[0].equals("delete")) {
                 System.out.println(sql.deleteAll() + " rows deleted");
             } // if

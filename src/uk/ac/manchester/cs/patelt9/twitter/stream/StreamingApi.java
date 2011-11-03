@@ -35,6 +35,7 @@ public abstract class StreamingApi implements ParseListener {
     private volatile boolean stillStream = true;
 
     private StreamParseThread parseThread = null;
+    private ScannerThread scanner = null;
 
     @Override
     public void onParseComplete(final Tweet t) {
@@ -87,6 +88,11 @@ public abstract class StreamingApi implements ParseListener {
         sql = SqlConnector.getInstance();
         counterInterval = interval;
         urlString = url;
+        scanner = new ScannerThread() {
+            protected void performTask() {
+                stillStream = false;
+            } // performTask()
+        };
     } // StreamingApi(String)
 
     // Public interface for setting up connection
@@ -120,6 +126,10 @@ public abstract class StreamingApi implements ParseListener {
                 e.printStackTrace();
             } // catch
         } // if
+        if (scanner != null && scanner.isAlive()){
+            scanner.interrupt();
+            scanner = null;
+        } // if
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
         if (sql != null) {
@@ -149,11 +159,7 @@ public abstract class StreamingApi implements ParseListener {
             return;
         } // catch
 
-        new ScannerThread() {
-            protected void performTask() {
-                stillStream = false;
-            } // performTask()
-        }.start();
+        scanner.start();
         // System.out.println(Thread.currentThread().getName());
 
         System.out.println("Started");
