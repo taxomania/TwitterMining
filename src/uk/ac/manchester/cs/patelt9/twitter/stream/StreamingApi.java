@@ -94,7 +94,6 @@ public abstract class StreamingApi implements ParseListener {
 
     protected StreamingApi(final String url, final int interval) throws SQLException {
         this(SqlConnector.getInstance(), url, interval);
-        sql = SqlConnector.getInstance();
         scanner = new ScannerThread() {
             protected void performTask() {
                 stillStream = false;
@@ -123,18 +122,24 @@ public abstract class StreamingApi implements ParseListener {
         con.connect();
     } // connect(HttpsURLConnection)
 
+    private boolean isScanner() {
+        return scanner != null;
+    } // isScanner()
+
     public void close() {
-        if (parseThread != null) {
-            try {
-                parseThread.join();
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            } // catch
-            parseThread.removeListener(this);
-        } // if
-        if (scanner != null && scanner.isAlive()) {
-            scanner.interrupt();
-            scanner = null;
+        if (isScanner()) {
+            if (parseThread != null) {
+                try {
+                    parseThread.join();
+                } catch (final InterruptedException e) {
+                    e.printStackTrace();
+                } // catch
+                parseThread.removeListener(this);
+            } // if
+            if (scanner.isAlive()) {
+                scanner.interrupt();
+                scanner = null;
+            } // if
         } // if
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
@@ -163,21 +168,19 @@ public abstract class StreamingApi implements ParseListener {
         jsonReader = new JsonReader(new BufferedReader(new InputStreamReader(con.getInputStream())));
     } // initialiseReader()
 
-    public void streamTweet() {
-        onJsonReadComplete(jp.parse(jsonReader).getAsJsonObject());
+    public StreamParseThread streamTweet() {
+        return onJsonReadComplete(jp.parse(jsonReader).getAsJsonObject());
     } // streamTweet()
 
     public void streamTweets() {
         try {
-            jsonReader = new JsonReader(new BufferedReader(new InputStreamReader(
-                    con.getInputStream())));
+            initialiseReader();
         } catch (final IOException e) {
             e.printStackTrace();
             return;
         } // catch
 
-        final boolean isScanner = scanner != null;
-        if (isScanner) {
+        if (isScanner()) {
             scanner.start();
         } // if
 
@@ -188,20 +191,21 @@ public abstract class StreamingApi implements ParseListener {
             } else if (i == Integer.MAX_VALUE) {
                 i = 1;
             } // else if
-            onJsonReadComplete(jp.parse(jsonReader).getAsJsonObject());
+            streamTweet();
         } // for
 
         // close();
-        if (isScanner) {
+        if (isScanner()) {
             closeSql();
         } // if
     } // streamTweets()
 
-    private void onJsonReadComplete(final JsonObject jo) {
+    private StreamParseThread onJsonReadComplete(final JsonObject jo) {
         // System.out.println(Thread.currentThread().getName());
         parseThread = new StreamParseThread(jo);
         parseThread.addListener(this);
         parseThread.start();
+        return parseThread;
     } // onJsonReadComplete(JsonObject)
 
     protected int addToDb(final Long tweetId, final String screenName, final String tweet,

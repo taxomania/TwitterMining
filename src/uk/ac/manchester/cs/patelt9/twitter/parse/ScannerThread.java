@@ -25,13 +25,14 @@ public abstract class ScannerThread extends Thread {
         close();
     } // run()
 
-    private void close(){
+    private void close() {
         scanner.close();
     } // close()
+
     @Override
     public void interrupt() {
-        super.interrupt();
         performTask();
+        super.interrupt();
     } // close()
 
     protected abstract void performTask();
