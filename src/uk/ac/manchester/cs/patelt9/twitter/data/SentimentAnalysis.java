@@ -17,7 +17,8 @@ import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListe
 import com.alchemyapi.api.AlchemyAPI;
 
 public class SentimentAnalysis implements ParseListener {
-    private static final String DEFAULT_QUERY = "SELECT text, id FROM tweet WHERE sentiment IS NULL LIMIT 30000;";
+    private static final String DEFAULT_QUERY = "SELECT text, id FROM tweet WHERE sentiment IS NULL"
+            + " AND keyword IS NOT NULL LIMIT 30000;";
 
     private final AlchemyAPI api;
     private ResultSet res;

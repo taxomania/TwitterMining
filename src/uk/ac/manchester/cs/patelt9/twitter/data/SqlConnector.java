@@ -145,7 +145,7 @@ public class SqlConnector {
         } // catch
     } // updateSentiment(String, long)
 
-    public synchronized int updateSentimentScore(final String sentiment,
+    public int updateSentimentScore(final String sentiment,
             final String sentimentScore, final long id) {
         try {
             updateSentimentScore.setString(1, sentiment);
