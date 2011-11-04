@@ -24,7 +24,8 @@ public class SqlConnector {
     private PreparedStatement insertUser = null;
     private PreparedStatement insertFilteredTweet = null;
     private PreparedStatement insertTweet = null;
-    private PreparedStatement deleteTweet = null;
+    private PreparedStatement deleteTweetByTweetId = null;
+    private PreparedStatement deleteTweetById = null;
     private PreparedStatement updateSentiment = null;
     private PreparedStatement updateSentimentScore = null;
 
@@ -71,7 +72,8 @@ public class SqlConnector {
                     "?, " + // User_Id
                     "default, default, default);"); // Sentiment, Sentiment_score, Keyword
 
-            deleteTweet = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
+            deleteTweetByTweetId = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
+            deleteTweetById = con.prepareStatement("DELETE FROM tweet WHERE id=?;");
 
             updateSentiment = con.prepareStatement("UPDATE tweet SET sentiment=? WHERE id=?;");
             updateSentimentScore = con.prepareStatement("UPDATE tweet SET sentiment=?, " +
@@ -202,14 +204,22 @@ public class SqlConnector {
         return (i == DB_ERROR || j == DB_ERROR) ? DB_ERROR : i + j;
     } // deleteAll()
 
-    public int deleteTweet(final long tweetId) {
+    public int deleteTweet(final PreparedStatement s, final long id) {
         try {
-            deleteTweet.setLong(1, tweetId);
-            return executeUpdate(deleteTweet) * -1;
+            s.setLong(1, id);
+            return executeUpdate(s) * -1;
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
+    } // deleteTweet(PreparedStatement, long)
+
+    public int deleteTweetById(final long id) {
+        return deleteTweet(deleteTweetById, id);
+    } // deleteTweetById(long)
+
+    public int deleteTweetByTweetId(final long tweetId) {
+        return deleteTweet(deleteTweetByTweetId, tweetId);
     } // deleteTweet(long)
 
     public synchronized void close() {

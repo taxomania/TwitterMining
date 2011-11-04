@@ -59,7 +59,7 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
         sqlThread = new SqlThread() {
             @Override
             protected void performTask() {
-                notifyListeners(sql.deleteTweet(id));
+                notifyListeners(sql.deleteTweetByTweetId(id));
             } // performTask();
         };
         sqlThread.addListener(this);

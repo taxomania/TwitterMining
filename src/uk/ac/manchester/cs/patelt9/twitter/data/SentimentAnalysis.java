@@ -10,14 +10,13 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.SqlThread.SqlTaskCompleteListener;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListener;
 
 import com.alchemyapi.api.AlchemyAPI;
 
-public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener {
+public class SentimentAnalysis implements ParseListener {
     private static final String DEFAULT_QUERY = "SELECT text, id FROM tweet WHERE sentiment IS NULL LIMIT 30000;";
 
     private final AlchemyAPI api;
@@ -26,7 +25,6 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
     private volatile boolean stillAnalyse = true;
     private int count = 0;
     private ScannerThread scanner = null;
-    private SqlThread sqlThread = null;
     private SentimentParseThread parseThread = null;
 
     private static SentimentAnalysis sa = null;
@@ -143,14 +141,6 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
                 scanner = null;
             } // if
         } // if
-        if (sqlThread != null && sqlThread.isAlive()) {
-            try {
-                sqlThread.join();
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            } // catch
-            sqlThread.removeListener(this);
-        } // if
         if (isScanner()) {
             closeSql();
         } // if
@@ -164,45 +154,21 @@ public class SentimentAnalysis implements ParseListener, SqlTaskCompleteListener
         } // if
     } // closeSql()
 
-    private void startSqlThread(){
-        sqlThread.addListener(this);
-        sqlThread.start();
-    } // startSqlThread()
-
     @Override
     public void onParseComplete(final long id, final String sentiment) {
-        sqlThread = new SqlThread() {
-            @Override
-            protected void performTask() {
-                notifyListeners(sql.updateSentiment(sentiment, id));
-            } // performTask();
-        };
-        startSqlThread();
+        System.out.println(sentiment);
+        count += sql.updateSentiment(sentiment, id);
     } // onParseComplete(long, String)
 
     @Override
     public void onParseComplete(final long id, final String sentiment, final String sentimentScore) {
-        sqlThread = new SqlThread() {
-            @Override
-            protected void performTask() {
-                notifyListeners(sql.updateSentimentScore(sentiment, sentimentScore, id));
-            } // performTask();
-        };
-        startSqlThread();
+        System.out.println(sentiment);
+        count += sql.updateSentimentScore(sentiment, sentimentScore, id);
     } // onParseComplete(long, String, String)
 
     private void deleteError(final long id) {
-        sqlThread = new SqlThread() {
-            @Override
-            protected void performTask() {
-                notifyListeners(sql.deleteTweet(id));
-            } // performTask();
-        };
-        startSqlThread();
+        System.out.println(id);
+        count += sql.deleteTweetById(id);
     } // deleteError(long)
 
-    @Override
-    public void onSqlTaskComplete(final int rowsAffected) {
-        count += rowsAffected;
-    } // onSqlTaskComplete(int)
 } // SentimentAnalysis
