@@ -13,6 +13,7 @@ public class InsertKeywordSQLTask extends InsertSQLTask {
 
     @Override
     public int doSqlTask(final SqlConnector sql) {
+        final Tweet tweet = getTweet();
         return sql.insertTweet(tweet.getId(), tweet.getScreenName(), tweet.getTweet(),
                 tweet.getCreatedAt(), tweet.getUserId(), keyword);
     } // doSqlTask(SqlConnector)

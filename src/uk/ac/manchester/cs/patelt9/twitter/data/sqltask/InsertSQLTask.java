@@ -4,11 +4,15 @@ import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 
 public class InsertSQLTask extends SQLTask {
-    protected final Tweet tweet;
+    private final Tweet tweet;
 
     public InsertSQLTask(final Tweet t) {
         tweet = t;
     } // InsertSQLTask(Tweet)
+
+    protected Tweet getTweet(){
+        return tweet;
+    } // getTweet()
 
     @Override
     public int doSqlTask(final SqlConnector sql) {
