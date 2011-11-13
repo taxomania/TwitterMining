@@ -157,18 +157,15 @@ public class SentimentAnalysis implements ParseListener {
 
     @Override
     public void onParseComplete(final long id, final String sentiment) {
-        System.out.println(sentiment);
         count += sql.updateSentiment(sentiment, id);
     } // onParseComplete(long, String)
 
     @Override
     public void onParseComplete(final long id, final String sentiment, final String sentimentScore) {
-        System.out.println(sentiment);
         count += sql.updateSentimentScore(sentiment, sentimentScore, id);
     } // onParseComplete(long, String, String)
 
     private void deleteError(final long id) {
-        System.out.println(id);
         count += sql.deleteTweetById(id);
     } // deleteError(long)
 
