@@ -16,7 +16,7 @@ public class StreamParseThread extends Thread {
     private int objectsParsed;
 
     public StreamParseThread() {
-        this("Parse");
+        this("ParseJson");
     } // StreamParseThread()
 
     public StreamParseThread(final String s) {
@@ -138,4 +138,4 @@ public class StreamParseThread extends Thread {
             return null;
         } // catch
     } // parseCreatedAtForSql(String)
-} // ParseThread
+} // StreamParseThread

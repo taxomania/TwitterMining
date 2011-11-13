@@ -14,8 +14,9 @@ import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SentimentSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SentimentScoreSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
-import uk.ac.manchester.cs.patelt9.twitter.practice.SentimentParseThread;
-import uk.ac.manchester.cs.patelt9.twitter.practice.SentimentParseThread.ParseListener;
+import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentObject;
+import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
+import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListener;
 
 import com.alchemyapi.api.AlchemyAPI;
 
@@ -48,6 +49,8 @@ public class SentimentAnalysis implements ParseListener {
             } // performTask()
         };
         sqlThread = new SQLThread();
+        parseThread = new SentimentParseThread();
+        parseThread.addListener(this);
     } // SentimentAnalysis()
 
     private void setRes(final ResultSet res) {
@@ -70,6 +73,7 @@ public class SentimentAnalysis implements ParseListener {
         System.out.println("Analysing tweet sentiment");
         scanner.start();
         sqlThread.start();
+        parseThread.start();
         try {
             res.beforeFirst();
             while (stillAnalyse && res.next()) {
@@ -101,9 +105,7 @@ public class SentimentAnalysis implements ParseListener {
                         continue;
                     } // else
                 } // catch
-                parseThread = new SentimentParseThread(id, doc);
-                parseThread.addListener(this);
-                parseThread.start();
+                parseThread.addTask(new SentimentObject(id, doc));
             } // while
             close();
         } catch (final SQLException e) {
@@ -113,11 +115,7 @@ public class SentimentAnalysis implements ParseListener {
 
     private void close() {
         if (parseThread != null) {
-            try {
-                parseThread.join();
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            } // catch
+            parseThread.interrupt();
             parseThread.removeListener(this);
         } // if
         if (scanner.isAlive()) {
