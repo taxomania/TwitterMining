@@ -3,6 +3,8 @@ package uk.ac.manchester.cs.patelt9.twitter.stream;
 import java.sql.SQLException;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.sql.InsertKeywordSQLTask;
 
 public class StreamingApiFilter extends StreamingApi {
     // URL for Twitter Streaming API filter; filter by software here
@@ -16,7 +18,6 @@ public class StreamingApiFilter extends StreamingApi {
     protected String keyword = "";
 
     // Singleton lock as you cannot have more than one connection
-    // This may not be needed
     public static StreamingApiFilter getInstance() throws SQLException {
         return getInstance(DEFAULT_KEYWORD);
     } // getInstance()
@@ -67,10 +68,7 @@ public class StreamingApiFilter extends StreamingApi {
     } // StreamingApiFilter(String, int)
 
     @Override
-    protected int addToDb(final Long tweetId, final String screenName, final String tweet,
-            final String createdAt, final Long userId) {
-        return getSqlConnector()
-                .insertTweet(tweetId, screenName, tweet, createdAt, userId, keyword);
-    } // addToDb(Long, String, String, String, Long)
-
+    protected boolean addToDb(final Tweet t) {
+        return getSqlThread().addTask(new InsertKeywordSQLTask(t, keyword));
+    } // addToDb(Tweet)
 } // StreamingApiFilter

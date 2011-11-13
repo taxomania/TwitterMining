@@ -84,7 +84,7 @@ public class SqlConnector {
         } // catch
     } // SqlConnector()
 
-    private synchronized int executeUpdate(final PreparedStatement s) {
+    private int executeUpdate(final PreparedStatement s) {
         try {
             return s.executeUpdate();
         } catch (final MysqlDataTruncation e) {
@@ -178,7 +178,7 @@ public class SqlConnector {
         } // catch
     } // insertTweet(long, String, String, String, long)
 
-    public synchronized int executeUpdate(final String sqlStatement) {
+    public int executeUpdate(final String sqlStatement) {
         try {
             return con.createStatement().executeUpdate(sqlStatement);
         } catch (final MySQLIntegrityConstraintViolationException e) {
@@ -222,7 +222,7 @@ public class SqlConnector {
         return deleteTweet(deleteTweetByTweetId, tweetId);
     } // deleteTweet(long)
 
-    public synchronized void close() {
+    public void close() {
         if (con != null) {
             try {
                 con.close();

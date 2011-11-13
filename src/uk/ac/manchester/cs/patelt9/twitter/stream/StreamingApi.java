@@ -17,6 +17,8 @@ import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlThread.SqlTaskCompleteListener;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.sql.InsertSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.sql.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
@@ -40,23 +42,23 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
     private StreamParseThread parseThread = null;
     private SqlThread sqlThread = null;
     private ScannerThread scanner = null;
+    private SQLThread sqlThread2 = null;
 
     @Override
     public void onParseComplete(final Tweet t) {
-        sqlThread = new SqlThread() {
-            @Override
-            protected void performTask() {
-                notifyListeners(addToDb(t.getId(), t.getScreenName(), t.getTweet(),
-                        t.getCreatedAt(), t.getUserId()));
-            } // performTask();
-        };
-        sqlThread.addListener(this);
-        sqlThread.start();
+        addToDb(t);
+        /*
+         * sqlThread = new SqlThread() {
+         *
+         * @Override protected void performTask() { notifyListeners(addToDb(t.getId(),
+         * t.getScreenName(), t.getTweet(), t.getCreatedAt(), t.getUserId())); } // performTask();
+         * }; sqlThread.addListener(this); sqlThread.start();
+         */
     } // onParseComplete(Tweet)
 
     @Override
     public void onParseComplete(final long id) {
-        sqlThread = new SqlThread() {
+    /*    sqlThread = new SqlThread() {
             @Override
             protected void performTask() {
                 notifyListeners(sql.deleteTweetByTweetId(id));
@@ -64,7 +66,7 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
         };
         sqlThread.addListener(this);
         sqlThread.start();
-    } // onParseComplete(long)
+    */} // onParseComplete(long)
 
     @Override
     public void onSqlTaskComplete(final int rowsAffected) {
@@ -78,6 +80,10 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
     protected SqlConnector getSqlConnector() {
         return sql;
     } // getSqlConnector()
+
+    protected SQLThread getSqlThread(){
+        return sqlThread2;
+    } // getSqlThread
 
     protected HttpsURLConnection getConnection() {
         return con;
@@ -113,7 +119,12 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
     } // StreamingApi(SqlConnector, String, int)
 
     protected StreamingApi(final String url, final int interval) throws SQLException {
-        this(SqlConnector.getInstance(), url, interval);
+        //this(SqlConnector.getInstance(), url, interval);
+        counterInterval = interval;
+        urlString = url;
+        jp = new JsonParser();
+        sqlThread2 = new SQLThread();
+        sqlThread2.start();
         scanner = new ScannerThread() {
             protected void performTask() {
                 stillStream = false;
@@ -160,7 +171,11 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
                 scanner.interrupt();
                 scanner = null;
             } // if
-            closeSql();
+            if (sqlThread2 != null){
+                sqlThread2.interrupt();
+                sqlThread2 = null;
+            } // if
+       //     closeSql();
         } // if
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
@@ -231,6 +246,10 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
         parseThread.start();
         return parseThread;
     } // onJsonReadComplete(JsonObject)
+
+    protected boolean addToDb(final Tweet t) {
+        return sqlThread2.addTask(new InsertSQLTask(t));
+    } // addToDb(Tweet)
 
     protected int addToDb(final Long tweetId, final String screenName, final String tweet,
             final String createdAt, final Long userId) {
