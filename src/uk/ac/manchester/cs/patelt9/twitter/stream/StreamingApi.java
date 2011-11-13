@@ -17,11 +17,10 @@ import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetIdSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.InsertSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread;
+import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread.ParseListener;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
-import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
-import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
@@ -35,7 +34,7 @@ public abstract class StreamingApi implements ParseListener {
     private HttpsURLConnection con = null;
     private JsonReader jsonReader = null;
     private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
-    private StreamParseThread parseThread = null;
+    private ParseThread parseThread = null;
     private ScannerThread scanner = null;
     private SQLThread sqlThread = null;
 
@@ -88,6 +87,8 @@ public abstract class StreamingApi implements ParseListener {
         urlString = url;
         jp = new JsonParser();
         sqlThread = new SQLThread();
+        parseThread = new ParseThread();
+        parseThread.addListener(this);
         scanner = new ScannerThread() {
             protected void performTask() {
                 stillStream = false;
@@ -118,11 +119,7 @@ public abstract class StreamingApi implements ParseListener {
 
     private void close() {
         if (parseThread != null) {
-            try {
-                parseThread.join();
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            } // catch
+            parseThread.interrupt();
             parseThread.removeListener(this);
         } // if
         if (scanner.isAlive()) {
@@ -153,10 +150,6 @@ public abstract class StreamingApi implements ParseListener {
         jsonReader = new JsonReader(new BufferedReader(new InputStreamReader(con.getInputStream())));
     } // initialiseReader()
 
-    public StreamParseThread streamTweet() {
-        return onJsonReadComplete(jp.parse(jsonReader).getAsJsonObject());
-    } // streamTweet()
-
     public void streamTweets() {
         try {
             initialiseReader();
@@ -167,6 +160,7 @@ public abstract class StreamingApi implements ParseListener {
 
         scanner.start();
         sqlThread.start();
+        parseThread.start();
 
         System.out.println("Started");
         for (int i = 1; stillStream; i++) {
@@ -175,18 +169,11 @@ public abstract class StreamingApi implements ParseListener {
             } else if (i == Integer.MAX_VALUE) {
                 i = 1;
             } // else if
-            streamTweet();
+            parseThread.addTask(jp.parse(jsonReader).getAsJsonObject());
         } // for
 
         close();
     } // streamTweets()
-
-    private StreamParseThread onJsonReadComplete(final JsonObject jo) {
-        parseThread = new StreamParseThread(jo);
-        parseThread.addListener(this);
-        parseThread.start();
-        return parseThread;
-    } // onJsonReadComplete(JsonObject)
 
     protected boolean addToDb(final Tweet t) {
         return sqlThread.addTask(new InsertSQLTask(t));
