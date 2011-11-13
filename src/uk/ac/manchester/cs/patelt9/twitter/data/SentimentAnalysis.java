@@ -14,8 +14,8 @@ import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SentimentSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SentimentScoreSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
-import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
-import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListener;
+import uk.ac.manchester.cs.patelt9.twitter.practice.SentimentParseThread;
+import uk.ac.manchester.cs.patelt9.twitter.practice.SentimentParseThread.ParseListener;
 
 import com.alchemyapi.api.AlchemyAPI;
 

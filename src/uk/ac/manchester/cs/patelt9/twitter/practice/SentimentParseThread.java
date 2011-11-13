@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.parse;
+package uk.ac.manchester.cs.patelt9.twitter.practice;
 
 import java.util.HashSet;
 import java.util.Set;
