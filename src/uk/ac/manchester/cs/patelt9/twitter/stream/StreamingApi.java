@@ -28,14 +28,13 @@ import com.google.gson.stream.JsonReader;
 public abstract class StreamingApi implements ParseListener {
     private static String userPassword = null, encoding = null;
 
-    private int count = 0;
     private final String urlString;
     private final int counterInterval;
     private final JsonParser jp;
-    private HttpsURLConnection con = null;
-    private volatile JsonReader jsonReader = null;
-    private volatile boolean stillStream = true;
 
+    private HttpsURLConnection con = null;
+    private JsonReader jsonReader = null;
+    private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
     private StreamParseThread parseThread = null;
     private ScannerThread scanner = null;
     private SQLThread sqlThread = null;
@@ -49,11 +48,6 @@ public abstract class StreamingApi implements ParseListener {
     public void onParseComplete(final long id) {
         sqlThread.addTask(new DeleteSQLTask(id));
     } // onParseComplete(long)
-
-    // @Override
-    // public void onSqlTaskComplete(final int rowsAffected) {
-    // count += rowsAffected;
-    // } // onSqlTaskComplete(int)
 
     static {
         getUserPass();
@@ -122,30 +116,23 @@ public abstract class StreamingApi implements ParseListener {
         con.connect();
     } // connect(HttpsURLConnection)
 
-    private boolean isScanner() {
-        return scanner != null;
-    } // isScanner()
-
     public void close() {
-        if (isScanner()) {
-            if (parseThread != null) {
-                try {
-                    parseThread.join();
-                } catch (final InterruptedException e) {
-                    e.printStackTrace();
-                } // catch
-                parseThread.removeListener(this);
-            } // if
-            if (scanner.isAlive()) {
-                scanner.interrupt();
-                scanner = null;
-            } // if
-            if (sqlThread != null) {
-                sqlThread.interrupt();
-                sqlThread = null;
-            } // if
+        if (parseThread != null) {
+            try {
+                parseThread.join();
+            } catch (final InterruptedException e) {
+                e.printStackTrace();
+            } // catch
+            parseThread.removeListener(this);
         } // if
-        System.out.println(Integer.toString(count) + " tweets added");
+        if (scanner.isAlive()) {
+            scanner.interrupt();
+            scanner = null;
+        } // if
+        if (sqlThread != null) {
+            sqlThread.interrupt();
+            sqlThread = null;
+        } // if
         disconnect();
     } // close()
 
@@ -178,10 +165,8 @@ public abstract class StreamingApi implements ParseListener {
             return;
         } // catch
 
-        if (isScanner()) {
-            scanner.start();
-            sqlThread.start();
-        } // if
+        scanner.start();
+        sqlThread.start();
 
         System.out.println("Started");
         for (int i = 1; stillStream; i++) {
