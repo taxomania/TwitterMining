@@ -15,7 +15,7 @@ import javax.net.ssl.HttpsURLConnection;
 import sun.misc.BASE64Encoder;
 import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetIdSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.InsertSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
@@ -46,7 +46,7 @@ public abstract class StreamingApi implements ParseListener {
 
     @Override
     public void onParseComplete(final long id) {
-        sqlThread.addTask(new DeleteSQLTask(id));
+        sqlThread.addTask(new DeleteTweetIdSQLTask(id));
     } // onParseComplete(long)
 
     static {
@@ -116,7 +116,7 @@ public abstract class StreamingApi implements ParseListener {
         con.connect();
     } // connect(HttpsURLConnection)
 
-    public void close() {
+    private void close() {
         if (parseThread != null) {
             try {
                 parseThread.join();
