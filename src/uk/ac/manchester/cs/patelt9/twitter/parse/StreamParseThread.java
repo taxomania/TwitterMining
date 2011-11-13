@@ -11,18 +11,18 @@ import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 
 import com.google.gson.JsonObject;
 
-public class ParseThread extends Thread {
+public class StreamParseThread extends Thread {
     private final List<JsonObject> parseList = new ArrayList<JsonObject>();
     private int objectsParsed;
 
-    public ParseThread() {
+    public StreamParseThread() {
         this("Parse");
-    } // SQLThread()
+    } // StreamParseThread()
 
-    public ParseThread(final String s) {
+    public StreamParseThread(final String s) {
         super(s);
         objectsParsed = 0;
-    } // SQLThread(String)
+    } // StreamParseThread(String)
 
     @Override
     public final void run() {

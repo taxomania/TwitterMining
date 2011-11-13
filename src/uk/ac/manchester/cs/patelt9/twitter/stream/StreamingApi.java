@@ -17,8 +17,8 @@ import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetIdSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.InsertSQLTask;
-import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread;
-import uk.ac.manchester.cs.patelt9.twitter.parse.ParseThread.ParseListener;
+import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
+import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 
 import com.google.gson.JsonParser;
@@ -34,7 +34,7 @@ public abstract class StreamingApi implements ParseListener {
     private HttpsURLConnection con = null;
     private JsonReader jsonReader = null;
     private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
-    private ParseThread parseThread = null;
+    private StreamParseThread parseThread = null;
     private ScannerThread scanner = null;
     private SQLThread sqlThread = null;
 
@@ -87,7 +87,7 @@ public abstract class StreamingApi implements ParseListener {
         urlString = url;
         jp = new JsonParser();
         sqlThread = new SQLThread();
-        parseThread = new ParseThread();
+        parseThread = new StreamParseThread();
         parseThread.addListener(this);
         scanner = new ScannerThread() {
             protected void performTask() {
