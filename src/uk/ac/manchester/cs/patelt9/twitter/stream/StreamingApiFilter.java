@@ -2,9 +2,8 @@ package uk.ac.manchester.cs.patelt9.twitter.stream;
 
 import java.sql.SQLException;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.data.sql.InsertKeywordSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.InsertKeywordSQLTask;
 
 public class StreamingApiFilter extends StreamingApi {
     // URL for Twitter Streaming API filter; filter by software here
@@ -29,22 +28,6 @@ public class StreamingApiFilter extends StreamingApi {
         return stream;
     } // getInstance(String)
 
-    public static StreamingApiFilter getInstance(final SqlConnector sql) {
-        return getInstance(sql, DEFAULT_KEYWORD);
-    } // getInstance(SqlConnector)
-
-    public static StreamingApiFilter getInstance(final SqlConnector sql, final String filter) {
-        if (stream == null) {
-            stream = new StreamingApiFilter(sql, filter);
-        } // if
-        return stream;
-    } // getInstance(SqlConnector, String)
-
-    private StreamingApiFilter(final SqlConnector sql, final String filter) {
-        super(sql, TWITTER_STREAM_API + DEFAULT_QUERY + filter, COUNTER_INTERVAL);
-        keyword = filter;
-    } // StreamingApiFilter(SqlConnector, String)
-
     private StreamingApiFilter(final String filter) throws SQLException {
         this(TWITTER_STREAM_API + DEFAULT_QUERY + filter, COUNTER_INTERVAL);
         keyword = filter;
@@ -54,14 +37,6 @@ public class StreamingApiFilter extends StreamingApi {
     protected StreamingApiFilter(final int interval) throws SQLException {
         this(TWITTER_STREAM_API, interval);
     } // StreamingApiFilter(int)
-
-    protected StreamingApiFilter(final SqlConnector sql, final int interval) {
-        this(sql, TWITTER_STREAM_API, interval);
-    } // StreamingApiFilter(SqlConnector, int)
-
-    private StreamingApiFilter(final SqlConnector sql, final String url, final int interval) {
-        super(sql, url, interval);
-    } // StreamingApiFilter(SqlConnector, String, int)
 
     private StreamingApiFilter(final String url, final int interval) throws SQLException {
         super(url, interval);

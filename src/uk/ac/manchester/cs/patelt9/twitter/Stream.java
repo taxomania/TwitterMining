@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApi;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilterPost;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiSample;
@@ -22,19 +21,7 @@ public class Stream {
         } // else
     } // getStream(String[])
 
-    public static StreamingApi getStream(final String[] args, final SqlConnector sql) {
-        if (args != null && args.length != 0) {
-            if (args[0].equals("sample")) {
-                return StreamingApiSample.getInstance(sql);
-            } else {
-                return StreamingApiFilterPost.getInstance(sql, args);
-            } // else
-        } else {
-            return StreamingApiFilterPost.getInstance(sql);
-        } // else
-    } // getStream(String[], SqlConnector)
-
-    public static void main(final String[] args) {
+   public static void main(final String[] args) {
         final StreamingApi stream;
         try {
             stream = getStream(args);

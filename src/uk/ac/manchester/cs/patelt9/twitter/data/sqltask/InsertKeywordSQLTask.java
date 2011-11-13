@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.data.sql;
+package uk.ac.manchester.cs.patelt9.twitter.data.sqltask;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
@@ -12,7 +12,7 @@ public class InsertKeywordSQLTask extends InsertSQLTask {
     } // InsertKeywordSQLTask(Tweet, String)
 
     @Override
-    protected int doSqlTask(final SqlConnector sql) {
+    public int doSqlTask(final SqlConnector sql) {
         return sql.insertTweet(tweet.getId(), tweet.getScreenName(), tweet.getTweet(),
                 tweet.getCreatedAt(), tweet.getUserId(), keyword);
     } // doSqlTask(SqlConnector)

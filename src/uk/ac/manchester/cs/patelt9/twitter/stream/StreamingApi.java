@@ -13,12 +13,10 @@ import java.sql.SQLException;
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
-import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
-import uk.ac.manchester.cs.patelt9.twitter.data.SqlThread;
-import uk.ac.manchester.cs.patelt9.twitter.data.SqlThread.SqlTaskCompleteListener;
+import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.data.sql.InsertSQLTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.sql.SQLThread;
+import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.InsertSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
@@ -27,7 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-public abstract class StreamingApi implements ParseListener, SqlTaskCompleteListener {
+public abstract class StreamingApi implements ParseListener {
     private static String userPassword = null, encoding = null;
 
     private int count = 0;
@@ -35,55 +33,35 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
     private final int counterInterval;
     private final JsonParser jp;
     private HttpsURLConnection con = null;
-    private volatile SqlConnector sql = null;
     private volatile JsonReader jsonReader = null;
     private volatile boolean stillStream = true;
 
     private StreamParseThread parseThread = null;
-    private SqlThread sqlThread = null;
     private ScannerThread scanner = null;
-    private SQLThread sqlThread2 = null;
+    private SQLThread sqlThread = null;
 
     @Override
     public void onParseComplete(final Tweet t) {
         addToDb(t);
-        /*
-         * sqlThread = new SqlThread() {
-         *
-         * @Override protected void performTask() { notifyListeners(addToDb(t.getId(),
-         * t.getScreenName(), t.getTweet(), t.getCreatedAt(), t.getUserId())); } // performTask();
-         * }; sqlThread.addListener(this); sqlThread.start();
-         */
     } // onParseComplete(Tweet)
 
     @Override
     public void onParseComplete(final long id) {
-    /*    sqlThread = new SqlThread() {
-            @Override
-            protected void performTask() {
-                notifyListeners(sql.deleteTweetByTweetId(id));
-            } // performTask();
-        };
-        sqlThread.addListener(this);
-        sqlThread.start();
-    */} // onParseComplete(long)
+        sqlThread.addTask(new DeleteSQLTask(id));
+    } // onParseComplete(long)
 
-    @Override
-    public void onSqlTaskComplete(final int rowsAffected) {
-        count += rowsAffected;
-    } // onSqlTaskComplete(int)
+    // @Override
+    // public void onSqlTaskComplete(final int rowsAffected) {
+    // count += rowsAffected;
+    // } // onSqlTaskComplete(int)
 
     static {
         getUserPass();
     } // static
 
-    protected SqlConnector getSqlConnector() {
-        return sql;
-    } // getSqlConnector()
-
-    protected SQLThread getSqlThread(){
-        return sqlThread2;
-    } // getSqlThread
+    protected SQLThread getSqlThread() {
+        return sqlThread;
+    } // getSqlThread()
 
     protected HttpsURLConnection getConnection() {
         return con;
@@ -111,20 +89,11 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
         } // finally
     } // getUserPass()
 
-    protected StreamingApi(final SqlConnector sql, final String url, final int interval) {
-        this.sql = sql;
-        counterInterval = interval;
-        urlString = url;
-        jp = new JsonParser();
-    } // StreamingApi(SqlConnector, String, int)
-
     protected StreamingApi(final String url, final int interval) throws SQLException {
-        //this(SqlConnector.getInstance(), url, interval);
         counterInterval = interval;
         urlString = url;
         jp = new JsonParser();
-        sqlThread2 = new SQLThread();
-        sqlThread2.start();
+        sqlThread = new SQLThread();
         scanner = new ScannerThread() {
             protected void performTask() {
                 stillStream = false;
@@ -171,28 +140,14 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
                 scanner.interrupt();
                 scanner = null;
             } // if
-            if (sqlThread2 != null){
-                sqlThread2.interrupt();
-                sqlThread2 = null;
+            if (sqlThread != null) {
+                sqlThread.interrupt();
+                sqlThread = null;
             } // if
-       //     closeSql();
         } // if
         System.out.println(Integer.toString(count) + " tweets added");
         disconnect();
     } // close()
-
-    private void closeSql() {
-        if (sql != null) {
-            if (sqlThread != null && sqlThread.isAlive()) {
-                try {
-                    sqlThread.join();
-                } catch (final InterruptedException e) {
-                    e.printStackTrace();
-                } // catch
-            } // if
-            sql.close();
-        } // if
-    } // closeSql()
 
     private void disconnect() {
         if (jsonReader != null) {
@@ -225,6 +180,7 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
 
         if (isScanner()) {
             scanner.start();
+            sqlThread.start();
         } // if
 
         System.out.println("Started");
@@ -248,11 +204,6 @@ public abstract class StreamingApi implements ParseListener, SqlTaskCompleteList
     } // onJsonReadComplete(JsonObject)
 
     protected boolean addToDb(final Tweet t) {
-        return sqlThread2.addTask(new InsertSQLTask(t));
+        return sqlThread.addTask(new InsertSQLTask(t));
     } // addToDb(Tweet)
-
-    protected int addToDb(final Long tweetId, final String screenName, final String tweet,
-            final String createdAt, final Long userId) {
-        return sql.insertTweet(tweetId, screenName, tweet, createdAt, userId);
-    } // addToDb(Long, String, String, String, Long)
 } // StreamingApi

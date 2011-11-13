@@ -1,47 +1,58 @@
 package uk.ac.manchester.cs.patelt9.twitter.data;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class SqlThread extends Thread {
-    public SqlThread() {
+import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SQLTask;
+
+public class SQLThread extends Thread {
+    private final SqlConnector sql;
+    private int affectedRows;
+    private List<SQLTask> taskList = new ArrayList<SQLTask>();
+
+    public SQLThread() throws SQLException {
         this("SQL");
-    } // SqlThread()
+    } // SQLThread()
 
-    public SqlThread(final String s) {
+    public SQLThread(final String s) throws SQLException {
         super(s);
-    } // SqlThread(String)
-
-    public interface SqlTaskCompleteListener {
-        void onSqlTaskComplete(int rowsAffected);
-    } // ParseListener
-
-    private static final Set<SqlTaskCompleteListener> listeners = new HashSet<SqlTaskCompleteListener>();
-
-    protected final void notifyListeners(final int rowsAffected) {
-        synchronized (listeners) {
-            for (final SqlTaskCompleteListener listener : listeners) {
-                listener.onSqlTaskComplete(rowsAffected);
-            } // for
-        } // synchronized
-    } // notifyListeners(int)
-
-    public final void addListener(final SqlTaskCompleteListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        } // synchronized
-    } // addListener(SqlTaskCompleteListener)
-
-    public final void removeListener(final SqlTaskCompleteListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        } // synchronized
-    } // removeListener(SqlTaskCompleteListener)
+        sql = SqlConnector.getInstance();
+        affectedRows = 0;
+    } // SQLThread(String)
 
     @Override
     public final void run() {
-        performTask();
+        while (!isInterrupted()) {
+            try {
+                synchronized (taskList) {
+                    performTask();
+                } // synchronized
+            } catch (final IndexOutOfBoundsException e) {
+                continue;
+            } // catch
+        } // while
     } // run()
 
-    protected abstract void performTask();
-} // SqlThread
+    @Override
+    public void interrupt() {
+        synchronized (taskList) {
+            while (!taskList.isEmpty()) {
+                performTask();
+            } // while
+        } // synchronized
+        sql.close();
+        System.out.println(affectedRows + " rows affected");
+        super.interrupt();
+    } // interrupt()
+
+    protected void performTask() {
+        affectedRows += taskList.remove(0).doSqlTask(sql);
+    } // performTask()
+
+    public boolean addTask(final SQLTask task) {
+        synchronized (taskList) {
+            return taskList.add(task);
+        } // synchronized
+    } // addTask(SQLTask)
+} // SQLThread
