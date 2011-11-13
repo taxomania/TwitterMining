@@ -8,8 +8,8 @@ import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SQLTask;
 
 public class SQLThread extends Thread {
     private final SqlConnector sql;
+    private final List<SQLTask> taskList = new ArrayList<SQLTask>();
     private int affectedRows;
-    private List<SQLTask> taskList = new ArrayList<SQLTask>();
 
     public SQLThread() throws SQLException {
         this("SQL");
