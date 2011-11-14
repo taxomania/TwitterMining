@@ -96,7 +96,12 @@ public class StreamParseThread extends Thread {
 
     private int parse(final JsonObject jo) {
         if (isTweetJsonObject(jo)) {
-            notifyListeners(getTweet(jo));
+            final Tweet tweet = getTweet(jo);
+            if (tweet != null) {
+                notifyListeners(tweet);
+            } else {
+                System.out.println("Not English");
+            } // else
         } else {
             notifyListeners(getDeleteStatusId(jo));
         } // else
@@ -113,7 +118,12 @@ public class StreamParseThread extends Thread {
 
     private Tweet getTweet(final JsonObject jo) {
         final JsonObject user = jo.getAsJsonObject("user");
+        final String lang = user.getAsJsonPrimitive("lang").getAsString();
+        if (!("en".equals(lang))){
+            return null;
+        } // if
         final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
+
         final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
         final String tweet = jo.getAsJsonPrimitive("text").getAsString();
         final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
