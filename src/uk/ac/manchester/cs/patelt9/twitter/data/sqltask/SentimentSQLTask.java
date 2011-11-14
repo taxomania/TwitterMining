@@ -2,7 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data.sqltask;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 
-public class SentimentSQLTask extends SQLTask {
+public class SentimentSQLTask implements SQLTask {
     private final long id;
     private final String sentiment;
 

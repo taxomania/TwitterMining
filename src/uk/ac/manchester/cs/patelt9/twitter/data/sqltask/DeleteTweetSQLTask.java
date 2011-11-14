@@ -2,7 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data.sqltask;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 
-public class DeleteTweetSQLTask extends SQLTask {
+public class DeleteTweetSQLTask implements SQLTask {
     private final long id;
 
     public DeleteTweetSQLTask(final long id) {

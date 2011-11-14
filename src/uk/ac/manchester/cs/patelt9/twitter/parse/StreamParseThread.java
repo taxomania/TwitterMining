@@ -99,9 +99,7 @@ public class StreamParseThread extends Thread {
             final Tweet tweet = getTweet(jo);
             if (tweet != null) {
                 notifyListeners(tweet);
-            } else {
-                System.out.println("Not English");
-            } // else
+            } // if
         } else {
             notifyListeners(getDeleteStatusId(jo));
         } // else

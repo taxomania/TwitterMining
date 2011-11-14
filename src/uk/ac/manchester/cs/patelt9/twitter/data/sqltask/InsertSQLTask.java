@@ -3,7 +3,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data.sqltask;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 
-public class InsertSQLTask extends SQLTask {
+public class InsertSQLTask implements SQLTask {
     private final Tweet tweet;
 
     public InsertSQLTask(final Tweet t) {
