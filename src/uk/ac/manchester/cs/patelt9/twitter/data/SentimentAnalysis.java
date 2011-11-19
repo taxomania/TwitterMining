@@ -21,8 +21,14 @@ import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListe
 import com.alchemyapi.api.AlchemyAPI;
 
 public class SentimentAnalysis implements ParseListener {
+    // @formatter:off
     private static final String DEFAULT_QUERY = "SELECT text, id FROM tweet WHERE sentiment IS NULL"
-            + " AND keyword IS NOT NULL LIMIT 30000;";
+            + " AND keyword"
+            + " IS NOT NULL"
+            // + " = 'app,program,software,windows,osx,mac'"
+            + " LIMIT 30000;";
+            // + " AND tweet_id = '131420971264516096';";
+    // @formatter:on
 
     private final AlchemyAPI api;
     private ResultSet res;
@@ -118,7 +124,7 @@ public class SentimentAnalysis implements ParseListener {
             parseThread.interrupt();
             parseThread.removeListener(this);
         } // if
-        if (scanner.isAlive()) {
+        if (scanner != null) {
             scanner.interrupt();
             scanner = null;
         } // if
