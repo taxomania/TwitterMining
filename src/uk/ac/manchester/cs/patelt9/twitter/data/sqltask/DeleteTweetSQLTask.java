@@ -7,15 +7,11 @@ public class DeleteTweetSQLTask implements SQLTask {
 
     public DeleteTweetSQLTask(final long id) {
         this.id = id;
-    } // DeleteSQLTask(long)
-
-    public long getId() {
-        return id;
-    } // getId()
+    } // DeleteTweetIdSQLTask(long)
 
     @Override
     public int doSqlTask(final SqlConnector sql) {
-        return sql.deleteTweetById(id);
+        return sql.deleteTweet(id);
     } // doSqlTask(SqlConnector)
 
     @Override
@@ -23,4 +19,4 @@ public class DeleteTweetSQLTask implements SQLTask {
         return Long.toString(id);
     } // toString()
 
-} // DeleteTweetSQLTask
+} // DeleteTweetIdSQLTask

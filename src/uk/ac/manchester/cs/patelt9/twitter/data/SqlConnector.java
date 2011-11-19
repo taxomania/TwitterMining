@@ -25,7 +25,6 @@ public class SqlConnector {
     private PreparedStatement insertFilteredTweet = null;
     private PreparedStatement insertTweet = null;
     private PreparedStatement deleteTweetByTweetId = null;
-    private PreparedStatement deleteTweetById = null;
     private PreparedStatement updateSentiment = null;
     private PreparedStatement updateSentimentScore = null;
 
@@ -73,7 +72,6 @@ public class SqlConnector {
                     "default, default, default);"); // Sentiment, Sentiment_score, Keyword
 
             deleteTweetByTweetId = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
-            deleteTweetById = con.prepareStatement("DELETE FROM tweet WHERE id=?;");
 
             updateSentiment = con.prepareStatement("UPDATE tweet SET sentiment=? WHERE id=?;");
             updateSentimentScore = con.prepareStatement("UPDATE tweet SET sentiment=?, " +
@@ -145,8 +143,8 @@ public class SqlConnector {
         } // catch
     } // updateSentiment(String, long)
 
-    public int updateSentimentScore(final String sentiment,
-            final String sentimentScore, final long id) {
+    public int updateSentimentScore(final String sentiment, final String sentimentScore,
+            final long id) {
         try {
             updateSentimentScore.setString(1, sentiment);
             updateSentimentScore.setDouble(2, Double.parseDouble(sentimentScore));
@@ -194,32 +192,20 @@ public class SqlConnector {
         return con.createStatement().executeQuery(sqlStatement);
     } // executeQuery(String)
 
-    public int deleteError() {
-        return executeUpdate("DELETE FROM tweet WHERE sentiment='error';");
-    } // deleteError()
-
     public int deleteAll() {
         final int i = executeUpdate("DELETE FROM tweet");
         final int j = executeUpdate("DELETE FROM user");
         return (i == DB_ERROR || j == DB_ERROR) ? DB_ERROR : i + j;
     } // deleteAll()
 
-    public int deleteTweet(final PreparedStatement s, final long id) {
+    public int deleteTweet(final long tweetId) {
         try {
-            s.setLong(1, id);
-            return executeUpdate(s) * -1;
+            deleteTweetByTweetId.setLong(1, tweetId);
+            return executeUpdate(deleteTweetByTweetId) * -1;
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // deleteTweet(PreparedStatement, long)
-
-    public int deleteTweetById(final long id) {
-        return deleteTweet(deleteTweetById, id);
-    } // deleteTweetById(long)
-
-    public int deleteTweetByTweetId(final long tweetId) {
-        return deleteTweet(deleteTweetByTweetId, tweetId);
     } // deleteTweet(long)
 
     public void close() {

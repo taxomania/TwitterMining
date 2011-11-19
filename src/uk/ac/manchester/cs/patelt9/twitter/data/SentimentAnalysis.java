@@ -22,7 +22,7 @@ import com.alchemyapi.api.AlchemyAPI;
 
 public class SentimentAnalysis implements ParseListener {
     // @formatter:off
-    private static final String DEFAULT_QUERY = "SELECT text, id FROM tweet WHERE sentiment IS NULL"
+    private static final String DEFAULT_QUERY = "SELECT text, tweet_id FROM tweet WHERE sentiment IS NULL"
             + " AND keyword"
             + " IS NOT NULL"
             // + " = 'app,program,software,windows,osx,mac'"
