@@ -45,19 +45,20 @@ public class MongoConnector {
         } // catch
     } // main(String[])
 
-    public int insertUser(final long id, final String name) {
+    public DBObject insertUser(final long id, final String name) {
         final BasicDBObject user = new BasicDBObject();
         user.put("user_id", id);
         user.put("username", name);
-        return userCollection.insert(user).getN();
+        userCollection.insert(user);
+        return user;
     } // insertUser(long, String)
 
     public int insertTweet(final Tweet t) {
         final long userId = t.getUserId();
         final String username = t.getScreenName();
-        final DBObject user = userCollection.findOne(new BasicDBObject("username", username));
+        DBObject user = userCollection.findOne(new BasicDBObject("username", username));
         if (user == null) {
-            insertUser(userId, username);
+            user = insertUser(userId, username);
         } // if
         final BasicDBObject tweet = new BasicDBObject();
         tweet.put("tweet_id", t.getId());

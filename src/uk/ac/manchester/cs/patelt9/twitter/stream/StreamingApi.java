@@ -8,21 +8,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.SQLException;
+import java.net.UnknownHostException;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
-import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
+import uk.ac.manchester.cs.patelt9.twitter.data.MongoThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetSQLTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.InsertSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.mongotask.DeleteTweetMongoTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.mongotask.InsertMongoTask;
+import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
-import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import com.mongodb.MongoException;
 
 public abstract class StreamingApi implements ParseListener {
     private static String userPassword = null, encoding = null;
@@ -36,25 +37,21 @@ public abstract class StreamingApi implements ParseListener {
     private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
     private StreamParseThread parseThread = null;
     private ScannerThread scanner = null;
-    private SQLThread sqlThread = null;
+    private MongoThread mongoThread = null;
 
     @Override
     public void onParseComplete(final Tweet t) {
-        addToDb(t);
+        mongoThread.addTask(new InsertMongoTask(t));
     } // onParseComplete(Tweet)
 
     @Override
     public void onParseComplete(final long id) {
-        sqlThread.addTask(new DeleteTweetSQLTask(id));
+        mongoThread.addTask(new DeleteTweetMongoTask(id));
     } // onParseComplete(long)
 
     static {
         getUserPass();
     } // static
-
-    protected SQLThread getSqlThread() {
-        return sqlThread;
-    } // getSqlThread()
 
     protected HttpsURLConnection getConnection() {
         return con;
@@ -82,11 +79,12 @@ public abstract class StreamingApi implements ParseListener {
         } // finally
     } // getUserPass()
 
-    protected StreamingApi(final String url, final int interval) throws SQLException {
+    protected StreamingApi(final String url, final int interval) throws MongoException,
+            UnknownHostException {
         counterInterval = interval;
         urlString = url;
         jp = new JsonParser();
-        sqlThread = new SQLThread();
+        mongoThread = new MongoThread();
         parseThread = new StreamParseThread();
         parseThread.addListener(this);
         scanner = new ScannerThread() {
@@ -126,9 +124,9 @@ public abstract class StreamingApi implements ParseListener {
             scanner.interrupt();
             scanner = null;
         } // if
-        if (sqlThread != null) {
-            sqlThread.interrupt();
-            sqlThread = null;
+        if (mongoThread != null) {
+            mongoThread.interrupt();
+            mongoThread = null;
         } // if
         disconnect();
     } // close()
@@ -159,7 +157,7 @@ public abstract class StreamingApi implements ParseListener {
         } // catch
 
         scanner.start();
-        sqlThread.start();
+        mongoThread.start();
         parseThread.start();
 
         System.out.println("Started");
@@ -174,8 +172,4 @@ public abstract class StreamingApi implements ParseListener {
 
         close();
     } // streamTweets()
-
-    protected boolean addToDb(final Tweet t) {
-        return sqlThread.addTask(new InsertSQLTask(t));
-    } // addToDb(Tweet)
 } // StreamingApi

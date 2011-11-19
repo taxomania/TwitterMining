@@ -2,9 +2,11 @@ package uk.ac.manchester.cs.patelt9.twitter.stream;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.net.UnknownHostException;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import com.mongodb.MongoException;
 
 public class StreamingApiFilterPost extends StreamingApiFilter {
     private static final int COUNTER_INTERVAL = 200;
@@ -12,18 +14,20 @@ public class StreamingApiFilterPost extends StreamingApiFilter {
 
     private static StreamingApiFilterPost stream = null;
 
-    public static StreamingApiFilterPost getInstance(final String[] keywords) throws SQLException {
+    public static StreamingApiFilterPost getInstance(final String[] keywords)
+            throws MongoException, UnknownHostException {
         if (stream == null) {
             stream = new StreamingApiFilterPost(keywords);
         } // if
         return stream;
     } // getInstance(String[])
 
-    public static StreamingApiFilterPost getInstance() throws SQLException {
+    public static StreamingApiFilterPost getInstance() throws MongoException, UnknownHostException {
         return getInstance(new String[] { "software", "app" });
     } // getInstance()
 
-    private StreamingApiFilterPost(final String[] keywords) throws SQLException {
+    private StreamingApiFilterPost(final String[] keywords) throws UnknownHostException,
+            MongoException {
         super(COUNTER_INTERVAL);
         setKeyword(keywords);
     } // StreamingApiFilterPost(String[])

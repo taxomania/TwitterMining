@@ -10,9 +10,8 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetSQLTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SentimentSQLTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SentimentScoreSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.mongotask.DeleteTweetMongoTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.mongotask.SentimentMongoTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentObject;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
@@ -35,7 +34,7 @@ public class SentimentAnalysis implements ParseListener {
     private boolean stillAnalyse = true;
     private ScannerThread scanner = null;
     private SentimentParseThread parseThread = null;
-    private SQLThread sqlThread = null;
+    private MongoThread mongoThread = null;
 
     private static SentimentAnalysis sa = null;
 
@@ -54,7 +53,7 @@ public class SentimentAnalysis implements ParseListener {
                 stillAnalyse = false;
             } // performTask()
         };
-        sqlThread = new SQLThread();
+        mongoThread = new MongoThread();
         parseThread = new SentimentParseThread();
         parseThread.addListener(this);
     } // SentimentAnalysis()
@@ -78,7 +77,7 @@ public class SentimentAnalysis implements ParseListener {
     public void analyseSentiment() {
         System.out.println("Analysing tweet sentiment");
         scanner.start();
-        sqlThread.start();
+        mongoThread.start();
         parseThread.start();
         try {
             res.beforeFirst();
@@ -135,25 +134,25 @@ public class SentimentAnalysis implements ParseListener {
                 e.printStackTrace();
             } // catch
         } // if
-        if (sqlThread != null) {
-            sqlThread.interrupt();
-            sqlThread = null;
+        if (mongoThread != null) {
+            mongoThread.interrupt();
+            mongoThread = null;
         } // if
         sa = null;
     } // close()
 
     @Override
     public void onParseComplete(final long id, final String sentiment) {
-        sqlThread.addTask(new SentimentSQLTask(id, sentiment));
+        mongoThread.addTask(new SentimentMongoTask(id, sentiment));
     } // onParseComplete(long, String)
 
     @Override
     public void onParseComplete(final long id, final String sentiment, final String sentimentScore) {
-        sqlThread.addTask(new SentimentScoreSQLTask(id, sentiment, sentimentScore));
+        mongoThread.addTask(new SentimentMongoTask(id, sentiment, sentimentScore));
     } // onParseComplete(long, String, String)
 
     private void deleteError(final long id) {
-        sqlThread.addTask(new DeleteTweetSQLTask(id));
+        mongoThread.addTask(new DeleteTweetMongoTask(id));
     } // deleteError(long)
 
 } // SentimentAnalysis
