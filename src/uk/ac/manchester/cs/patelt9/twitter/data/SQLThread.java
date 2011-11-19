@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.SQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.DatabaseTask;
 
-public class SQLThread extends Thread {
+public class SQLThread extends DatabaseThread {
     private final SqlConnector sql;
     private final List<SQLTask> taskList = new ArrayList<SQLTask>();
     private int affectedRows;
@@ -50,9 +51,10 @@ public class SQLThread extends Thread {
         affectedRows += taskList.remove(0).doSqlTask(sql);
     } // performTask()
 
-    public boolean addTask(final SQLTask task) {
+    @Override
+    public boolean addTask(final DatabaseTask task) {
         synchronized (taskList) {
-            return taskList.add(task);
+            return taskList.add((SQLTask) task);
         } // synchronized
     } // addTask(SQLTask)
 } // SQLThread

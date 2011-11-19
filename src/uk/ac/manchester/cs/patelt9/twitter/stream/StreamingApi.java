@@ -9,14 +9,16 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
-import uk.ac.manchester.cs.patelt9.twitter.data.MongoThread;
+import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseThread;
+import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.data.mongotask.DeleteTweetMongoTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.mongotask.InsertMongoTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.InsertSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
@@ -37,16 +39,16 @@ public abstract class StreamingApi implements ParseListener {
     private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
     private StreamParseThread parseThread = null;
     private ScannerThread scanner = null;
-    private MongoThread mongoThread = null;
+    private DatabaseThread mongoThread = null;
 
     @Override
     public void onParseComplete(final Tweet t) {
-        mongoThread.addTask(new InsertMongoTask(t));
+        mongoThread.addTask(new InsertSQLTask(t));
     } // onParseComplete(Tweet)
 
     @Override
     public void onParseComplete(final long id) {
-        mongoThread.addTask(new DeleteTweetMongoTask(id));
+        mongoThread.addTask(new DeleteTweetSQLTask(id));
     } // onParseComplete(long)
 
     static {
@@ -80,11 +82,11 @@ public abstract class StreamingApi implements ParseListener {
     } // getUserPass()
 
     protected StreamingApi(final String url, final int interval) throws MongoException,
-            UnknownHostException {
+            UnknownHostException, SQLException {
         counterInterval = interval;
         urlString = url;
         jp = new JsonParser();
-        mongoThread = new MongoThread();
+        mongoThread = new SQLThread();
         parseThread = new StreamParseThread();
         parseThread.addListener(this);
         scanner = new ScannerThread() {

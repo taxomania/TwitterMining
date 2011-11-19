@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.mongotask.MongoTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.DatabaseTask;
 
 import com.mongodb.MongoException;
 
-public class MongoThread extends Thread {
+public class MongoThread extends DatabaseThread {
     private final MongoConnector mongo;
     private final List<MongoTask> taskList = new ArrayList<MongoTask>();
     private int affectedRows;
@@ -48,13 +49,15 @@ public class MongoThread extends Thread {
         super.interrupt();
     } // interrupt()
 
+    @Override
     protected void performTask() {
         affectedRows += taskList.remove(0).doMongoTask(mongo);
     } // performTask()
 
-    public boolean addTask(final MongoTask task) {
+    @Override
+    public boolean addTask(final DatabaseTask task) {
         synchronized (taskList) {
-            return taskList.add(task);
+            return taskList.add((MongoTask) task);
         } // synchronized
     } // addTask(MongoTask)
 } // MongoThread

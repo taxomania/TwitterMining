@@ -1,10 +1,9 @@
 package uk.ac.manchester.cs.patelt9.twitter.data.mongotask;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.MongoConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.SentimentTask;
 
-public class SentimentMongoTask implements MongoTask {
-    private final long id;
-    private final String sentiment;
+public class SentimentMongoTask extends SentimentTask implements MongoTask {
     private final String sentimentScore;
 
     public SentimentMongoTask(final long id, final String s) {
@@ -12,18 +11,17 @@ public class SentimentMongoTask implements MongoTask {
     } // SentimentSQLTask(long, String)
 
     public SentimentMongoTask(final long id, final String s, final String score) {
-        this.id = id;
-        sentiment = s;
+        super(id, s);
         sentimentScore = score;
-    } // SentimentSQLTask(long, String, String)
+    } // SentimentMongoTask(long, String, String)
 
     @Override
     public int doMongoTask(final MongoConnector mongo) {
-        return mongo.updateSentiment(id, sentiment, sentimentScore);
+        return mongo.updateSentiment(getId(), getSentiment(), sentimentScore);
     } // doSqlTask(SqlConnector)
 
     @Override
     public String toString() {
-        return Long.toString(id) + ": " + sentiment + ": " + sentimentScore;
+        return super.toString() + ": " + sentimentScore;
     } // toString()
 } // SentimentMongoTask

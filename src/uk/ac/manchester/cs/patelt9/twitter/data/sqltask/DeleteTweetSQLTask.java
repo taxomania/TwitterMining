@@ -1,22 +1,15 @@
 package uk.ac.manchester.cs.patelt9.twitter.data.sqltask;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.DeleteTask;
 
-public class DeleteTweetSQLTask implements SQLTask {
-    private final long id;
-
+public class DeleteTweetSQLTask extends DeleteTask implements SQLTask {
     public DeleteTweetSQLTask(final long id) {
-        this.id = id;
+        super(id);
     } // DeleteTweetIdSQLTask(long)
 
     @Override
     public int doSqlTask(final SqlConnector sql) {
-        return sql.deleteTweet(id);
+        return sql.deleteTweet(getId());
     } // doSqlTask(SqlConnector)
-
-    @Override
-    public String toString() {
-        return Long.toString(id);
-    } // toString()
-
 } // DeleteTweetIdSQLTask

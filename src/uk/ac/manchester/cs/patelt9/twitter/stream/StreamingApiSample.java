@@ -1,6 +1,7 @@
 package uk.ac.manchester.cs.patelt9.twitter.stream;
 
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 
 import com.mongodb.MongoException;
 
@@ -12,14 +13,15 @@ public class StreamingApiSample extends StreamingApi {
     private static StreamingApiSample stream = null;
 
     // Singleton lock as you cannot have more than one connection
-    public static StreamingApiSample getInstance() throws MongoException, UnknownHostException {
+    public static StreamingApiSample getInstance() throws MongoException, UnknownHostException,
+            SQLException {
         if (stream == null) {
             stream = new StreamingApiSample();
         } // if
         return stream;
     } // getInstance()
 
-    private StreamingApiSample() throws MongoException, UnknownHostException {
+    private StreamingApiSample() throws MongoException, UnknownHostException, SQLException {
         super(TWITTER_STREAM_API, COUNTER_INTERVAL);
     } // StreamingApiSample()
 } // StreamingApiSample

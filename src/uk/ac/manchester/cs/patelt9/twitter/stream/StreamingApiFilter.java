@@ -1,6 +1,7 @@
 package uk.ac.manchester.cs.patelt9.twitter.stream;
 
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 
 import com.mongodb.MongoException;
 
@@ -16,29 +17,32 @@ public class StreamingApiFilter extends StreamingApi {
     protected String keyword = "";
 
     // Singleton lock as you cannot have more than one connection
-    public static StreamingApiFilter getInstance() throws UnknownHostException, MongoException {
+    public static StreamingApiFilter getInstance() throws UnknownHostException, MongoException,
+            SQLException {
         return getInstance(DEFAULT_KEYWORD);
     } // getInstance()
 
     public static StreamingApiFilter getInstance(final String filter) throws MongoException,
-            UnknownHostException {
+            UnknownHostException, SQLException {
         if (stream == null) {
             stream = new StreamingApiFilter(filter);
         } // if
         return stream;
     } // getInstance(String)
 
-    private StreamingApiFilter(final String filter) throws MongoException, UnknownHostException {
+    private StreamingApiFilter(final String filter) throws MongoException, UnknownHostException,
+            SQLException {
         this(TWITTER_STREAM_API + DEFAULT_QUERY + filter, COUNTER_INTERVAL);
     } // StreamingApiFilter(String)
 
     // For subclasses
-    protected StreamingApiFilter(final int interval) throws MongoException, UnknownHostException {
+    protected StreamingApiFilter(final int interval) throws MongoException, UnknownHostException,
+            SQLException {
         this(TWITTER_STREAM_API, interval);
     } // StreamingApiFilter(int)
 
     private StreamingApiFilter(final String url, final int interval) throws MongoException,
-            UnknownHostException {
+            UnknownHostException, SQLException {
         super(url, interval);
     } // StreamingApiFilter(String, int)
 } // StreamingApiFilter
