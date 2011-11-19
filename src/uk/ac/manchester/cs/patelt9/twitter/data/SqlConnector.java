@@ -73,9 +73,9 @@ public class SqlConnector {
 
             deleteTweetByTweetId = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
 
-            updateSentiment = con.prepareStatement("UPDATE tweet SET sentiment=? WHERE id=?;");
+            updateSentiment = con.prepareStatement("UPDATE tweet SET sentiment=? WHERE tweet_id=?;");
             updateSentimentScore = con.prepareStatement("UPDATE tweet SET sentiment=?, " +
-                    "sentiment_score=? WHERE id=?;");
+                    "sentiment_score=? WHERE tweet_id=?;");
             // @formatter:on
         } catch (final ClassNotFoundException e) {
             e.printStackTrace();
