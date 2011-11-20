@@ -3,9 +3,20 @@ package uk.ac.manchester.cs.patelt9.twitter.data.task;
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 
+/**
+ * DatabaseTask allowing database insertion.
+ *
+ * @author Tariq Patel
+ *
+ */
 public class InsertTask implements DatabaseTask {
     private final Tweet tweet;
 
+    /**
+     *
+     * @param t
+     *            Tweet to insert into database
+     */
     public InsertTask(final Tweet t) {
         tweet = t;
     } // InsertTask(Tweet)

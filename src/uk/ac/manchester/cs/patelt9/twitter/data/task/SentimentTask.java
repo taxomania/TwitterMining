@@ -2,10 +2,23 @@ package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 
+/**
+ * DatabaseTask which updates the sentiment of a tweet
+ *
+ * @author Tariq Patel
+ *
+ */
 public class SentimentTask implements DatabaseTask {
     private final long id;
     private final String sentiment;
 
+    /**
+     *
+     * @param id
+     *            Tweet id
+     * @param s
+     *            Sentiment result - positive/negative/neutral
+     */
     public SentimentTask(final long id, final String s) {
         this.id = id;
         sentiment = s;

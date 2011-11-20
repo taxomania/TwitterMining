@@ -9,7 +9,7 @@ public class SentimentObject {
     public SentimentObject(final long id, final Document document) {
         doc = document;
         this.id = id;
-    } // SentimentParseThread(long, Document)
+    } // SentimentObject(long, Document)
 
     public Document getDoc() {
         return doc;

@@ -20,6 +20,7 @@ import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListe
 
 import com.alchemyapi.api.AlchemyAPI;
 
+// THIS CLASS STILL ONLY WORKS PROPERLY WITH MYSQL
 public class SentimentAnalysis implements ParseListener {
     // @formatter:off
     private static final String DEFAULT_QUERY = "SELECT text, tweet_id FROM tweet WHERE sentiment IS NULL"

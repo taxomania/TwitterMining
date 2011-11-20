@@ -9,14 +9,18 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoException;
 
+/**
+ * Helper class to connect to MongoDB and carry out database operations.
+ *
+ * @author Tariq Patel
+ *
+ */
 public final class MongoConnector implements DatabaseConnector {
     private static final String DB_NAME = "TwitterMining";
-    public static final int DB_ERROR = -1;
 
     private static MongoConnector mongoConnector = null;
 
     private final Mongo mongo;
-    private final DB db;
     private final DBCollection userCollection, tweetCollection;
 
     /**
@@ -26,7 +30,6 @@ public final class MongoConnector implements DatabaseConnector {
      * @throws UnknownHostException
      * @throws MongoException
      */
-    // Singleton lock on database helper
     public static synchronized MongoConnector getInstance() throws UnknownHostException,
             MongoException {
         if (mongoConnector == null) {
@@ -37,7 +40,7 @@ public final class MongoConnector implements DatabaseConnector {
 
     private MongoConnector() throws UnknownHostException, MongoException {
         mongo = new Mongo(/* ip, port */);
-        db = mongo.getDB(DB_NAME);
+        final DB db = mongo.getDB(DB_NAME);
         userCollection = db.getCollection("user");
         tweetCollection = db.getCollection("tweet");
     } // MongoConnector()
@@ -61,7 +64,7 @@ public final class MongoConnector implements DatabaseConnector {
         return (insertNewUser(user) != null) ? 1 : 0;
     } // insertUser(long, String)
 
-    public DBObject insertNewUser(final User u) {
+    private DBObject insertNewUser(final User u) {
         final BasicDBObject user = new BasicDBObject();
         user.put("user_id", u.getId());
         user.put("username", u.getUsername());
@@ -89,6 +92,7 @@ public final class MongoConnector implements DatabaseConnector {
         } // else
     } // insertTweet(Tweet)
 
+    @Override
     public int deleteTweet(final long id) {
         return tweetCollection.remove(new BasicDBObject("tweet_id", id)).getN();
     } // deleteTweet(long)
@@ -97,10 +101,12 @@ public final class MongoConnector implements DatabaseConnector {
     // tweetCollection.find
     // }
 
+    @Override
     public int updateSentiment(final long id, final String sentiment) {
         return updateSentiment(id, sentiment, null);
     } // updateSentiment(long, String)
 
+    @Override
     public int updateSentiment(final long id, final String sentiment, final String score) {
         final BasicDBObject sentimentObject = new BasicDBObject("sentiment", sentiment);
         if (score != null) {
@@ -110,6 +116,7 @@ public final class MongoConnector implements DatabaseConnector {
         return 1;
     } // updateSentiment(long, String, String)
 
+    @Override
     public int deleteAll() {
         final long count = userCollection.count() + tweetCollection.count();
         userCollection.drop();
@@ -117,6 +124,7 @@ public final class MongoConnector implements DatabaseConnector {
         return (int) count;
     } // deleteAll()
 
+    @Override
     public void close() {
         mongo.close();
         mongoConnector = null;

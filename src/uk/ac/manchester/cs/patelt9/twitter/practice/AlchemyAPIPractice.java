@@ -37,7 +37,7 @@ public class AlchemyAPIPractice {
             res.beforeFirst();
             while (res.next()) {
                 final String tweet = res.getString(1);
-                final Long id = res.getLong(2);
+                // final Long id = res.getLong(2);
                 try {
                     final Document doc = api.TextGetTextSentiment(tweet);
                     final Node sentimentNode = doc.getElementsByTagName("docSentiment").item(0);
@@ -49,10 +49,10 @@ public class AlchemyAPIPractice {
                         final String sentimentScore = sent.getElementsByTagName("score").item(0)
                                 .getTextContent();
                         System.out.println(sentimentScore);
-                        System.out.println(sql.executeUpdate("UPDATE tweet SET sentiment='"
-                                + sentiment + "', sentiment_score='" + sentimentScore
-                                + "' WHERE id='" + id + "';")
-                                + " rows updated");
+                        // System.out.println(sql.executeUpdate("UPDATE tweet SET sentiment='"
+                        // + sentiment + "', sentiment_score='" + sentimentScore
+                        // + "' WHERE id='" + id + "';")
+                        // + " rows updated");
                     } // if
                     sql.close();
                 } catch (final XPathExpressionException e) {

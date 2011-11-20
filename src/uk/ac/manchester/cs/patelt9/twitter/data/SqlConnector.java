@@ -14,6 +14,12 @@ import java.sql.SQLException;
 import com.mysql.jdbc.MysqlDataTruncation;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
+/**
+ * Helper class to connect to MySQL and carry out database operations.
+ *
+ * @author Tariq Patel
+ *
+ */
 public final class SqlConnector implements DatabaseConnector {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining";
@@ -35,7 +41,12 @@ public final class SqlConnector implements DatabaseConnector {
     private Connection con = null;
     private static SqlConnector mySql = null;
 
-    // Singleton lock on database helper
+    /**
+     * Retrieve the current instance of SqlConnector, or create a new one if it is null;
+     *
+     * @return A single instance of SqlConnector
+     * @throws SQLException
+     */
     public static synchronized SqlConnector getInstance() throws SQLException {
         if (mySql == null) {
             mySql = new SqlConnector();
@@ -102,7 +113,7 @@ public final class SqlConnector implements DatabaseConnector {
         return insertUser(user.getId(), user.getUsername());
     } // insertUser(User)
 
-    public int insertUser(final long id, final String screenName) throws SQLException {
+    private int insertUser(final long id, final String screenName) throws SQLException {
         insertUser.setLong(1, id);
         insertUser.setString(2, screenName);
         return executeUpdate(insertUser);
@@ -120,7 +131,7 @@ public final class SqlConnector implements DatabaseConnector {
         } // else
     } // insertTweet(Tweet)
 
-    public int insertTweet(final long id, final String screenName, final String content,
+    private int insertTweet(final long id, final String screenName, final String content,
             final String createdAt, final long userId, final String keyword) {
         try {
             insertUser(userId, screenName);
@@ -141,38 +152,7 @@ public final class SqlConnector implements DatabaseConnector {
         } // catch
     } // insertTweet(long, String, String, String, long, String)
 
-    private void setTweetValues(PreparedStatement s, final long id, final String content,
-            final String createdAt, final long userId) throws SQLException {
-        s.setLong(1, id);
-        s.setString(2, content);
-        s.setString(3, createdAt);
-        s.setLong(4, userId);
-    } // setTweetValues(PreparedStatement, long, String, String, long)
-
-    public int updateSentiment(final long id, final String sentiment) {
-        try {
-            updateSentiment.setString(1, sentiment);
-            updateSentiment.setLong(2, id);
-            return executeUpdate(updateSentiment);
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return DB_ERROR;
-        } // catch
-    } // updateSentiment(long, String)
-
-    public int updateSentiment(final long id, final String sentiment, final String sentimentScore) {
-        try {
-            updateSentimentScore.setString(1, sentiment);
-            updateSentimentScore.setDouble(2, Double.parseDouble(sentimentScore));
-            updateSentimentScore.setLong(3, id);
-            return executeUpdate(updateSentimentScore);
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return DB_ERROR;
-        } // catch
-    } // updateSentiment(long, String, String)
-
-    public int insertTweet(final long id, final String screenName, final String content,
+    private int insertTweet(final long id, final String screenName, final String content,
             final String createdAt, final long userId) {
         try {
             insertUser(userId, screenName);
@@ -192,7 +172,40 @@ public final class SqlConnector implements DatabaseConnector {
         } // catch
     } // insertTweet(long, String, String, String, long)
 
-    public int executeUpdate(final String sqlStatement) {
+    private void setTweetValues(PreparedStatement s, final long id, final String content,
+            final String createdAt, final long userId) throws SQLException {
+        s.setLong(1, id);
+        s.setString(2, content);
+        s.setString(3, createdAt);
+        s.setLong(4, userId);
+    } // setTweetValues(PreparedStatement, long, String, String, long)
+
+    @Override
+    public int updateSentiment(final long id, final String sentiment) {
+        try {
+            updateSentiment.setString(1, sentiment);
+            updateSentiment.setLong(2, id);
+            return executeUpdate(updateSentiment);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // updateSentiment(long, String)
+
+    @Override
+    public int updateSentiment(final long id, final String sentiment, final String sentimentScore) {
+        try {
+            updateSentimentScore.setString(1, sentiment);
+            updateSentimentScore.setDouble(2, Double.parseDouble(sentimentScore));
+            updateSentimentScore.setLong(3, id);
+            return executeUpdate(updateSentimentScore);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // updateSentiment(long, String, String)
+
+    private int executeUpdate(final String sqlStatement) {
         try {
             return con.createStatement().executeUpdate(sqlStatement);
         } catch (final MySQLIntegrityConstraintViolationException e) {
@@ -204,16 +217,26 @@ public final class SqlConnector implements DatabaseConnector {
         } // catch
     } // executeUpdate(String)
 
+    /**
+     * Execute any MySQL query.
+     *
+     * @param sqlStatement
+     *            The query to execute, typically a SELECT statement
+     * @return The ResultSet object that contains the data produced by the given query, never null
+     * @throws SQLException
+     */
     public ResultSet executeQuery(final String sqlStatement) throws SQLException {
         return con.createStatement().executeQuery(sqlStatement);
     } // executeQuery(String)
 
+    @Override
     public int deleteAll() {
         final int i = executeUpdate("DELETE FROM tweet");
         final int j = executeUpdate("DELETE FROM user");
         return (i == DB_ERROR || j == DB_ERROR) ? DB_ERROR : i + j;
     } // deleteAll()
 
+    @Override
     public int deleteTweet(final long tweetId) {
         try {
             deleteTweetByTweetId.setLong(1, tweetId);
@@ -224,6 +247,7 @@ public final class SqlConnector implements DatabaseConnector {
         } // catch
     } // deleteTweet(long)
 
+    @Override
     public void close() {
         if (con != null) {
             try {

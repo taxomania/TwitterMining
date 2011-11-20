@@ -2,9 +2,20 @@ package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 
+/**
+ * DatabaseTask to allow deleting from the database.
+ *
+ * @author Tariq Patel
+ *
+ */
 public class DeleteTask implements DatabaseTask {
     private final long id;
 
+    /**
+     *
+     * @param id
+     *            Tweet id
+     */
     public DeleteTask(final long id) {
         this.id = id;
     } // DeleteTask(long)
