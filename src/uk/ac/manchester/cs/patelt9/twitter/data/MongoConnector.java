@@ -38,7 +38,7 @@ public class MongoConnector implements DatabaseConnector {
     public static void main(String[] args) {
         try {
             MongoConnector m = getInstance();
-            m.insertTweet(new Tweet(14141411, "HELLO WORLD", "1411=6-16", new User(141455,
+            m.insertTweet(new Tweet(14142411, "HELLO WORLD", "1411=6-16", new User(141455,
                     "taxomania")));
             m.close();
 
@@ -73,7 +73,7 @@ public class MongoConnector implements DatabaseConnector {
         tweet.put("user", user);
         tweet.put("text", t.getTweet());
         tweet.put("created_at", t.getCreatedAt());
-        if (tweetCollection.find(tweet) == null) {
+        if (tweetCollection.findOne(tweet) == null) {
             System.out.println("Insert");
             return tweetCollection.insert(tweet).getN();
         } else {
