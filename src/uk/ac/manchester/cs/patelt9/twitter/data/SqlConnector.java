@@ -110,8 +110,14 @@ public class SqlConnector implements DatabaseConnector {
 
     @Override
     public int insertTweet(final Tweet t) {
-        return insertTweet(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
-                t.getUserId());
+        final String keyword = t.getKeyword();
+        if (keyword == null) {
+            return insertTweet(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
+                    t.getUserId());
+        } else {
+            return insertTweet(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
+                    t.getUserId(), keyword);
+        } // else
     } // insertTweet(Tweet)
 
     public int insertTweet(final long id, final String screenName, final String content,

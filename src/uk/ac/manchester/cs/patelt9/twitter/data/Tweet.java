@@ -5,6 +5,7 @@ public class Tweet {
     private final String tweet;
     private final String createdAt;
     private final User user;
+    private String keyword = null; // Only used by keyword filter
 
     public Tweet(final long id, final String text, final String createdAt, final User user) {
         tweetId = id;
@@ -12,6 +13,14 @@ public class Tweet {
         this.createdAt = createdAt;
         this.user = user;
     } // Tweet(long, String, String, User)
+
+    public void setKeyword(final String keyword) {
+        this.keyword = keyword;
+    } // setKeyword(String)
+
+    public String getKeyword() {
+        return keyword;
+    } // getKeyword()
 
     public long getId() {
         return tweetId;

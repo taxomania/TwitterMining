@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import javax.net.ssl.HttpsURLConnection;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.InsertKeywordSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.InsertKeywordTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.task.InsertTask;
 
 import com.mongodb.MongoException;
@@ -71,6 +71,6 @@ public class StreamingApiFilterPost extends StreamingApiFilter {
 
     @Override
     protected InsertTask createInsertTask(final Tweet t) {
-        return new InsertKeywordSQLTask(t, keyword);
+        return new InsertKeywordTask(t, keyword);
     } // createInsertTask(Tweet)
 } // StreamingApiFilterPost
