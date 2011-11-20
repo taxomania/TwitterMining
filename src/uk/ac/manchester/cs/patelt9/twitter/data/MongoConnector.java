@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoException;
@@ -48,8 +49,13 @@ public final class MongoConnector implements DatabaseConnector {
     public static void main(String[] args) {
         try {
             MongoConnector m = getInstance();
-            m.insertTweet(new Tweet(14142411, "HELLO WORLD", "1411=6-16", new User(141455,
-                    "taxomania")));
+            m.deleteAll();
+            // m.insertTweet(new Tweet(14142411, "HELLO WORLD", "1411=6-16", new User(141455,
+            // "taxomania")));
+
+            // m.insertTweet(new Tweet(23142411, "THAT WAS SO AWESOME!", "1411=6-16", new
+            // User(141455,
+            // "taxomania")));
             m.close();
 
         } catch (UnknownHostException e) {
@@ -78,16 +84,13 @@ public final class MongoConnector implements DatabaseConnector {
         if (user == null) {
             user = insertNewUser(t.getUser());
         } // if
-        final BasicDBObject tweet = new BasicDBObject();
-        tweet.put("tweet_id", t.getId());
-        tweet.put("user", user);
-        tweet.put("text", t.getTweet());
-        tweet.put("created_at", t.getCreatedAt());
+        final BasicDBObject tweet = new BasicDBObject("tweet_id", t.getId());
         if (tweetCollection.findOne(tweet) == null) {
-            System.out.println("Insert");
+            tweet.put("text", t.getTweet());
+            tweet.put("created_at", t.getCreatedAt());
+            tweet.put("user", user);
             return tweetCollection.insert(tweet).getN();
         } else {
-            System.out.println("Exists");
             return 0;
         } // else
     } // insertTweet(Tweet)
@@ -96,10 +99,6 @@ public final class MongoConnector implements DatabaseConnector {
     public int deleteTweet(final long id) {
         return tweetCollection.remove(new BasicDBObject("tweet_id", id)).getN();
     } // deleteTweet(long)
-
-    // public void addEntities(final long id, final Entity[] entities){
-    // tweetCollection.find
-    // }
 
     @Override
     public int updateSentiment(final long id, final String sentiment) {
@@ -112,9 +111,17 @@ public final class MongoConnector implements DatabaseConnector {
         if (score != null) {
             sentimentObject.put("sentiment_score", score);
         } // if
-        tweetCollection.findAndModify(new BasicDBObject("tweet_id", id), sentimentObject);
-        return 1;
+        tweetCollection.setObjectClass(BasicDBObject.class);
+        final BasicDBObject tweet = (BasicDBObject) tweetCollection.findOne(new BasicDBObject(
+                "tweet_id", id));
+        tweet.put("sentiment", sentimentObject);
+        return tweetCollection.update(new BasicDBObject("tweet_id", id), tweet).getN();
     } // updateSentiment(long, String, String)
+
+    public DBCursor loadSentimentDataSet() {
+        return tweetCollection.find(new BasicDBObject("sentiment", new BasicDBObject("$exists",
+                false)));
+    } // loadSentimentDataSet()
 
     @Override
     public int deleteAll() {

@@ -1,6 +1,7 @@
 package uk.ac.manchester.cs.patelt9.twitter.data;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -19,6 +20,9 @@ import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread.ParseListener;
 
 import com.alchemyapi.api.AlchemyAPI;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
 
 // THIS CLASS STILL ONLY WORKS PROPERLY WITH MYSQL
 public class SentimentAnalysis implements ParseListener {
@@ -56,7 +60,7 @@ public class SentimentAnalysis implements ParseListener {
                 stillAnalyse = false;
             } // performTask()
         };
-        dbThread = new SQLThread();
+        dbThread = new MongoThread();
         parseThread = new SentimentParseThread();
         parseThread.addListener(this);
     } // SentimentAnalysis()
@@ -64,6 +68,10 @@ public class SentimentAnalysis implements ParseListener {
     private void setRes(final ResultSet res) {
         this.res = res;
     } // setRes(ResultSet)
+
+    public DBCursor getDataSet() throws UnknownHostException, MongoException {
+        return MongoConnector.getInstance().loadSentimentDataSet();
+    }
 
     public void loadDataSet() {
         loadDataSet(DEFAULT_QUERY);
@@ -83,40 +91,79 @@ public class SentimentAnalysis implements ParseListener {
         dbThread.start();
         parseThread.start();
         try {
-            res.beforeFirst();
-            while (stillAnalyse && res.next()) {
-                final String tweet = res.getString(1);
-                final Long id = res.getLong(2);
-                // System.out.println(id + ": " + tweet);
-                final Document doc;
-                try {
-                    doc = api.TextGetTextSentiment(tweet);
-                } catch (final IllegalArgumentException e) {
-                    deleteError(id);
-                    continue;
-                } catch (final SAXException e) {
-                    e.printStackTrace();
-                    continue;
-                } catch (final XPathExpressionException e) {
-                    e.printStackTrace();
-                    continue;
-                } catch (final ParserConfigurationException e) {
-                    e.printStackTrace();
-                    continue;
-                } catch (final IOException e) {
-                    if (e.getMessage().contains("limit")) {
-                        System.out.println(e.getMessage());
-                        scanner.interrupt();
-                        break;
-                    } else {
+            if (dbThread instanceof MongoThread) {
+                final DBCursor c = getDataSet();
+                while (stillAnalyse && c.hasNext()) {
+                    final DBObject ob = c.next();
+                    final long id = ((Long) ob.get("tweet_id")).longValue();
+                    final String tweet = (String) ob.get("text");
+                    final Document doc;
+                    try {
+                        doc = api.TextGetTextSentiment(tweet);
+                    } catch (final IllegalArgumentException e) {
                         deleteError(id);
                         continue;
-                    } // else
-                } // catch
-                parseThread.addTask(new SentimentObject(id, doc));
-            } // while
+                    } catch (final SAXException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (final XPathExpressionException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (final ParserConfigurationException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (final IOException e) {
+                        if (e.getMessage().contains("limit")) {
+                            System.out.println(e.getMessage());
+                            scanner.interrupt();
+                            break;
+                        } else {
+                            deleteError(id);
+                            continue;
+                        } // else
+                    } // catch
+                    parseThread.addTask(new SentimentObject(id, doc));
+                } // while
+            } else {
+                res.beforeFirst();
+                while (stillAnalyse && res.next()) {
+                    final String tweet = res.getString(1);
+                    final Long id = res.getLong(2);
+                    // System.out.println(id + ": " + tweet);
+                    final Document doc;
+                    try {
+                        doc = api.TextGetTextSentiment(tweet);
+                    } catch (final IllegalArgumentException e) {
+                        deleteError(id);
+                        continue;
+                    } catch (final SAXException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (final XPathExpressionException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (final ParserConfigurationException e) {
+                        e.printStackTrace();
+                        continue;
+                    } catch (final IOException e) {
+                        if (e.getMessage().contains("limit")) {
+                            System.out.println(e.getMessage());
+                            scanner.interrupt();
+                            break;
+                        } else {
+                            deleteError(id);
+                            continue;
+                        } // else
+                    } // catch
+                    parseThread.addTask(new SentimentObject(id, doc));
+                } // while
+            } // else
             close();
         } catch (final SQLException e) {
+            e.printStackTrace();
+        } catch (final UnknownHostException e) {
+            e.printStackTrace();
+        } catch (final MongoException e) {
             e.printStackTrace();
         } // catch
     } // analyseSentiment()
