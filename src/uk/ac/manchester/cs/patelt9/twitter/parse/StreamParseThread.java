@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.User;
 
 import com.google.gson.JsonObject;
 
@@ -117,17 +118,14 @@ public class StreamParseThread extends Thread {
     private Tweet getTweet(final JsonObject jo) {
         final JsonObject user = jo.getAsJsonObject("user");
         final String lang = user.getAsJsonPrimitive("lang").getAsString();
-        if (!("en".equals(lang))){
-            return null;
-        } // if
-        final Long userId = user.getAsJsonPrimitive("id_str").getAsLong();
-
+        if (!("en".equals(lang))) { return null; } // if
+        final long userId = user.getAsJsonPrimitive("id_str").getAsLong();
         final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
         final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-        final Long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
+        final long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
         final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
                 .getAsString());
-        return new Tweet(tweetId, userId, screenName, tweet, createdAt);
+        return new Tweet(tweetId, tweet, createdAt, new User(userId, screenName));
     } // getTweet(JsonObject)
 
     private long getDeleteStatusId(final JsonObject jo) {

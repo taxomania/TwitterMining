@@ -1,32 +1,33 @@
 package uk.ac.manchester.cs.patelt9.twitter.data;
 
 public class Tweet {
-    private final Long tweetId;
-    private final Long userId;
-    private final String screenName;
+    private final long tweetId;
     private final String tweet;
     private final String createdAt;
+    private final User user;
 
-    public Tweet(final Long id, final Long userId, final String username, final String tweet,
-            final String createdAt) {
+    public Tweet(final long id, final String text, final String createdAt, final User user) {
         tweetId = id;
-        this.userId = userId;
-        screenName = username;
-        this.tweet = tweet;
+        tweet = text;
         this.createdAt = createdAt;
-    } // Tweet(Long, Long, String, String, String)
+        this.user = user;
+    } // Tweet(long, String, String, User)
 
     public Long getId() {
         return tweetId;
     } // getId()
 
-    public Long getUserId() {
-        return userId;
+    public long getUserId() {
+        return user.getId();
     } // getUserId()
 
     public String getScreenName() {
-        return screenName;
+        return user.getUsername();
     } // getScreenName()
+
+    public User getUser() {
+        return user;
+    } // getUser()
 
     public String getTweet() {
         return tweet;

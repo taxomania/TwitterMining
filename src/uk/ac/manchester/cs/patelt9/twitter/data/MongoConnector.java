@@ -37,7 +37,11 @@ public class MongoConnector implements DatabaseConnector {
 
     public static void main(String[] args) {
         try {
-            getInstance();
+            MongoConnector m = getInstance();
+            m.insertTweet(new Tweet(14141411, "HELLO WORLD", "1411=6-16", new User(141455,
+                    "taxomania")));
+            m.close();
+
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (MongoException e) {
@@ -46,25 +50,23 @@ public class MongoConnector implements DatabaseConnector {
     } // main(String[])
 
     @Override
-    public int insertUser(final long id, final String name) {
-        return (insertNewUser(id, name) != null) ? 1 : 0;
+    public int insertUser(final User user) {
+        return (insertNewUser(user) != null) ? 1 : 0;
     } // insertUser(long, String)
 
-    public DBObject insertNewUser(final long id, final String name) {
+    public DBObject insertNewUser(final User u) {
         final BasicDBObject user = new BasicDBObject();
-        user.put("user_id", id);
-        user.put("username", name);
+        user.put("user_id", u.getId());
+        user.put("username", u.getUsername());
         userCollection.insert(user);
         return user;
     } // insertNewUser(long, String)
 
     @Override
     public int insertTweet(final Tweet t) {
-        final long userId = t.getUserId();
-        final String username = t.getScreenName();
-        DBObject user = userCollection.findOne(new BasicDBObject("username", username));
+        DBObject user = userCollection.findOne(new BasicDBObject("user_id", t.getUserId()));
         if (user == null) {
-            user = insertNewUser(userId, username);
+            user = insertNewUser(t.getUser());
         } // if
         final BasicDBObject tweet = new BasicDBObject();
         tweet.put("tweet_id", t.getId());
@@ -95,7 +97,7 @@ public class MongoConnector implements DatabaseConnector {
         final long count = userCollection.count() + tweetCollection.count();
         userCollection.drop();
         tweetCollection.drop();
-        return (int)count;
+        return (int) count;
     } // deleteAll()
 
     public void close() {

@@ -97,6 +97,11 @@ public class SqlConnector implements DatabaseConnector {
         } // catch
     } // executeUpdate(PreparedStatement)
 
+    @Override
+    public int insertUser(final User user) throws SQLException {
+        return insertUser(user.getId(), user.getUsername());
+    } // insertUser(User)
+
     public int insertUser(final long id, final String screenName) throws SQLException {
         insertUser.setLong(1, id);
         insertUser.setString(2, screenName);
