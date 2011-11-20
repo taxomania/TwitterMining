@@ -73,12 +73,22 @@ public class MongoConnector implements DatabaseConnector {
         tweet.put("user", user);
         tweet.put("text", t.getTweet());
         tweet.put("created_at", t.getCreatedAt());
-        return tweetCollection.insert(tweet).getN();
+        if (tweetCollection.find(tweet) == null) {
+            System.out.println("Insert");
+            return tweetCollection.insert(tweet).getN();
+        } else {
+            System.out.println("Exists");
+            return 0;
+        } // else
     } // insertTweet(Tweet)
 
     public int deleteTweet(final long id) {
         return tweetCollection.remove(new BasicDBObject("tweet_id", id)).getN();
     } // deleteTweet(long)
+
+    // public void addEntities(final long id, final Entity[] entities){
+    // tweetCollection.find
+    // }
 
     public int updateSentiment(final long id, final String sentiment) {
         return updateSentiment(id, sentiment, null);

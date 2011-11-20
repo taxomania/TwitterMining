@@ -13,7 +13,7 @@ public class Tweet {
         this.user = user;
     } // Tweet(long, String, String, User)
 
-    public Long getId() {
+    public long getId() {
         return tweetId;
     } // getId()
 
