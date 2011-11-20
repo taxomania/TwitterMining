@@ -1,7 +1,6 @@
 package uk.ac.manchester.cs.patelt9.twitter.data;
 
-
-public class User {
+public final class User {
     private final Long id;
     private final String username;
 

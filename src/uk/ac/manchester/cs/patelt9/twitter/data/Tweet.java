@@ -1,6 +1,6 @@
 package uk.ac.manchester.cs.patelt9.twitter.data;
 
-public class Tweet {
+public final class Tweet {
     private final long tweetId;
     private final String tweet;
     private final String createdAt;

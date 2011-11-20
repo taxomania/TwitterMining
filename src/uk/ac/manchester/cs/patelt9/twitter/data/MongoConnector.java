@@ -9,7 +9,7 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoException;
 
-public class MongoConnector implements DatabaseConnector {
+public final class MongoConnector implements DatabaseConnector {
     private static final String DB_NAME = "TwitterMining";
     public static final int DB_ERROR = -1;
 

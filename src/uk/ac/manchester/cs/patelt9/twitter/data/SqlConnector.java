@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import com.mysql.jdbc.MysqlDataTruncation;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
-public class SqlConnector implements DatabaseConnector {
+public final class SqlConnector implements DatabaseConnector {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining";
     public static final int DB_ERROR = -1;

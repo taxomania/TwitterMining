@@ -4,7 +4,7 @@ import java.net.UnknownHostException;
 
 import com.mongodb.MongoException;
 
-public class MongoThread extends DatabaseThread {
+public final class MongoThread extends DatabaseThread {
     public MongoThread() throws UnknownHostException, MongoException {
         this("Mongo");
     } // MongoThread()

@@ -2,7 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data;
 
 import java.sql.SQLException;
 
-public class SQLThread extends DatabaseThread {
+public final class SQLThread extends DatabaseThread {
     public SQLThread() throws SQLException {
         this("SQL");
     } // SQLThread()
