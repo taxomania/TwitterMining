@@ -10,8 +10,13 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import uk.ac.manchester.cs.patelt9.twitter.data.task.DeleteTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.SentimentTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.task.mongo.DeleteTweetMongoTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.task.mongo.SentimentMongoTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.sql.DeleteTweetSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.sql.SentimentSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.sql.SentimentScoreSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentObject;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;
@@ -30,6 +35,8 @@ public class SentimentAnalysis implements ParseListener {
     // @formatter:on
 
     private final AlchemyAPI api;
+    private final boolean usingSql;
+
     private ResultSet res;
     private boolean stillAnalyse = true;
     private ScannerThread scanner = null;
@@ -54,6 +61,7 @@ public class SentimentAnalysis implements ParseListener {
             } // performTask()
         };
         dbThread = new SQLThread();
+        usingSql = dbThread instanceof SQLThread;
         parseThread = new SentimentParseThread();
         parseThread.addListener(this);
     } // SentimentAnalysis()
@@ -143,16 +151,34 @@ public class SentimentAnalysis implements ParseListener {
 
     @Override
     public void onParseComplete(final long id, final String sentiment) {
-        dbThread.addTask(new SentimentMongoTask(id, sentiment));
+        final SentimentTask task;
+        if (usingSql){
+            task = new SentimentSQLTask(id, sentiment);
+        } else {
+            task = new SentimentMongoTask(id, sentiment);
+        } // else
+        dbThread.addTask(task);
     } // onParseComplete(long, String)
 
     @Override
     public void onParseComplete(final long id, final String sentiment, final String sentimentScore) {
-        dbThread.addTask(new SentimentMongoTask(id, sentiment, sentimentScore));
+        final SentimentTask task;
+        if (usingSql){
+            task = new SentimentScoreSQLTask(id, sentiment, sentimentScore);
+        } else {
+            task = new SentimentMongoTask(id, sentiment, sentimentScore);
+        } // else
+        dbThread.addTask(task);
     } // onParseComplete(long, String, String)
 
     private void deleteError(final long id) {
-        dbThread.addTask(new DeleteTweetMongoTask(id));
+        final DeleteTask task;
+        if (usingSql){
+            task = new DeleteTweetSQLTask(id);
+        } else {
+            task = new DeleteTweetMongoTask(id);
+        } // else
+        dbThread.addTask(task);
     } // deleteError(long)
 
 } // SentimentAnalysis
