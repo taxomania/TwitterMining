@@ -4,6 +4,11 @@ import java.net.UnknownHostException;
 
 import com.mongodb.MongoException;
 
+/**
+ * Create a new Thread to carry out all MongoDB tasks in a queue
+ *
+ * @see DatabaseThread
+ */
 public final class MongoThread extends DatabaseThread {
     public MongoThread() throws UnknownHostException, MongoException {
         this("Mongo");

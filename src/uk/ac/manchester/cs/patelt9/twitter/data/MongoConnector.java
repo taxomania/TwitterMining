@@ -19,6 +19,13 @@ public final class MongoConnector implements DatabaseConnector {
     private final DB db;
     private final DBCollection userCollection, tweetCollection;
 
+    /**
+     * Retrieve the current instance of MongoConnector, or create a new one if it is null;
+     *
+     * @return A single instance of MongoConnector
+     * @throws UnknownHostException
+     * @throws MongoException
+     */
     // Singleton lock on database helper
     public static synchronized MongoConnector getInstance() throws UnknownHostException,
             MongoException {
