@@ -2,7 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 
-public abstract class DeleteTask implements DatabaseTask {
+public class DeleteTask implements DatabaseTask {
     private final long id;
 
     public DeleteTask(final long id) {

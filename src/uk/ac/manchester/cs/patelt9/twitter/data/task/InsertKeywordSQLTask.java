@@ -1,10 +1,10 @@
-package uk.ac.manchester.cs.patelt9.twitter.data.task.sql;
+package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 
-public class InsertKeywordSQLTask extends InsertSQLTask {
+public class InsertKeywordSQLTask extends InsertTask {
     private final String keyword;
 
     public InsertKeywordSQLTask(final Tweet t, final String filter) {
@@ -17,7 +17,7 @@ public class InsertKeywordSQLTask extends InsertSQLTask {
         return doSqlTask((SqlConnector) db);
     } // doTask(DatabaseConnector)
 
-    @Override
+    // This needs fixing to fit new structure
     public int doSqlTask(final SqlConnector sql) {
         final Tweet tweet = getTweet();
         return sql.insertTweet(tweet.getId(), tweet.getScreenName(), tweet.getTweet(),

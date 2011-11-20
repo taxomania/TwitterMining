@@ -3,7 +3,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data.task;
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 
-public abstract class InsertTask implements DatabaseTask {
+public class InsertTask implements DatabaseTask {
     private final Tweet tweet;
 
     public InsertTask(final Tweet t) {

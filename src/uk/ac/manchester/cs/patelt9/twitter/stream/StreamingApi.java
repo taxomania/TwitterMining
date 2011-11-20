@@ -19,10 +19,6 @@ import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.task.DeleteTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.task.InsertTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.mongo.DeleteTweetMongoTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.mongo.InsertMongoTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.sql.DeleteTweetSQLTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.sql.InsertSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
@@ -37,7 +33,6 @@ public abstract class StreamingApi implements ParseListener {
     private final String urlString;
     private final int counterInterval;
     private final JsonParser jp;
-    private final boolean usingSql;
 
     private HttpsURLConnection con = null;
     private JsonReader jsonReader = null;
@@ -47,29 +42,17 @@ public abstract class StreamingApi implements ParseListener {
     private DatabaseThread dbThread = null;
 
     protected InsertTask createInsertTask(final Tweet t){
-        return new InsertSQLTask(t);
+        return new InsertTask(t);
     } // createInsertTask(Tweet)
 
     @Override
     public void onParseComplete(final Tweet t) {
-        final InsertTask task;
-        if (usingSql) {
-            task = createInsertTask(t);
-        } else {
-            task = new InsertMongoTask(t);
-        } // else
-        dbThread.addTask(task);
+        dbThread.addTask(createInsertTask(t));
     } // onParseComplete(Tweet)
 
     @Override
     public void onParseComplete(final long id) {
-        final DeleteTask task;
-        if (usingSql) {
-            task = new DeleteTweetSQLTask(id);
-        } else {
-            task = new DeleteTweetMongoTask(id);
-        } // else
-        dbThread.addTask(task);
+        dbThread.addTask(new DeleteTask(id));
     } // onParseComplete(long)
 
     static {
@@ -108,7 +91,6 @@ public abstract class StreamingApi implements ParseListener {
         urlString = url;
         jp = new JsonParser();
         dbThread = new SQLThread();
-        usingSql = dbThread instanceof SQLThread;
         parseThread = new StreamParseThread();
         parseThread.addListener(this);
         scanner = new ScannerThread() {

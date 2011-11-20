@@ -2,7 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 
-public abstract class SentimentTask implements DatabaseTask {
+public class SentimentTask implements DatabaseTask {
     private final long id;
     private final String sentiment;
 
