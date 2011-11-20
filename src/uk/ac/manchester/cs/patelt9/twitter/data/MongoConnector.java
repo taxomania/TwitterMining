@@ -9,7 +9,7 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoException;
 
-public class MongoConnector {
+public class MongoConnector implements DatabaseConnector {
     private static final String DB_NAME = "TwitterMining";
     public static final int DB_ERROR = -1;
 
@@ -45,20 +45,26 @@ public class MongoConnector {
         } // catch
     } // main(String[])
 
-    public DBObject insertUser(final long id, final String name) {
+    @Override
+    public int insertUser(final long id, final String name) {
+        return (insertNewUser(id, name) != null) ? 1 : 0;
+    } // insertUser(long, String)
+
+    public DBObject insertNewUser(final long id, final String name) {
         final BasicDBObject user = new BasicDBObject();
         user.put("user_id", id);
         user.put("username", name);
         userCollection.insert(user);
         return user;
-    } // insertUser(long, String)
+    } // insertNewUser(long, String)
 
+    @Override
     public int insertTweet(final Tweet t) {
         final long userId = t.getUserId();
         final String username = t.getScreenName();
         DBObject user = userCollection.findOne(new BasicDBObject("username", username));
         if (user == null) {
-            user = insertUser(userId, username);
+            user = insertNewUser(userId, username);
         } // if
         final BasicDBObject tweet = new BasicDBObject();
         tweet.put("tweet_id", t.getId());
@@ -72,6 +78,10 @@ public class MongoConnector {
         return tweetCollection.remove(new BasicDBObject("tweet_id", id)).getN();
     } // deleteTweet(long)
 
+    public int updateSentiment(final long id, final String sentiment) {
+        return updateSentiment(id, sentiment, null);
+    } // updateSentiment(long, String)
+
     public int updateSentiment(final long id, final String sentiment, final String score) {
         final BasicDBObject sentimentObject = new BasicDBObject("sentiment", sentiment);
         if (score != null) {
@@ -81,11 +91,11 @@ public class MongoConnector {
         return 1;
     } // updateSentiment(long, String, String)
 
-    public long deleteAll() {
+    public int deleteAll() {
         final long count = userCollection.count() + tweetCollection.count();
         userCollection.drop();
         tweetCollection.drop();
-        return count;
+        return (int)count;
     } // deleteAll()
 
     public void close() {

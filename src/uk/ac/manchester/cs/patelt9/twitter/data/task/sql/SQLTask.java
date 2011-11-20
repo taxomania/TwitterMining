@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.data.sqltask;
+package uk.ac.manchester.cs.patelt9.twitter.data.task.sql;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.task.DatabaseTask;

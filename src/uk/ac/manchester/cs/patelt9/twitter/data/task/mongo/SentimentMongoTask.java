@@ -1,5 +1,6 @@
-package uk.ac.manchester.cs.patelt9.twitter.data.mongotask;
+package uk.ac.manchester.cs.patelt9.twitter.data.task.mongo;
 
+import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.MongoConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.task.SentimentTask;
 
@@ -18,7 +19,12 @@ public class SentimentMongoTask extends SentimentTask implements MongoTask {
     @Override
     public int doMongoTask(final MongoConnector mongo) {
         return mongo.updateSentiment(getId(), getSentiment(), sentimentScore);
-    } // doSqlTask(SqlConnector)
+    } // doMongoTask(SqlConnector)
+
+    @Override
+    public int doTask(final DatabaseConnector db) {
+        return db.updateSentiment(getId(), getSentiment(), sentimentScore);
+    } // doTask(DatabaseConnector)
 
     @Override
     public String toString() {

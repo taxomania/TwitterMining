@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import com.mysql.jdbc.MysqlDataTruncation;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
-public class SqlConnector {
+public class SqlConnector implements DatabaseConnector {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining";
     public static final int DB_ERROR = -1;
@@ -97,11 +97,17 @@ public class SqlConnector {
         } // catch
     } // executeUpdate(PreparedStatement)
 
-    private int insertUser(final long id, final String screenName) throws SQLException {
+    public int insertUser(final long id, final String screenName) throws SQLException {
         insertUser.setLong(1, id);
         insertUser.setString(2, screenName);
         return executeUpdate(insertUser);
     } // insertUser(long, String)
+
+    @Override
+    public int insertTweet(final Tweet t) {
+        return insertTweet(t.getId(), t.getScreenName(), t.getTweet(), t.getCreatedAt(),
+                t.getUserId());
+    } // insertTweet(Tweet)
 
     public int insertTweet(final long id, final String screenName, final String content,
             final String createdAt, final long userId, final String keyword) {
@@ -132,7 +138,7 @@ public class SqlConnector {
         s.setLong(4, userId);
     } // setTweetValues(PreparedStatement, long, String, String, long)
 
-    public int updateSentiment(final String sentiment, final long id) {
+    public int updateSentiment(final long id, final String sentiment) {
         try {
             updateSentiment.setString(1, sentiment);
             updateSentiment.setLong(2, id);
@@ -141,10 +147,9 @@ public class SqlConnector {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // updateSentiment(String, long)
+    } // updateSentiment(long, String)
 
-    public int updateSentimentScore(final String sentiment, final String sentimentScore,
-            final long id) {
+    public int updateSentiment(final long id, final String sentiment, final String sentimentScore) {
         try {
             updateSentimentScore.setString(1, sentiment);
             updateSentimentScore.setDouble(2, Double.parseDouble(sentimentScore));
@@ -154,7 +159,7 @@ public class SqlConnector {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // updateSentiment(String, String, long)
+    } // updateSentiment(long, String, String)
 
     public int insertTweet(final long id, final String screenName, final String content,
             final String createdAt, final long userId) {

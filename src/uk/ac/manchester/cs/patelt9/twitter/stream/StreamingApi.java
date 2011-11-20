@@ -15,10 +15,10 @@ import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseThread;
-import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
+import uk.ac.manchester.cs.patelt9.twitter.data.MongoThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.DeleteTweetSQLTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.sqltask.InsertSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.sql.DeleteTweetSQLTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.task.sql.InsertSQLTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.StreamParseThread.ParseListener;
@@ -39,16 +39,16 @@ public abstract class StreamingApi implements ParseListener {
     private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
     private StreamParseThread parseThread = null;
     private ScannerThread scanner = null;
-    private DatabaseThread mongoThread = null;
+    private DatabaseThread dbThread = null;
 
     @Override
     public void onParseComplete(final Tweet t) {
-        mongoThread.addTask(new InsertSQLTask(t));
+        dbThread.addTask(new InsertSQLTask(t));
     } // onParseComplete(Tweet)
 
     @Override
     public void onParseComplete(final long id) {
-        mongoThread.addTask(new DeleteTweetSQLTask(id));
+        dbThread.addTask(new DeleteTweetSQLTask(id));
     } // onParseComplete(long)
 
     static {
@@ -86,7 +86,7 @@ public abstract class StreamingApi implements ParseListener {
         counterInterval = interval;
         urlString = url;
         jp = new JsonParser();
-        mongoThread = new SQLThread();
+        dbThread = new MongoThread();
         parseThread = new StreamParseThread();
         parseThread.addListener(this);
         scanner = new ScannerThread() {
@@ -126,9 +126,9 @@ public abstract class StreamingApi implements ParseListener {
             scanner.interrupt();
             scanner = null;
         } // if
-        if (mongoThread != null) {
-            mongoThread.interrupt();
-            mongoThread = null;
+        if (dbThread != null) {
+            dbThread.interrupt();
+            dbThread = null;
         } // if
         disconnect();
     } // close()
@@ -159,7 +159,7 @@ public abstract class StreamingApi implements ParseListener {
         } // catch
 
         scanner.start();
-        mongoThread.start();
+        dbThread.start();
         parseThread.start();
 
         System.out.println("Started");

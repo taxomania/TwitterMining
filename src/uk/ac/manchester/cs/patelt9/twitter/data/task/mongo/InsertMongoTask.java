@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.data.mongotask;
+package uk.ac.manchester.cs.patelt9.twitter.data.task.mongo;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.MongoConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;

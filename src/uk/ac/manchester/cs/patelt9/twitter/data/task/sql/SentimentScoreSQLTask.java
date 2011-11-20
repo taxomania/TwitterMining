@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.data.sqltask;
+package uk.ac.manchester.cs.patelt9.twitter.data.task.sql;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
 
@@ -12,7 +12,7 @@ public class SentimentScoreSQLTask extends SentimentSQLTask {
 
     @Override
     public int doSqlTask(final SqlConnector sql) {
-        return sql.updateSentimentScore(getSentiment(), sentimentScore, getId());
+        return sql.updateSentiment(getId(), getSentiment(), sentimentScore);
     } // doSqlTask(SqlConnector)
 
     @Override

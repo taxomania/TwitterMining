@@ -1,6 +1,8 @@
 package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
-public class SentimentTask implements DatabaseTask {
+import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
+
+public abstract class SentimentTask implements DatabaseTask {
     private final long id;
     private final String sentiment;
 
@@ -16,6 +18,11 @@ public class SentimentTask implements DatabaseTask {
     protected String getSentiment() {
         return sentiment;
     } // getSentiment()
+
+    @Override
+    public int doTask(final DatabaseConnector db) {
+        return db.updateSentiment(id, sentiment);
+    } // doTask(DatabaseConnector)
 
     @Override
     public String toString() {
