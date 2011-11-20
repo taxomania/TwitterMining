@@ -10,9 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -71,7 +69,7 @@ public class HttpsPractice {
         new HttpsPractice().test();
     } // main(String[])
 
-    private final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
+    // private final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
 
     private void test() {
         final URL url;
@@ -148,24 +146,22 @@ public class HttpsPractice {
                         else if (je.isJsonObject()) {
                             final JsonObject jo = je.getAsJsonObject();
                             // System.out.println(jo.toString());
-                             System.out.println(jo.getAsJsonObject("user").toString());
-                            final Long id = jo.getAsJsonObject("user").getAsJsonPrimitive("id_str")
-                                    .getAsLong();
-                            final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-                            //System.out.println(Long.toString(id) + ": " + tweet); // Testing
+                            System.out.println(jo.getAsJsonObject("user").toString());
+                            // final Long id =
+                            // jo.getAsJsonObject("user").getAsJsonPrimitive("id_str")
+                            // .getAsLong();
+                            // final String tweet = jo.getAsJsonPrimitive("text").getAsString();
+                            // System.out.println(Long.toString(id) + ": " + tweet); // Testing
                             final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive(
                                     "created_at").getAsString());
                             System.out.println(createdAt);
-                            final TwitterUser tweeter;
-                            if (tweeters.containsKey(id)) {
-                                tweeter = tweeters.get(id);
-                            } else {
-                                tweeter = new TwitterUser(id);
-                                tweeters.put(id, tweeter);
-                            } // else
-                            tweeter.addTweet(new Tweet(tweet, createdAt));
-                            // System.out.println(tweeters.get(id).toString()); // Testing maps
-
+                            /*
+                             * final TwitterUser tweeter; if (tweeters.containsKey(id)) { tweeter =
+                             * tweeters.get(id); } else { tweeter = new TwitterUser(id);
+                             * tweeters.put(id, tweeter); } // else tweeter.addTweet(new
+                             * Tweet(tweet, createdAt)); //
+                             * System.out.println(tweeters.get(id).toString()); // Testing maps
+                             */
                             // TODO: Add into database
                         } // if
                     } // while

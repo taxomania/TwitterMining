@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,15 +15,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 
 public class APIPractice {
     private static final String GET_PUBLIC_TIMELINE_URL = "http://api.twitter.com/1/statuses/public_timeline.xml?trim_user=true";
 
-    private static final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
+    // private static final Map<Long, TwitterUser> tweeters = new HashMap<Long, TwitterUser>();
 
     private static HttpResponse getTwitterPosts() {
         final HttpClient client = new DefaultHttpClient();
@@ -86,39 +82,33 @@ public class APIPractice {
             } // catch
         } // finally
 
-        if (userIds == null || tweets == null) return;
+        if (userIds == null || tweets == null || times == null) return;
 
         // Links tweets to user through the map
-        for (int i = 0; i < userIds.getLength(); i++) {
-            final long id = parseUserId(userIds.item(i));
-            final TwitterUser tweeter;
-            if (tweeters.containsKey(id)) {
-                tweeter = tweeters.get(id);
-            } else {
-                tweeter = new TwitterUser(id);
-                tweeters.put(id, tweeter);
-            } // else
-            tweeter.addTweet(new Tweet(tweets.item(i).getTextContent(), times.item(i)
-                    .getTextContent()));
-
-            // For visualisation only
-            //System.out.println(Long.toString(id) + ": " + tweets.item(i).getTextContent());
-        } // for
-    } // printTweets(HttpResponse)
+        /*
+         * for (int i = 0; i < userIds.getLength(); i++) { final long id =
+         * parseUserId(userIds.item(i)); final TwitterUser tweeter; if (tweeters.containsKey(id)) {
+         * tweeter = tweeters.get(id); } else { tweeter = new TwitterUser(id); tweeters.put(id,
+         * tweeter); } // else tweeter.addTweet(new Tweet(tweets.item(i).getTextContent(),
+         * times.item(i) .getTextContent()));
+         *
+         * // For visualisation only //System.out.println(Long.toString(id) + ": " +
+         * tweets.item(i).getTextContent()); } // for
+         */} // printTweets(HttpResponse)
 
     public static void main(final String[] args) {
         printTweets(getTwitterPosts());
 
-        // Test feature
-        for (TwitterUser t : tweeters.values()) {
-            System.out.println(t);
-        }
+        /*
+         * // Test feature for (TwitterUser t : tweeters.values()) { System.out.println(t); }
+         */
     } // main(String[])
 
-    private static final long parseUserId(final Node user) {
-        return Long.parseLong(user.getTextContent().replaceAll(" ", "").replaceAll("\n", ""));
-    } // parseUserId(Node)
-
+    /*
+     * private static final long parseUserId(final Node user) { return
+     * Long.parseLong(user.getTextContent().replaceAll(" ", "").replaceAll("\n", "")); } //
+     * parseUserId(Node)
+     */
     // This is used to check the xml response from Twitter
     @SuppressWarnings("unused")
     private static void printXmlResponse(final InputStream in) throws IOException {
