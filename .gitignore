@@ -1,7 +1,6 @@
 bin/
 doc/
 .DS_Store
-twitter4j.properties
 userpass.txt
 sqluserpass.txt
 alchemyapikey.txt
