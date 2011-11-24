@@ -49,7 +49,7 @@ public final class MongoConnector implements DatabaseConnector {
     public static void main(String[] args) {
         try {
             MongoConnector m = getInstance();
-            m.deleteAll();
+            // m.deleteAll();
             // m.insertTweet(new Tweet(14142411, "HELLO WORLD", "1411=6-16", new User(141455,
             // "taxomania")));
 
