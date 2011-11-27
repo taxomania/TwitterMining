@@ -42,9 +42,9 @@ public final class SQLConnector implements DatabaseConnector {
     private static SQLConnector mySql = null;
 
     /**
-     * Retrieve the current instance of SqlConnector, or create a new one if it is null;
+     * Retrieve the current instance of SQLConnector, or create a new one if it is null;
      *
-     * @return A single instance of SqlConnector
+     * @return A single instance of SQLConnector
      * @throws SQLException
      */
     public static synchronized SQLConnector getInstance() throws SQLException {
