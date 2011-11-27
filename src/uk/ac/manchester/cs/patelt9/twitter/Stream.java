@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import java.sql.SQLException;
 
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApi;
-import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilterPost;
+import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiFilter;
 import uk.ac.manchester.cs.patelt9.twitter.stream.StreamingApiSample;
 
 import com.mongodb.MongoException;
@@ -18,10 +18,10 @@ public class Stream {
             if (args[0].equals("sample")) {
                 return StreamingApiSample.getInstance();
             } else {
-                return StreamingApiFilterPost.getInstance(args);
+                return StreamingApiFilter.getInstance(args);
             } // else
         } else {
-            return StreamingApiFilterPost.getInstance();
+            return StreamingApiFilter.getInstance();
         } // else
     } // getStream(String[])
 
