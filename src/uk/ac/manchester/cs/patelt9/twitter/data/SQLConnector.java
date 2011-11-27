@@ -20,7 +20,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
  * @author Tariq Patel
  *
  */
-public final class SqlConnector implements DatabaseConnector {
+public final class SQLConnector implements DatabaseConnector {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining";
     public static final int DB_ERROR = -1;
@@ -39,7 +39,7 @@ public final class SqlConnector implements DatabaseConnector {
     } // static
 
     private Connection con = null;
-    private static SqlConnector mySql = null;
+    private static SQLConnector mySql = null;
 
     /**
      * Retrieve the current instance of SqlConnector, or create a new one if it is null;
@@ -47,14 +47,14 @@ public final class SqlConnector implements DatabaseConnector {
      * @return A single instance of SqlConnector
      * @throws SQLException
      */
-    public static synchronized SqlConnector getInstance() throws SQLException {
+    public static synchronized SQLConnector getInstance() throws SQLException {
         if (mySql == null) {
-            mySql = new SqlConnector();
+            mySql = new SQLConnector();
         } // if
         return mySql;
     } // getInstance()
 
-    private SqlConnector() throws SQLException {
+    private SQLConnector() throws SQLException {
         try {
             Class.forName(JDBC_DRIVER);
             con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
@@ -91,7 +91,7 @@ public final class SqlConnector implements DatabaseConnector {
         } catch (final ClassNotFoundException e) {
             e.printStackTrace();
         } // catch
-    } // SqlConnector()
+    } // SQLConnector()
 
     private int executeUpdate(final PreparedStatement s) {
         try {

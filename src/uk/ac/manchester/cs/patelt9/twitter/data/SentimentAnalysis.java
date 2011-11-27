@@ -79,7 +79,7 @@ public class SentimentAnalysis implements ParseListener {
 
     public void loadDataSet(final String sqlStatement) {
         try {
-            setRes(SqlConnector.getInstance().executeQuery(sqlStatement));
+            setRes(SQLConnector.getInstance().executeQuery(sqlStatement));
         } catch (final SQLException e) {
             e.printStackTrace();
         } // catch

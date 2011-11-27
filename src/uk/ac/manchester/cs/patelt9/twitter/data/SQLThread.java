@@ -26,9 +26,9 @@ public final class SQLThread extends DatabaseThread {
      *            Thread name
      *
      * @throws SQLException
-     * @see SqlConnector
+     * @see SQLConnector
      */
     public SQLThread(final String s) throws SQLException {
-        super(s, SqlConnector.getInstance());
+        super(s, SQLConnector.getInstance());
     } // SQLThread(String)
 } // SQLThread

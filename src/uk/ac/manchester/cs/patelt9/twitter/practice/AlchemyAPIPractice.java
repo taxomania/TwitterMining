@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.SqlConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.SQLConnector;
 
 import com.alchemyapi.api.AlchemyAPI;
 
@@ -31,7 +31,7 @@ public class AlchemyAPIPractice {
             return;
         } // catch
         try {
-            final SqlConnector sql = SqlConnector.getInstance();
+            final SQLConnector sql = SQLConnector.getInstance();
             final ResultSet res = sql
                     .executeQuery("SELECT t.text, t.id FROM user u, tweet t WHERE u.id = t.user_id AND u.username='taxomania';");
             res.beforeFirst();
