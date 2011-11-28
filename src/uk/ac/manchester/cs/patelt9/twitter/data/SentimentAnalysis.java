@@ -85,6 +85,12 @@ public class SentimentAnalysis implements ParseListener {
         } // catch
     } // loadDataSet(String)
 
+    private void getSentiment(final long id, final String tweet) throws IllegalArgumentException,
+            SAXException, XPathExpressionException, ParserConfigurationException, IOException {
+        final Document doc = api.TextGetTextSentiment(tweet);
+        parseThread.addTask(new SentimentObject(id, doc));
+    } // getSentiment(long, String)
+
     public void analyseSentiment() {
         System.out.println("Analysing tweet sentiment");
         scanner.start();
@@ -97,9 +103,8 @@ public class SentimentAnalysis implements ParseListener {
                     final DBObject ob = c.next();
                     final long id = ((Long) ob.get("tweet_id")).longValue();
                     final String tweet = (String) ob.get("text");
-                    final Document doc;
                     try {
-                        doc = api.TextGetTextSentiment(tweet);
+                        getSentiment(id, tweet);
                     } catch (final IllegalArgumentException e) {
                         deleteError(id);
                         continue;
@@ -122,17 +127,14 @@ public class SentimentAnalysis implements ParseListener {
                             continue;
                         } // else
                     } // catch
-                    parseThread.addTask(new SentimentObject(id, doc));
                 } // while
             } else {
                 res.beforeFirst();
                 while (stillAnalyse && res.next()) {
                     final String tweet = res.getString(1);
                     final Long id = res.getLong(2);
-                    // System.out.println(id + ": " + tweet);
-                    final Document doc;
                     try {
-                        doc = api.TextGetTextSentiment(tweet);
+                        getSentiment(id, tweet);
                     } catch (final IllegalArgumentException e) {
                         deleteError(id);
                         continue;
@@ -155,7 +157,6 @@ public class SentimentAnalysis implements ParseListener {
                             continue;
                         } // else
                     } // catch
-                    parseThread.addTask(new SentimentObject(id, doc));
                 } // while
             } // else
             close();
