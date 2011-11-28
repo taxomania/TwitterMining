@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT software (name,version?,type?,os*,language*)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT version (#PCDATA)>
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT os (#PCDATA)>
+<!ELEMENT language (name, version?)>
+<!ELEMENT reason (#PCDATA)>
