@@ -1,18 +1,11 @@
 package uk.ac.manchester.cs.patelt9.twitter.data;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.mysql.jdbc.MysqlDataTruncation;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
 
 /**
  * Helper class to connect to MySQL and carry out database operations.
@@ -20,13 +13,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
  * @author Tariq Patel
  *
  */
-public final class TweetSQLConnector implements DatabaseConnector {
-    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining";
-    public static final int DB_ERROR = -1;
-
-    private static String dbUser = null, dbPass = null;
-
+public final class TweetSQLConnector extends SQLConnector implements DatabaseConnector {
     private PreparedStatement insertUser = null;
     private PreparedStatement insertFilteredTweet = null;
     private PreparedStatement insertTweet = null;
@@ -34,11 +21,7 @@ public final class TweetSQLConnector implements DatabaseConnector {
     private PreparedStatement updateSentiment = null;
     private PreparedStatement updateSentimentScore = null;
 
-    static {
-        getUserPass();
-    } // static
-
-    private Connection con = null;
+    private final Connection con = getConnection();
     private static TweetSQLConnector mySql = null;
 
     /**
@@ -55,58 +38,37 @@ public final class TweetSQLConnector implements DatabaseConnector {
     } // getInstance()
 
     private TweetSQLConnector() throws SQLException {
-        try {
-            Class.forName(JDBC_DRIVER);
-            con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
-            // @formatter:off
-            insertUser = con.prepareStatement(
-                    "INSERT INTO user VALUES(" +
-                    "?, " +  // Id
-                    "?"   +  // Username
-                    ");");
+        // @formatter:off
+        insertUser = con.prepareStatement(
+                "INSERT INTO user VALUES(" +
+                "?, " +  // Id
+                "?"   +  // Username
+                ");");
 
-            insertFilteredTweet = con.prepareStatement(
-                    "INSERT INTO tweet VALUES(default, " + // Id
-                    "?, " + // Tweet_Id
-                    "?, " + // Text
-                    "?, " + // Created_at
-                    "?, " + // User_Id
-                    "default, default, " + // Sentiment, Sentiment_score,
-                    "?);"); // Keyword
+        insertFilteredTweet = con.prepareStatement(
+                "INSERT INTO tweet VALUES(default, " + // Id
+                "?, " + // Tweet_Id
+                "?, " + // Text
+                "?, " + // Created_at
+                "?, " + // User_Id
+                "default, default, " + // Sentiment, Sentiment_score,
+                "?);"); // Keyword
 
-            insertTweet = con.prepareStatement(
-                    "INSERT INTO tweet VALUES(default, " + // Id
-                    "?, " + // Tweet_Id
-                    "?, " + // Text
-                    "?, " + // Created_at
-                    "?, " + // User_Id
-                    "default, default, default);"); // Sentiment, Sentiment_score, Keyword
+        insertTweet = con.prepareStatement(
+                "INSERT INTO tweet VALUES(default, " + // Id
+                "?, " + // Tweet_Id
+                "?, " + // Text
+                "?, " + // Created_at
+                "?, " + // User_Id
+                "default, default, default);"); // Sentiment, Sentiment_score, Keyword
 
-            deleteTweetByTweetId = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
+        deleteTweetByTweetId = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
 
-            updateSentiment = con.prepareStatement("UPDATE tweet SET sentiment=? WHERE tweet_id=?;");
-            updateSentimentScore = con.prepareStatement("UPDATE tweet SET sentiment=?, " +
-                    "sentiment_score=? WHERE tweet_id=?;");
-            // @formatter:on
-        } catch (final ClassNotFoundException e) {
-            e.printStackTrace();
-        } // catch
+        updateSentiment = con.prepareStatement("UPDATE tweet SET sentiment=? WHERE tweet_id=?;");
+        updateSentimentScore = con.prepareStatement("UPDATE tweet SET sentiment=?, " +
+                "sentiment_score=? WHERE tweet_id=?;");
+        // @formatter:on
     } // SQLConnector()
-
-    private int executeUpdate(final PreparedStatement s) {
-        try {
-            return s.executeUpdate();
-        } catch (final MysqlDataTruncation e) {
-            System.err.println(e.getMessage());
-            return DB_ERROR;
-        } catch (final MySQLIntegrityConstraintViolationException e) {
-            // System.err.println(e.getMessage());
-            return DB_ERROR;
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return DB_ERROR;
-        } // catch
-    } // executeUpdate(PreparedStatement)
 
     @Override
     public int insertUser(final User user) throws SQLException {
@@ -205,18 +167,6 @@ public final class TweetSQLConnector implements DatabaseConnector {
         } // catch
     } // updateSentiment(long, String, String)
 
-    private int executeUpdate(final String sqlStatement) {
-        try {
-            return con.createStatement().executeUpdate(sqlStatement);
-        } catch (final MySQLIntegrityConstraintViolationException e) {
-            System.err.println(e.getMessage());
-            return DB_ERROR;
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return DB_ERROR;
-        } // catch
-    } // executeUpdate(String)
-
     /**
      * Execute any MySQL query.
      *
@@ -249,36 +199,7 @@ public final class TweetSQLConnector implements DatabaseConnector {
 
     @Override
     public void close() {
-        if (con != null) {
-            try {
-                con.close();
-            } catch (final SQLException e) {
-                e.printStackTrace();
-            } // catch
-        } // if
+        super.close();
         mySql = null;
     } // close()
-
-    private static void getUserPass() {
-        BufferedReader userPass = null;
-        try {
-            userPass = new BufferedReader(new FileReader(new File("sqluserpass.txt")));
-            dbUser = userPass.readLine();
-            dbPass = userPass.readLine();
-        } catch (final FileNotFoundException e) {
-            e.printStackTrace();
-            System.err.println("Login file not found");
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (userPass != null) {
-                try {
-                    userPass.close();
-                } catch (final IOException e) {
-                    e.printStackTrace();
-                } // catch
-            } // if
-        } // finally
-    } // getUserPass()
-
 } // SQLConnector
