@@ -1,0 +1,411 @@
+ZeuAPP
+Bitcoin
+vtiger CRM
+ReOS
+SugarCRM
+OrangeHRM
+Ebase
+Dolibarr ERP/CRM
+Bonita Open Solution
+Adempiere
+bookyt
+Compiere
+FrontAccounting
+GnuCash
+Grisbi
+HomeBank
+jFin
+JFire
+JGnash
+JQuantLib
+KMyMoney
+LedgerSMB
+MibianLib
+Mifos
+Octopus Micro Finance Suite
+Openbravo
+OpenERP
+Postbooks
+QuickFIX
+QuickFIX/J
+SQL Ledger
+Tryton
+TurboCASH
+WebERP
+refbase
+Evergreen
+Koha
+NewGenLib
+OpenBiblio
+PMB
+SimPy
+Blender
+CellProfiler
+ImageJ
+FIJI
+Endrov
+Jmol
+Molekel
+MeshLab
+PyMOL
+QuteMol
+RasMol
+Avogadro
+Ascalaph Designer
+GROMACS
+LAMMPS
+MDynaMix
+TINKER
+NAMD
+Chemistry Development Kit
+JOELib
+OpenBabel
+P-GRADE Portal
+OpenCog
+OpenCV
+AForge.NET
+ROS
+TREX
+CMU Sphinx
+Emacspeak
+Festival Speech Synthesis System
+Modular Audio Recognition Framework
+NonVisual Desktop Access
+NVDA
+Text2Speech
+ESpeak
+Dasher
+Gnopernicus
+Virtual Magnifying Glass
+OpenAFS
+Eucalyptus
+AppScale
+FusionCharts
+ParaView
+Orange
+RapidMiner
+Scriptella ETL
+Weka
+jHepWork
+Konstanz Information Miner
+KNIME
+Environment for DeveLoping KDD-Applications Supported by Index-Structures
+ELKI
+Jumper
+Lucene
+Solr
+Xapian
+Nutch
+CloverETL
+Talend
+Pentaho
+SpagoBI
+Limesurvey
+OpenX
+RSS Bandit
+RSSOwl
+Akregator
+Sage
+Liferea
+Bots
+Asterisk
+Ekiga
+FreePBX
+FreeSWITCH
+Jitsi
+QuteCom
+sipX
+Slrn
+Twinkle
+FreeNX
+OpenVPN
+rdesktop
+Synergy
+VNC
+RealVNC
+TightVNC
+UltraVNC
+xrdp
+Cheese
+cURL
+HTTrack
+Wget
+Apache
+Apache Cocoon
+AWStats
+BookmarkSync
+CougarXML
+curl-loader
+HTTP File Server
+Distributed ICDL Crawler
+Crawley Framework
+lighttpd
+nginx
+NetKernel
+Piwik
+Qcodo
+Squid
+Web-Developer Server Suite
+XAMPP
+Zope
+Oxwall
+Liferay
+Sun Java System Portal Server
+uPortal
+Apache Axis2
+Apache Geronimo
+GlassFish
+CORBA
+JacORB
+Jakarta Tomcat
+Tomcat
+Jakarta
+JBoss
+ObjectWeb JOnAS
+JOnAS
+OpenSplice DDS
+SmartVariables
+TAO
+OpenLDAP
+JXplorer
+openVXI
+YaCy
+Gnaural
+DoceboLMS
+eFront
+GCompris
+IUP
+Moodle
+Omeka
+Sakai
+Chamilo
+openSIS
+ATutor
+ILIAS
+Kiten
+KVerbos
+KTouch
+Tux
+KGeography
+KEduca
+openlp.org
+BibleDesktop
+BibleTime
+Xiphos
+SWORD Project
+SwordBible
+Go Bible
+jSword
+MacSword
+Marcion
+Eye of GNOME
+F-spot
+Gqview
+Gthumb
+imgSeek
+Kphotoalbum
+Dream DRM Receiver
+KToon
+Synfig
+Pencil
+Blender
+Art of Illusion
+K-3D
+OpenFX
+Seamless3d
+Pencil Animation
+SWFTools
+Avidemux
+AviSynth
+Blender
+Cinelerra
+CineFX formerly known as Jahshaka
+DScaler
+DVD Flick
+DVDx
+Kaltura
+Kino
+Kdenlive
+LiVES
+OpenShot Video Editor
+PiTiVi
+VirtualDub
+VirtualDubMod
+Celtx
+KeePass
+Password Safe
+TeamLab
+Project.net
+Chandler
+KAddressBook
+Kontact
+KOrganizer
+Mozilla
+Novell Evolution
+OpenSync
+Rachota Timetracker
+Bugzilla
+Mantis
+Mindquarry
+Redmine
+Trac
+Open Scene Graph
+OpenSCDP
+Bison
+CodeSynthesis XSD
+CodeSynthesis XSD/e
+xmlbeansxx
+Flex lexical analyser
+Kodos
+phpCodeGenie
+^txt2regex$
+SableCC
+SWIG
+Autoconf
+Automake
+Xnee
+Memtest86
+JSystem
+GNU Debugger
+ClamAV
+ClamWin
+Gateway Anti-Virus
+AVG
+Winpooch
+MyDLP
+GnuPG
+KGPG
+Seahorse
+GnuTLS
+OpenSSL
+CrossCrypt
+FreeOTFE and FreeOTFE Explorer
+Iptables
+Coyote Linux
+Firestarter
+IPFilter
+ipfw
+IPCop
+IPFire
+M0n0wall
+PeerGuardian
+PF
+pfSense
+Rope
+SmoothWall
+Shorewall
+Untangle
+Vyatta
+Zentyal
+Lsh
+OpenSSH
+PuTTY
+Cyberduck
+Agorum
+Alpine
+Anti-Spam SMTP Proxy
+Balsa
+Bogofilter
+Citadel/UX
+Claws Mail
+Dada Mail
+DSPAM
+Enigmail
+Evolution
+Exim
+Fdm
+Fetchmail
+FreePOPs
+FUDforum
+Getmail
+GNUMail
+Gnus
+Gnuzilla
+GPGMail
+GroupServer
+Hula
+Hypermail
+I-sense
+IlohaMail
+Internet Messaging Program
+Libremail
+GNU Mailman
+MailScanner
+Mailx
+Majordomo
+MH Message Handling System
+MIMEDefang
+Modest
+Movemail
+Mozilla Mail & Newsgroups
+Mozilla Thunderbird
+Mutt
+NeoMail
+Open-Xchange
+POPFile
+Qpopper
+Roundcube
+Scalix
+SimpleMail
+Smail
+Smartlist
+SpamAssassin
+Spicebird
+SquirrelMail
+Sylpheed
+Sympa
+Uebimiau
+Universal village collaboration suite
+UW IMAP
+Vpopmail
+Xuheki
+YAM
+Yet Another Mailer
+YPOPs!
+Zarafa
+Zimbra
+Adium
+AMSN
+Ayttm
+BitlBee
+Bombus
+Bombusmod
+Centericq
+Climm
+Coccinella
+Ekiga
+Emesene
+Empathy
+Fama IM
+Fire
+Gabber
+Gajim
+Instantbird
+JabberMixClient
+Jimm
+Jitsi
+JWChat
+Kadu
+Kopete
+Meetro
+Miranda IM
+Monal
+Naim
+Neustradamus
+Pandion
+Pidgin
+Proteus
+Psi
+QuteCom
+Retroshare
+SFLphone
+Tapioca
+Telepathy
+TerraIM
+Tkabber
+Tmsnc
+TNT
+TorChat
+WASTE
+Zephyr
+Zinc

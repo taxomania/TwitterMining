@@ -43,7 +43,7 @@ public final class DictionarySQLConnector extends SQLConnector {
      *
      * @param softwareName
      *            The word to be inserted
-     * @return The number of affected rows
+     * @return The number of affected rows or -1 if an error occurs
      */
     public int insert(final String softwareName) {
         try {
