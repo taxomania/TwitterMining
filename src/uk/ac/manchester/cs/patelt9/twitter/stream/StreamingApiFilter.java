@@ -3,11 +3,13 @@ package uk.ac.manchester.cs.patelt9.twitter.stream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.DictionarySQLConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.task.InsertKeywordTask;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.task.InsertTask;
 
@@ -25,30 +27,26 @@ public class StreamingApiFilter extends StreamingApi {
 
     public static StreamingApiFilter getInstance() throws MongoException, UnknownHostException,
             SQLException {
-        return getInstance(new String[] { "software", "app" });
-    } // getInstance()
-
-    public static StreamingApiFilter getInstance(final String[] keywords) throws MongoException,
-            UnknownHostException, SQLException {
         if (stream == null) {
-            stream = new StreamingApiFilter(keywords);
+            stream = new StreamingApiFilter();
         } // if
         return stream;
     } // getInstance(String[])
 
-    private StreamingApiFilter(final String[] keywords) throws UnknownHostException,
-            MongoException, SQLException {
+    private StreamingApiFilter() throws UnknownHostException, MongoException, SQLException {
         super(TWITTER_STREAM_API, COUNTER_INTERVAL);
-        setKeyword(keywords);
+        setKeyword();
     } // StreamingApiFilterPost(String[])
 
-    private void setKeyword(final String[] keywords) {
-        final int queryArgs = keywords.length;
-        for (int i = 0; i < queryArgs - 1; i++) {
-            keyword = keyword.concat(keywords[i] + ",");
-        } // for
-        keyword = keyword.concat(keywords[queryArgs - 1]);
-    } // setKeyword(String[])
+    private void setKeyword() throws SQLException {
+        final DictionarySQLConnector db = DictionarySQLConnector.getInstance();
+        final ResultSet filters = db.selectAll();
+        filters.beforeFirst();
+        while (filters.next()) {
+            keyword += filters.getString(1) + ",";
+        } // while
+        keyword = keyword.substring(0, keyword.length() - 1);
+    } // setKeyword()
 
     @Override
     protected void connect(final HttpsURLConnection con) throws IOException {
@@ -75,6 +73,8 @@ public class StreamingApiFilter extends StreamingApi {
 
     @Override
     protected InsertTask createInsertTask(final Tweet t) {
-        return new InsertKeywordTask(t, keyword);
+        return new InsertKeywordTask(t, "latest"); // No longer feasible to store keyword
+                                                   // Store 'latest' to differentiate from old
+                                                   // tweets
     } // createInsertTask(Tweet)
 } // StreamingApiFilter

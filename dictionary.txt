@@ -89,7 +89,6 @@ Weka
 jHepWork
 Konstanz Information Miner
 KNIME
-Environment for DeveLoping KDD-Applications Supported by Index-Structures
 ELKI
 Jumper
 Lucene
@@ -126,7 +125,6 @@ RealVNC
 TightVNC
 UltraVNC
 xrdp
-Cheese
 cURL
 HTTrack
 Wget
@@ -159,7 +157,6 @@ CORBA
 JacORB
 Jakarta Tomcat
 Tomcat
-Jakarta
 JBoss
 ObjectWeb JOnAS
 JOnAS
@@ -219,7 +216,8 @@ Avidemux
 AviSynth
 Blender
 Cinelerra
-CineFX formerly known as Jahshaka
+CineFX
+Jahshaka
 DScaler
 DVD Flick
 DVDx
@@ -409,3 +407,53 @@ TorChat
 WASTE
 Zephyr
 Zinc
+Activision
+Infinity Ward
+Blizzard
+EA
+Rockstar Games
+HP
+Codemasters
+WebOS
+Android
+Bada
+Symbian
+Linux
+Fedora
+Ubuntu
+uTorrent
+Skype
+Sopcast
+Spotify
+Adium
+Google Chrome
+Steam
+Valve
+TextMate
+Text Editor
+nedit
+gedit
+BitLord
+Adobe
+bittorrent
+Nero
+iTunes
+Blackberry
+AVG
+MS Office
+f.lux
+Cisco
+SlingMedia
+Maxis
+Rarlabs
+WinRar
+VLC
+VideoLan
+ATI
+Atari
+Radeon
+Daemon tools
+Nvidia
+Oracle
+SQL
+Symantec

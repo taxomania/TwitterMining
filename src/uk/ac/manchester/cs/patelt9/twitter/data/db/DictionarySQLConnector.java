@@ -2,6 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -75,6 +76,16 @@ public final class DictionarySQLConnector extends SQLConnector {
     public int deleteAll() {
         return executeUpdate("DELETE FROM dictionary");
     } // deleteAll()
+
+    public ResultSet selectAll() {
+        try {
+            return con.createStatement().executeQuery(
+                    "SELECT software_name FROM dictionary UNION SELECT word FROM keyword");
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return null;
+        } // catch
+    } // selectAll()
 
     @Override
     public void close() {

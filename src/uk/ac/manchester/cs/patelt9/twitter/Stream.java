@@ -15,15 +15,10 @@ public class Stream {
     public static StreamingApi getStream(final String[] args) throws MongoException,
             UnknownHostException, SQLException {
         if (args != null && args.length != 0) {
-            if (args[0].equals("sample")) {
-                return StreamingApiSample.getInstance();
-            } else {
-                return StreamingApiFilter.getInstance(args);
-            } // else
-        } else {
-            return StreamingApiFilter.getInstance();
-        } // else
-    } // getStream(String[])
+            if (args[0].equals("sample")) { return StreamingApiSample.getInstance(); }
+        } // if
+        return StreamingApiFilter.getInstance();
+    }// getStream(String[])
 
     public static void main(final String[] args) {
         final StreamingApi stream;
