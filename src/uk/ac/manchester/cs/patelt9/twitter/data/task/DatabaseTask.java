@@ -1,6 +1,6 @@
 package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.TweetDatabaseConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 
 /**
  * Any database tasks to be carried out must implement this interface.
@@ -21,5 +21,5 @@ public interface DatabaseTask {
      *            DatabaseConnector object
      * @return The number of rows affected
      */
-    public int doTask(TweetDatabaseConnector db);
+    public int doTask(DatabaseConnector db);
 } // DatabaseTask

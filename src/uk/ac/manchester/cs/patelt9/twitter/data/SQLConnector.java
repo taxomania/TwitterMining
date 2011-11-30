@@ -20,7 +20,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
  * @author Tariq Patel
  *
  */
-public final class SQLConnector implements TweetDatabaseConnector {
+public final class SQLConnector implements DatabaseConnector {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining";
     public static final int DB_ERROR = -1;

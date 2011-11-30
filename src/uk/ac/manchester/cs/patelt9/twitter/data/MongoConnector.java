@@ -16,7 +16,7 @@ import com.mongodb.MongoException;
  * @author Tariq Patel
  *
  */
-public final class MongoConnector implements TweetDatabaseConnector {
+public final class MongoConnector implements DatabaseConnector {
     private static final String DB_NAME = "TwitterMining";
 
     private static MongoConnector mongoConnector = null;

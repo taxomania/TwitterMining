@@ -1,6 +1,6 @@
 package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.TweetDatabaseConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 
 /**
@@ -31,7 +31,7 @@ public class InsertTask implements DatabaseTask {
     } // toString()
 
     @Override
-    public int doTask(final TweetDatabaseConnector db) {
+    public int doTask(final DatabaseConnector db) {
         return db.insertTweet(tweet);
     } // doTask(DatabaseConnector)
 } // InsertTask

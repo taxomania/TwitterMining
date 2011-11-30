@@ -16,7 +16,7 @@ import uk.ac.manchester.cs.patelt9.twitter.data.task.DatabaseTask;
 public abstract class DatabaseThread extends Thread {
     private final List<DatabaseTask> taskList = new ArrayList<DatabaseTask>();
     private int affectedRows = 0;
-    private TweetDatabaseConnector db;
+    private DatabaseConnector db;
 
     /**
      * Constructor taking thread name and a DatabaseConnector object
@@ -26,7 +26,7 @@ public abstract class DatabaseThread extends Thread {
      * @param connector
      *            DatabaseConnector object
      */
-    public DatabaseThread(final String s, final TweetDatabaseConnector connector) {
+    public DatabaseThread(final String s, final DatabaseConnector connector) {
         super(s);
         db = connector;
     } // DatabaseThread(String)
