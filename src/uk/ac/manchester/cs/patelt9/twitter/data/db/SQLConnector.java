@@ -59,7 +59,6 @@ public abstract class SQLConnector {
             try {
                 Class.forName(JDBC_DRIVER);
                 con = DriverManager.getConnection(DB_URL, dbUser, dbPass);
-                System.out.println("Connecting"); // TEST
             } catch (final ClassNotFoundException e) {
                 e.printStackTrace();
             } // catch
@@ -94,7 +93,6 @@ public abstract class SQLConnector {
     } // executeUpdate(String)
 
     public void close() {
-        System.out.println("CLOSED"); // TEST
         if (con != null) {
             try {
                 con.close();
