@@ -1,4 +1,7 @@
-package uk.ac.manchester.cs.patelt9.twitter.data;
+package uk.ac.manchester.cs.patelt9.twitter.data.db;
+
+import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.User;
 
 /**
  * All database connectors must implement this interface.

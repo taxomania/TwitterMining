@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.data.task;
+package uk.ac.manchester.cs.patelt9.twitter.data.db.task;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 

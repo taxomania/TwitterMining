@@ -1,9 +1,12 @@
-package uk.ac.manchester.cs.patelt9.twitter.data;
+package uk.ac.manchester.cs.patelt9.twitter.data.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.User;
 
 import com.mysql.jdbc.MysqlDataTruncation;
 

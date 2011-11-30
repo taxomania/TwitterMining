@@ -2,6 +2,8 @@ package uk.ac.manchester.cs.patelt9.twitter.data;
 
 import java.net.UnknownHostException;
 
+import uk.ac.manchester.cs.patelt9.twitter.data.db.MongoConnector;
+
 import com.mongodb.MongoException;
 
 /**

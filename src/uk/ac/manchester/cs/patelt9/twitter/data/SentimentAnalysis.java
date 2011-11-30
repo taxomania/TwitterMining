@@ -11,9 +11,11 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.task.DeleteTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.SentimentScoreTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.SentimentTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.MongoConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.TweetSQLConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.task.DeleteTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.task.SentimentScoreTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.task.SentimentTask;
 import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentObject;
 import uk.ac.manchester.cs.patelt9.twitter.parse.SentimentParseThread;

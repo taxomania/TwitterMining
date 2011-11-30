@@ -1,6 +1,9 @@
-package uk.ac.manchester.cs.patelt9.twitter.data;
+package uk.ac.manchester.cs.patelt9.twitter.data.db;
 
 import java.net.UnknownHostException;
+
+import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.User;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;

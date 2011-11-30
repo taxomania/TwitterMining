@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.data;
+package uk.ac.manchester.cs.patelt9.twitter.data.db;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,9 +16,9 @@ public final class DictionarySQLConnector extends SQLConnector {
     private PreparedStatement insert = null;
 
     /**
-     * Retrieve the current instance of SQLConnector, or create a new one if it is null;
+     * Retrieve the current instance of DictionarySQLConnector, or create a new one if it is null;
      *
-     * @return A single instance of SQLConnector
+     * @return A single instance of DictionarySQLConnector
      * @throws SQLException
      */
     public static synchronized DictionarySQLConnector getInstance() throws SQLException {
@@ -38,9 +38,16 @@ public final class DictionarySQLConnector extends SQLConnector {
         // @formatter:on
     } // DictionarySQLConnector()
 
-    public int insert(final String word) {
+    /**
+     * Insert a new software tool into the dictionary
+     *
+     * @param softwareName
+     *            The word to be inserted
+     * @return The number of affected rows
+     */
+    public int insert(final String softwareName) {
         try {
-            insert.setString(1, word);
+            insert.setString(1, softwareName);
             return executeUpdate(insert);
         } catch (final SQLException e) {
             e.printStackTrace();

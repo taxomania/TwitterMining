@@ -3,7 +3,8 @@ package uk.ac.manchester.cs.patelt9.twitter.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.task.DatabaseTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.DatabaseConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.task.DatabaseTask;
 
 /**
  * Create a queue of DatabaseTask objects to be performed.

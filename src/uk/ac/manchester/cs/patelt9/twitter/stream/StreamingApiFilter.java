@@ -8,8 +8,8 @@ import java.sql.SQLException;
 import javax.net.ssl.HttpsURLConnection;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.InsertKeywordTask;
-import uk.ac.manchester.cs.patelt9.twitter.data.task.InsertTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.task.InsertKeywordTask;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.task.InsertTask;
 
 import com.mongodb.MongoException;
 

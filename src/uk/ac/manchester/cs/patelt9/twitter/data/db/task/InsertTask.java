@@ -1,7 +1,7 @@
-package uk.ac.manchester.cs.patelt9.twitter.data.task;
+package uk.ac.manchester.cs.patelt9.twitter.data.db.task;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.DatabaseConnector;
 
 /**
  * DatabaseTask allowing database insertion.

@@ -2,6 +2,8 @@ package uk.ac.manchester.cs.patelt9.twitter.data;
 
 import java.sql.SQLException;
 
+import uk.ac.manchester.cs.patelt9.twitter.data.db.TweetSQLConnector;
+
 /**
  * Create a new Thread to carry out all MySQL tasks in a queue
  *
