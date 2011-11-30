@@ -14,6 +14,7 @@ public final class DictionarySQLConnector extends SQLConnector {
     private static DictionarySQLConnector mySql = null;
     private final Connection con = getConnection();
     private PreparedStatement insert = null;
+    private PreparedStatement insertKeyword = null;
 
     /**
      * Retrieve the current instance of DictionarySQLConnector, or create a new one if it is null;
@@ -35,6 +36,11 @@ public final class DictionarySQLConnector extends SQLConnector {
                 "default, " +  // id
                 "?"   +  // software_name
                 ");");
+        insertKeyword = con.prepareStatement(
+                "INSERT INTO keyword VALUES(" +
+                "default, " +  // id
+                "?"   +  // word
+                ");");
         // @formatter:on
     } // DictionarySQLConnector()
 
@@ -53,7 +59,17 @@ public final class DictionarySQLConnector extends SQLConnector {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // updateSentiment(long, String)
+    } // insert(String)
+
+    public int insertKeyword(final String word) {
+        try {
+            insertKeyword.setString(1, word);
+            return executeUpdate(insertKeyword);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // insertKeyword(String)
 
     @Override
     public int deleteAll() {

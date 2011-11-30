@@ -1,0 +1,13 @@
+software
+app
+mac
+os x
+apple
+windows
+microsoft
+google
+pc
+python
+java
+alpha
+beta

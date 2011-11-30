@@ -11,33 +11,42 @@ import uk.ac.manchester.cs.patelt9.twitter.data.db.DictionarySQLConnector;
 
 public class InsertSoftwareFromFileDictionary {
     public static void main(final String[] args) {
-        new InsertSoftwareFromFileDictionary().execute();
+        try {
+            new InsertSoftwareFromFileDictionary().execute();
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        } // catch
     } // main(String[])
 
     final String filepath;
+    final DictionarySQLConnector db;
 
-    private InsertSoftwareFromFileDictionary() {
+    private InsertSoftwareFromFileDictionary() throws SQLException {
         this("dictionary.txt");
     } // InsertSoftwareFromFileDictionary()
 
-    private InsertSoftwareFromFileDictionary(final String path) {
+    protected InsertSoftwareFromFileDictionary(final String path) throws SQLException {
         filepath = path;
+        db = DictionarySQLConnector.getInstance();
     } // InsertSoftwareFromFileDictionary(String)
 
-    private void execute() {
+    protected void performTask(final String s) {
+        db.insert(s);
+    } // performTask(String)
+
+    public DictionarySQLConnector getDb() {
+        return db;
+    } // getDb()
+
+    protected void execute() {
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new FileReader(new File("dictionary.txt")));
-            try {
-                final DictionarySQLConnector db = DictionarySQLConnector.getInstance();
-                String s;
-                while ((s = r.readLine()) != null) {
-                    db.insert(s);
-                } // while
-                db.close();
-            } catch (final SQLException e) {
-                e.printStackTrace();
-            } // catch
+            r = new BufferedReader(new FileReader(new File(filepath)));
+            String s;
+            while ((s = r.readLine()) != null) {
+                performTask(s);
+            } // while
+            db.close();
         } catch (final FileNotFoundException e) {
             e.printStackTrace();
             System.err.println("Login file not found");
