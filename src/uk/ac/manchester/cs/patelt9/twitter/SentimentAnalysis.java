@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.data;
+package uk.ac.manchester.cs.patelt9.twitter;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -11,6 +11,9 @@ import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseThread;
+import uk.ac.manchester.cs.patelt9.twitter.data.MongoThread;
+import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.MongoConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.TweetSQLConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.task.DeleteTask;
@@ -28,13 +31,27 @@ import com.mongodb.MongoException;
 
 // THIS CLASS STILL ONLY WORKS PROPERLY WITH MYSQL
 public class SentimentAnalysis implements ParseListener {
+    public static void main(final String[] args) {
+        final SentimentAnalysis sa;
+        try {
+            sa = SentimentAnalysis.getInstance();
+            sa.analyseSentiment();
+        } catch (final IOException e) {
+            System.err.println("Could not load API key");
+            System.exit(1);
+        } catch (final SQLException e) {
+            System.err.println("Could not connect to database");
+            System.exit(1);
+        } // catch
+    } // main(String[])
+
     // @formatter:off
     private static final String DEFAULT_QUERY = "SELECT text, tweet_id FROM tweet WHERE sentiment IS NULL"
-            //+ " AND keyword"
-            //+ " IS NOT NULL"
+            + " AND keyword"
+            + " IS NOT NULL"
             // + " = 'app,program,software,windows,osx,mac'"
-           // + " LIMIT 30000;";
-             + " AND tweet_id = 138048869840859136;";
+            + " LIMIT 30000;";
+            // + " AND tweet_id = 138048869840859136;";
     // @formatter:on
 
     private final AlchemyAPI api;
@@ -62,7 +79,7 @@ public class SentimentAnalysis implements ParseListener {
                 stillAnalyse = false;
             } // performTask()
         };
-        dbThread = new MongoThread();
+        dbThread = new SQLThread();
         parseThread = new SentimentParseThread();
         parseThread.addListener(this);
     } // SentimentAnalysis()
@@ -73,7 +90,7 @@ public class SentimentAnalysis implements ParseListener {
 
     public DBCursor getDataSet() throws UnknownHostException, MongoException {
         return MongoConnector.getInstance().loadSentimentDataSet();
-    }
+    } // getDataSet()
 
     public void loadDataSet() {
         loadDataSet(DEFAULT_QUERY);
@@ -131,6 +148,7 @@ public class SentimentAnalysis implements ParseListener {
                     } // catch
                 } // while
             } else {
+                loadDataSet();
                 res.beforeFirst();
                 while (stillAnalyse && res.next()) {
                     final String tweet = res.getString(1);
