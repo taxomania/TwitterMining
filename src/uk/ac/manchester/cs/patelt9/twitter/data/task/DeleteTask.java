@@ -1,6 +1,6 @@
 package uk.ac.manchester.cs.patelt9.twitter.data.task;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.TweetDatabaseConnector;
 
 /**
  * DatabaseTask to allow deleting from the database.
@@ -30,7 +30,7 @@ public class DeleteTask implements DatabaseTask {
     } // toString()
 
     @Override
-    public int doTask(final DatabaseConnector db) {
+    public int doTask(final TweetDatabaseConnector db) {
         return db.deleteTweet(id);
     } // doTask(DatabaseConnector)
 } // DeleteTask

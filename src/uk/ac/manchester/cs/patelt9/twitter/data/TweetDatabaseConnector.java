@@ -7,7 +7,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data;
  * @author Tariq Patel
  *
  */
-public interface DatabaseConnector {
+public interface TweetDatabaseConnector {
     /**
      * Insert a Tweet object into the database
      *
