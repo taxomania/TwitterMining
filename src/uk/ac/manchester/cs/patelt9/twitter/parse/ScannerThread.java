@@ -21,19 +21,13 @@ public abstract class ScannerThread extends Thread {
         while (!isInterrupted()) {
             try {
                 if (scanner.nextLine().contains("exit")) {
-                    performTask();
-                    break;
+                    interrupt();
                 } // if
             } catch (final NoSuchElementException e) {
                 // Hacky Method
             } // catch
         } // while
-        close();
     } // run()
-
-    private void close() {
-        scanner.close();
-    } // close()
 
     @Override
     public void interrupt() {
@@ -41,9 +35,9 @@ public abstract class ScannerThread extends Thread {
         try {
             System.in.close();
         } catch (final IOException e) {
-            // Hacky method
+            // Hacky Method
         } // catch
-        close();
+        scanner.close();
         super.interrupt();
     } // close()
 
