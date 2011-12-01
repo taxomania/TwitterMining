@@ -38,4 +38,9 @@ public final class User {
     public String getUsername() {
         return username;
     } // getUsername()
+
+    @Override
+    public String toString() {
+        return getUsername();
+    } // toString()
 } // User
