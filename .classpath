@@ -9,6 +9,5 @@
 	<classpathentry kind="lib" path="lib/gson-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/AlchemyAPI.jar" sourcepath="/Users/Tariq/Desktop/Dev Stuff/Tools/Java Libraries + SDKs/AlchemyAPI_Java-0.7/src"/>
 	<classpathentry kind="lib" path="lib/mongo-2.7.2.jar"/>
-	<classpathentry kind="lib" path="lib/twitter-text-1.1.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
