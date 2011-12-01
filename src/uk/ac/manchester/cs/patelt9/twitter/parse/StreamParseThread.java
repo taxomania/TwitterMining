@@ -27,7 +27,7 @@ public class StreamParseThread extends Thread {
         String filepath = new File("pysrc/lang").getAbsolutePath();
         py.exec("import sys\n" + "sys.path.append('" + filepath + "')\n");
         filepath = new File("pysrc/guess_language").getAbsolutePath();
-        py.exec("sys.path.append('" + filepath + "')\nfrom lang import getLanguage");
+        py.exec("sys.path.append('" + filepath + "')\n" + "from lang import getLanguage");
         langDetector = py.get("getLanguage");
     } // static
 
@@ -138,7 +138,7 @@ public class StreamParseThread extends Thread {
         if (!"English".equals(language)) {
             System.out.println(tweet);
             return null;
-        } // SEEMS FAULTY
+        } // slightly inaccurate
         final long userId = user.getAsJsonPrimitive("id_str").getAsLong();
         final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
         final long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
