@@ -4,5 +4,3 @@ doc/
 userpass.txt
 sqluserpass.txt
 alchemyapikey.txt
-pysrc/guess_language/*.class
-pysrc/lang/*.class
