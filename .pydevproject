@@ -7,5 +7,6 @@
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/TwitterMining/pysrc</path>
 <path>/TwitterMining/bin</path>
+<path>/TwitterMining/lib/guess_language</path>
 </pydev_pathproperty>
 </pydev_project>

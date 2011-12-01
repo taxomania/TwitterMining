@@ -119,9 +119,11 @@ public class StreamParseThread extends Thread {
         final JsonObject user = jo.getAsJsonObject("user");
         final String lang = user.getAsJsonPrimitive("lang").getAsString();
         if (!("en".equals(lang))) { return null; } // if
+        final String tweet = jo.getAsJsonPrimitive("text").getAsString();
+        // TODO: LANGUAGE CHECK
+
         final long userId = user.getAsJsonPrimitive("id_str").getAsLong();
         final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
-        final String tweet = jo.getAsJsonPrimitive("text").getAsString();
         final long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
         final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
                 .getAsString());
