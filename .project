@@ -3,6 +3,7 @@
 	<name>TwitterMining</name>
 	<comment></comment>
 	<projects>
+		<project>guess-lang</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

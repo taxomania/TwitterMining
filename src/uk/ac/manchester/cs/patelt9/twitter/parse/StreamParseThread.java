@@ -1,11 +1,16 @@
 package uk.ac.manchester.cs.patelt9.twitter.parse;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.util.PythonInterpreter;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.User;
@@ -14,7 +19,17 @@ import com.google.gson.JsonObject;
 
 public class StreamParseThread extends Thread {
     private final List<JsonObject> parseList = new ArrayList<JsonObject>();
+    private static PyObject langDetector;
     private int objectsParsed;
+
+    static {
+        final PythonInterpreter py = new PythonInterpreter();
+        String filepath = new File("pysrc/lang").getAbsolutePath();
+        py.exec("import sys\n" + "sys.path.append('" + filepath + "')\n");
+        filepath = new File("pysrc/guess_language").getAbsolutePath();
+        py.exec("sys.path.append('" + filepath + "')\nfrom lang import getLanguage");
+        langDetector = py.get("getLanguage");
+    } // static
 
     public StreamParseThread() {
         this("ParseJson");
@@ -117,11 +132,13 @@ public class StreamParseThread extends Thread {
 
     private Tweet getTweet(final JsonObject jo) {
         final JsonObject user = jo.getAsJsonObject("user");
-        final String lang = user.getAsJsonPrimitive("lang").getAsString();
-        if (!("en".equals(lang))) { return null; } // if
+        if (!("en".equals(user.getAsJsonPrimitive("lang").getAsString()))) { return null; }
         final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-        // TODO: LANGUAGE CHECK
-
+        final String language = langDetector.__call__(new PyString(tweet)).asString();
+        if (!"English".equals(language)) {
+            System.out.println(tweet);
+            return null;
+        } // SEEMS FAULTY
         final long userId = user.getAsJsonPrimitive("id_str").getAsLong();
         final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
         final long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
