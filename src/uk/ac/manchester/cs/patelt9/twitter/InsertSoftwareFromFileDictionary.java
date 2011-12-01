@@ -31,7 +31,7 @@ public class InsertSoftwareFromFileDictionary {
     } // InsertSoftwareFromFileDictionary(String)
 
     protected void performTask(final String s) {
-        db.insert(s);
+        db.insert(s.split("\t"));
     } // performTask(String)
 
     public DictionarySQLConnector getDb() {

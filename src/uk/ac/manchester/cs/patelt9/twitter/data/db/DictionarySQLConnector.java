@@ -15,7 +15,9 @@ public final class DictionarySQLConnector extends SQLConnector {
     private static DictionarySQLConnector mySql = null;
     private final Connection con = getConnection();
     private PreparedStatement insert = null;
+    private PreparedStatement insertSoftware = null;
     private PreparedStatement insertKeyword = null;
+    private PreparedStatement dictType = null;
 
     /**
      * Retrieve the current instance of DictionarySQLConnector, or create a new one if it is null;
@@ -35,13 +37,22 @@ public final class DictionarySQLConnector extends SQLConnector {
         insert = con.prepareStatement(
                 "INSERT INTO dictionary VALUES(" +
                 "default, " +  // id
-                "?"   +  // software_name
+                "?, "       +  // software_name
+                "?"         +  // type [software | company | game | prog_lang] // AS INT
                 ");");
+        insertSoftware = con.prepareStatement(
+                "INSERT INTO dictionary VALUES(" +
+                "default, " +  // id
+                "?, "       +  // software_name
+                "default"   +  // type
+                ");");
+
         insertKeyword = con.prepareStatement(
                 "INSERT INTO keyword VALUES(" +
                 "default, " +  // id
-                "?"   +  // word
+                "?"         +  // word
                 ");");
+        dictType = con.prepareStatement("SELECT id FROM dict_type WHERE type=?");
         // @formatter:on
     } // DictionarySQLConnector()
 
@@ -52,15 +63,34 @@ public final class DictionarySQLConnector extends SQLConnector {
      *            The word to be inserted
      * @return The number of affected rows or -1 if an error occurs
      */
-    public int insert(final String softwareName) {
+    public int insert(final String[] name) {
+        if (name.length == 1) { return insertSoftware(name[0]); }
         try {
-            insert.setString(1, softwareName);
+            insert.setString(1, name[0]);
+            insert.setInt(2, getType(name[1]));
             return executeUpdate(insert);
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
-    } // insert(String)
+    } // insert(String[])
+
+    private int getType(final String type) throws SQLException {
+        dictType.setString(1, type);
+        final ResultSet s = dictType.executeQuery();
+        if (!s.first()) { throw new SQLException("Type not found"); }
+        return s.getInt(1);
+    } // getType(String)
+
+    private int insertSoftware(final String name) {
+        try {
+            insertSoftware.setString(1, name);
+            return executeUpdate(insertSoftware);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // insertSoftware(String)
 
     public int insertKeyword(final String word) {
         try {
