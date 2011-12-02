@@ -1,9 +1,6 @@
 package uk.ac.manchester.cs.patelt9.twitter.stream;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -14,6 +11,7 @@ import java.sql.SQLException;
 import javax.net.ssl.HttpsURLConnection;
 
 import sun.misc.BASE64Encoder;
+import uk.ac.manchester.cs.patelt9.twitter.StaticFunctions;
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
@@ -28,7 +26,7 @@ import com.google.gson.stream.JsonReader;
 import com.mongodb.MongoException;
 
 public abstract class StreamingApi implements ParseListener {
-    private static String userPassword = null, encoding = null;
+    private static String encoding = null;
 
     private final String urlString;
     private final int counterInterval;
@@ -41,7 +39,7 @@ public abstract class StreamingApi implements ParseListener {
     private ScannerThread scanner = null;
     private DatabaseThread dbThread = null;
 
-    protected InsertTask createInsertTask(final Tweet t){
+    protected InsertTask createInsertTask(final Tweet t) {
         return new InsertTask(t);
     } // createInsertTask(Tweet)
 
@@ -56,34 +54,13 @@ public abstract class StreamingApi implements ParseListener {
     } // onParseComplete(long)
 
     static {
-        getUserPass();
+        encoding = new BASE64Encoder()
+                .encode(StaticFunctions.getDetails("userpass.txt").getBytes());
     } // static
 
     protected HttpsURLConnection getConnection() {
         return con;
     } // getConnection()
-
-    private static void getUserPass() {
-        BufferedReader userPass = null;
-        try {
-            userPass = new BufferedReader(new FileReader(new File("userpass.txt")));
-            userPassword = userPass.readLine();
-            encoding = new BASE64Encoder().encode(userPassword.getBytes());
-        } catch (final FileNotFoundException e) {
-            e.printStackTrace();
-            System.err.println("Login file not found");
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (userPass != null) {
-                try {
-                    userPass.close();
-                } catch (final IOException e) {
-                    e.printStackTrace();
-                } // catch
-            } // if
-        } // finally
-    } // getUserPass()
 
     protected StreamingApi(final String url, final int interval) throws MongoException,
             UnknownHostException, SQLException {

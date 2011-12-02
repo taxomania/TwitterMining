@@ -1,14 +1,11 @@
 package uk.ac.manchester.cs.patelt9.twitter.data.db;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import uk.ac.manchester.cs.patelt9.twitter.StaticFunctions;
 
 import com.mysql.jdbc.MysqlDataTruncation;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -29,30 +26,14 @@ public abstract class SQLConnector {
     private static Connection con = null; // Persistent state
 
     static {
-        getUserPass();
-    } // static
-
-    private static void getUserPass() {
-        BufferedReader userPass = null;
+        final String[] details = StaticFunctions.getDetails("sqluserpass.txt").split(":");
         try {
-            userPass = new BufferedReader(new FileReader(new File("sqluserpass.txt")));
-            dbUser = userPass.readLine();
-            dbPass = userPass.readLine();
-        } catch (final FileNotFoundException e) {
-            e.printStackTrace();
-            System.err.println("Login file not found");
-        } catch (final IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (userPass != null) {
-                try {
-                    userPass.close();
-                } catch (final IOException e) {
-                    e.printStackTrace();
-                } // catch
-            } // if
-        } // finally
-    } // getUserPass()
+            dbUser = details[0];
+            dbPass = details[1];
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            System.err.println("Error with login details");
+        } // catch
+    } // static
 
     protected SQLConnector() throws SQLException {
         if (con == null) {
