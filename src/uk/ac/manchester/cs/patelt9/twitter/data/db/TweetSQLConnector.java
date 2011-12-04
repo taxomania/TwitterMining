@@ -184,8 +184,8 @@ public final class TweetSQLConnector extends SQLConnector implements DatabaseCon
 
     @Override
     public int deleteAll() {
-        final int i = executeUpdate("DELETE FROM tweet");
-        final int j = executeUpdate("DELETE FROM user");
+        final int i = executeUpdate("TRUNCATE TABLE tweet");
+        final int j = executeUpdate("TRUNCATE TABLE user");
         return (i == DB_ERROR || j == DB_ERROR) ? DB_ERROR : i + j;
     } // deleteAll()
 

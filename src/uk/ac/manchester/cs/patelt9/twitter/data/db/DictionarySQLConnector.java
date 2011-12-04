@@ -104,7 +104,7 @@ public final class DictionarySQLConnector extends SQLConnector {
 
     @Override
     public int deleteAll() {
-        return executeUpdate("DELETE FROM dictionary");
+        return executeUpdate("TRUNCATE TABLE dictionary");
     } // deleteAll()
 
     public ResultSet selectAll() {
