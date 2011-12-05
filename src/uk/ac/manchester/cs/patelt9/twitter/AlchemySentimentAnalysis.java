@@ -30,11 +30,11 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
 // THIS CLASS STILL ONLY WORKS PROPERLY WITH MYSQL
-public class SentimentAnalysis implements ParseListener {
+public class AlchemySentimentAnalysis implements ParseListener {
     public static void main(final String[] args) {
-        final SentimentAnalysis sa;
+        final AlchemySentimentAnalysis sa;
         try {
-            sa = SentimentAnalysis.getInstance();
+            sa = AlchemySentimentAnalysis.getInstance();
             sa.analyseSentiment();
         } catch (final IOException e) {
             System.err.println("Could not load API key");
@@ -62,16 +62,16 @@ public class SentimentAnalysis implements ParseListener {
     private SentimentParseThread parseThread = null;
     private DatabaseThread dbThread = null;
 
-    private static SentimentAnalysis sa = null;
+    private static AlchemySentimentAnalysis sa = null;
 
-    public static SentimentAnalysis getInstance() throws IOException, SQLException {
+    public static AlchemySentimentAnalysis getInstance() throws IOException, SQLException {
         if (sa == null) {
-            sa = new SentimentAnalysis();
+            sa = new AlchemySentimentAnalysis();
         } // if
         return sa;
     } // getInstance()
 
-    private SentimentAnalysis() throws IOException, SQLException {
+    private AlchemySentimentAnalysis() throws IOException, SQLException {
         api = AlchemyAPI.GetInstanceFromFile("alchemyapikey.txt");
         scanner = new ScannerThread() {
             @Override
