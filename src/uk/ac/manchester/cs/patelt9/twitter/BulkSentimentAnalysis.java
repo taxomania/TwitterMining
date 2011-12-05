@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -28,7 +30,7 @@ public class BulkSentimentAnalysis {
     private static final String DEFAULT_QUERY = "SELECT tweet_id, text FROM tweet WHERE sentiment IS NULL"
             + " AND keyword"
             + " IS NOT NULL"
-            + " LIMIT 100;"; // No known limit for api
+            + " LIMIT 1000;"; // No known limit for api
     // @formatter:on
 
     private HttpURLConnection con = null;
@@ -64,14 +66,15 @@ public class BulkSentimentAnalysis {
         } // catch
     } // loadDataSet(String)
 
-    public JsonObject createJsonObject() throws SQLException {
+    public JsonObject createJsonObject() throws SQLException, UnsupportedEncodingException {
         final JsonArray array = new JsonArray();
         loadDataSet();
         res.beforeFirst();
         while (res.next()) {
             final JsonObject jo = new JsonObject();
             jo.add("id", new JsonPrimitive(res.getLong(1)));
-            jo.add("text", new JsonPrimitive(res.getString(2)));
+            final String text = URLEncoder.encode(res.getString(2),"UTF-8");
+            jo.add("text", new JsonPrimitive(text));
             array.add(jo);
         } // while
 
