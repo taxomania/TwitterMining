@@ -25,12 +25,11 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.stream.JsonReader;
 
 public class BulkSentimentAnalysis {
-    private static final String URL = "http://partners-v1.twittersentiment.appspot.com/api/bulkClassifyJson";
     // @formatter:off
-    private static final String DEFAULT_QUERY = "SELECT tweet_id, text FROM tweet WHERE sentiment IS NULL"
-            + " AND keyword"
-            + " IS NOT NULL"
-            + " LIMIT 1000;"; // No known limit for api
+    private static final String URL =
+            "http://partners-v1.twittersentiment.appspot.com/api/bulkClassifyJson";
+    private static final String DEFAULT_QUERY = "SELECT tweet_id, text FROM tweet WHERE sentiment"
+            + " IS NULL AND keyword IS NOT NULL LIMIT 10000;"; // 10,000 at a time
     // @formatter:on
 
     private HttpURLConnection con = null;
@@ -73,7 +72,7 @@ public class BulkSentimentAnalysis {
         while (res.next()) {
             final JsonObject jo = new JsonObject();
             jo.add("id", new JsonPrimitive(res.getLong(1)));
-            final String text = URLEncoder.encode(res.getString(2),"UTF-8");
+            final String text = URLEncoder.encode(res.getString(2), "UTF-8");
             jo.add("text", new JsonPrimitive(text));
             array.add(jo);
         } // while
