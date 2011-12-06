@@ -29,22 +29,28 @@ public class BulkSentimentAnalysis {
     private static final String URL =
             "http://partners-v1.twittersentiment.appspot.com/api/bulkClassifyJson";
     private static final String DEFAULT_QUERY = "SELECT tweet_id, text FROM tweet WHERE sentiment"
-            + " IS NULL AND keyword IS NOT NULL LIMIT 10000;"; // 10,000 at a time
+            + " IS NULL AND keyword IS NOT NULL LIMIT 1000;"; // 10,000 at a time
     // @formatter:on
 
     private HttpURLConnection con = null;
     private DatabaseThread dbThread = null;
 
     public static void main(final String[] args) throws IOException, SQLException {
-        final BulkSentimentAnalysis b = new BulkSentimentAnalysis();
-        b.loadDataSet();
-        b.connect(b.createJsonObject());
-        b.response();
+        BulkSentimentAnalysis.getInstance().run();
     } // main(String[])
+
+    public void run() throws IOException, SQLException {
+        dbThread.start();
+        while (loadDataSet()) {
+            connect(createJsonObject());
+            response();
+        } // while
+        dbThread.interrupt();
+    } // run()
 
     private static BulkSentimentAnalysis sa = null;
 
-    public static BulkSentimentAnalysis getInstance() throws IOException, SQLException {
+    public static BulkSentimentAnalysis getInstance() throws SQLException {
         if (sa == null) {
             sa = new BulkSentimentAnalysis();
         } // if
@@ -53,27 +59,29 @@ public class BulkSentimentAnalysis {
 
     private ResultSet res = null;
 
-    public void loadDataSet() {
-        loadDataSet(DEFAULT_QUERY);
-    } // loadDataSet()
-
-    public void loadDataSet(final String sqlStatement) {
+    private boolean loadDataSet() {
         try {
-            res = TweetSQLConnector.getInstance().executeQuery(sqlStatement);
+            res = TweetSQLConnector.getInstance().executeQuery(DEFAULT_QUERY);
+            return res.first();
         } catch (final SQLException e) {
             e.printStackTrace();
+            return false;
         } // catch
-    } // loadDataSet(String)
+    } // loadDataSet()
 
-    public JsonObject createJsonObject() throws SQLException, UnsupportedEncodingException {
+    private void checkRes() throws IOException {
+        if (res == null) throw new IOException("ResultSet not initialised");
+    } // checkRes()
+
+    private JsonObject createJsonObject() throws IOException, SQLException,
+            UnsupportedEncodingException {
+        checkRes();
         final JsonArray array = new JsonArray();
-        loadDataSet();
         res.beforeFirst();
         while (res.next()) {
             final JsonObject jo = new JsonObject();
             jo.add("id", new JsonPrimitive(res.getLong(1)));
-            final String text = URLEncoder.encode(res.getString(2), "UTF-8");
-            jo.add("text", new JsonPrimitive(text));
+            jo.add("text", new JsonPrimitive(URLEncoder.encode(res.getString(2), "UTF-8")));
             array.add(jo);
         } // while
 
@@ -82,22 +90,42 @@ public class BulkSentimentAnalysis {
         return data;
     } // createJsonObject()
 
-    private BulkSentimentAnalysis() throws IOException, SQLException {
+    private BulkSentimentAnalysis() throws SQLException {
         dbThread = new SQLThread();
     } // BulkSentiment()
 
-    public void response() throws IOException {
-        final JsonReader j = new JsonReader(new BufferedReader(new InputStreamReader(
-                con.getInputStream())));
+    private void response() {
+        print("Getting server response");
+        JsonReader j = null;
+        try {
+            j = new JsonReader(new BufferedReader(new InputStreamReader(con.getInputStream())));
+        } catch (final IOException e) {
+            con.disconnect();
+            e.printStackTrace();
+            return;
+        } // catch
+        print("Parsing server response");
         final JsonArray ja = new JsonParser().parse(j).getAsJsonObject().getAsJsonArray("data");
-        j.close();
+        try {
+            j.close();
+        } catch (final IOException e) {
+            e.printStackTrace();
+        } // catch
         con.disconnect();
         parse(ja);
     } // response()
 
-    public void parse(final JsonArray ja) {
-        dbThread.start();
+    private void print(final String s) {
+        System.out.println(s);
+    } // print(String)
+
+    private void parse(final JsonArray ja) {
+        print("Parsing JsonArray");
+        int i = 0;
         for (final JsonElement je : ja) {
+            if (++i % 500 == 0) {
+                print(Integer.toString(i));
+            } // if
             final JsonObject jo = je.getAsJsonObject();
             final long id = jo.getAsJsonPrimitive("id").getAsLong();
             final int polarity = jo.getAsJsonPrimitive("polarity").getAsInt();
@@ -116,13 +144,12 @@ public class BulkSentimentAnalysis {
             } // switch
             dbThread.addTask(new SentimentScoreTask(id, sentiment, Integer.toString(polarity)));
         } // for
-        dbThread.interrupt();
     } // parse(JsonArray)
 
-    public void connect(final JsonObject data) throws IOException, MalformedURLException {
-        if (res == null) throw new IOException();
+    private void connect(final JsonObject data) throws IOException, MalformedURLException {
+        checkRes();
         final URL url = new URL(URL);
-        System.out.println("Connecting to " + url.toString());
+        print("Connecting to " + url.toString());
         con = (HttpURLConnection) url.openConnection();
         con.setDoInput(true);
         con.setDoOutput(true);
@@ -131,6 +158,7 @@ public class BulkSentimentAnalysis {
         try {
             out = new DataOutputStream(con.getOutputStream());
             out.writeBytes(data.toString());
+            print("Request sent to server");
         } catch (final IOException e) {
             throw new IOException(e);
         } finally {
@@ -143,5 +171,4 @@ public class BulkSentimentAnalysis {
             } // if
         } // finally
     } // connect(URL)
-
 } // BulkSentiment
