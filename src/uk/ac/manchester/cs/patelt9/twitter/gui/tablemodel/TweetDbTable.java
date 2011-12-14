@@ -13,7 +13,7 @@ public class TweetDbTable extends DbTable {
             + "t.created_at, t.sentiment FROM tweet t, user u ";
     private static final String META_QUERY = QUERY_PREFIX + "LIMIT 1";
     private static final String DEFAULT_QUERY_PREFIX = QUERY_PREFIX
-            + "WHERE u.id = t.user_id ORDER BY t.id LIMIT ";
+            + "WHERE u.id = t.user_id ORDER BY t.id DESC LIMIT ";
     //@formatter:on
 
     public TweetDbTable() throws SQLException {
