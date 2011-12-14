@@ -2,6 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,8 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import uk.ac.manchester.cs.patelt9.twitter.gui.swing.TweetDbPanel;
-import uk.ac.manchester.cs.patelt9.twitter.gui.swing.UserDbPanel;
+import uk.ac.manchester.cs.patelt9.twitter.gui.swing.DbTablePanel;
 import uk.ac.manchester.cs.patelt9.twitter.gui.tablemodel.TweetDbTable;
 import uk.ac.manchester.cs.patelt9.twitter.gui.tablemodel.UserDbTable;
 
@@ -24,6 +24,26 @@ public class DatabaseGUI extends JFrame {
         super("Twitter Statistics");
         init();
     } // DatabaseGUI()
+
+    private static final class UserDbPanel extends DbTablePanel {
+        private static final long serialVersionUID = -7548894886086628117L;
+        private static final int WIDTH = 150;
+        private static final int HEIGHT = 660;
+
+        public UserDbPanel(final UserDbTable tbl) {
+            super(tbl, "All users", new Dimension(WIDTH, HEIGHT));
+        } // UserDbPanel(UserDbTable)
+    } // UserDbPanel()
+
+    private static final class TweetDbPanel extends DbTablePanel {
+        private static final long serialVersionUID = -7455757631429134627L;
+        private static final int WIDTH = 950;
+        private static final int HEIGHT = 660;
+
+        public TweetDbPanel(final TweetDbTable tbl) {
+            super(tbl, "All tweets", new Dimension(WIDTH, HEIGHT));
+        } // TweetDbPanel(TweetDbTable)
+    } // TweetDbPanel()
 
     private void init() throws SQLException {
         JFrame.setDefaultLookAndFeelDecorated(true);
