@@ -70,6 +70,34 @@ public class DatabaseGUI extends JFrame {
         } // actionPerformed()
     } // NextAction
 
+    private static final class DbTablePanel extends JPanel {
+        private static final long serialVersionUID = -8909541940637552591L;
+        private final DbTable tbl;
+
+        public DbTablePanel(final DbTable tbl, String title) {
+            this.tbl = tbl;
+            this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            this.add(new JLabel(title));
+        } // DbTablePanel
+
+        public void addTable(final Dimension d) {
+            final JScrollPane scroll = new JScrollPane(new JTable(tbl));
+            scroll.setPreferredSize(d);
+            this.add(scroll);
+        } // addTable(Dimension)
+
+        public void addButtons() {
+            final JPanel buttons = new JPanel(new FlowLayout());
+            JButton button = new JButton("Previous");
+            button.addActionListener(new PreviousAction(tbl));
+            buttons.add(button);
+            button = new JButton("Next");
+            button.addActionListener(new NextAction(tbl));
+            buttons.add(button);
+            this.add(buttons);
+        } // addButtons()
+    } // DbTablePanel
+
     private void init() throws SQLException {
         JFrame.setDefaultLookAndFeelDecorated(true);
         final Container contents = getContentPane();
@@ -80,43 +108,16 @@ public class DatabaseGUI extends JFrame {
 
         final JPanel mainPanel = new JPanel(new FlowLayout());
 
-        JPanel tablePanel = new JPanel();
-        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        tablePanel.add(new JLabel("All users"));
+        final DbTablePanel tbl = new DbTablePanel(userDb, "All users");
+        tbl.addTable(new Dimension(150, 660));
+        tbl.addButtons();
+        mainPanel.add(tbl);
 
-        JTable table = new JTable(userDb);
-        JScrollPane scroller = new JScrollPane(table);
-        scroller.setPreferredSize(new Dimension(150, 660));
-        tablePanel.add(scroller);
-        JPanel buttons = new JPanel(new FlowLayout());
-        JButton previous = new JButton("Previous");
-        previous.addActionListener(new PreviousAction(userDb));
-        buttons.add(previous);
-        JButton next = new JButton("Next");
-        next.addActionListener(new NextAction(userDb));
-        buttons.add(next);
-        tablePanel.add(buttons);
+        final DbTablePanel tbl2 = new DbTablePanel(tweetDb, "All tweets");
+        tbl2.addTable(new Dimension(950, 660));
+        tbl2.addButtons();
+        mainPanel.add(tbl2);
 
-        mainPanel.add(tablePanel);
-
-        tablePanel = new JPanel();
-        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        tablePanel.add(new JLabel("All tweets"));
-
-        table = new JTable(tweetDb);
-        scroller = new JScrollPane(table);
-        scroller.setPreferredSize(new Dimension(950, 660));
-        tablePanel.add(scroller);
-
-        buttons = new JPanel(new FlowLayout());
-        previous = new JButton("Previous");
-        previous.addActionListener(new PreviousAction(tweetDb));
-        buttons.add(previous);
-        next = new JButton("Next");
-        next.addActionListener(new NextAction(tweetDb));
-        buttons.add(next);
-        tablePanel.add(buttons);
-        mainPanel.add(tablePanel);
         contents.add(mainPanel, BorderLayout.CENTER);
 
         final JButton update = new JButton("Refresh All");
