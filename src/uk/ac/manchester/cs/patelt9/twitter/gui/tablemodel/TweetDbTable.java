@@ -1,11 +1,9 @@
 package uk.ac.manchester.cs.patelt9.twitter.gui.tablemodel;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TweetDbTable extends DbTable {
     private static final long serialVersionUID = -2366349712354391578L;
-    private ResultSet rs;
     private static final int MAX_RESULTS = 100;
 
     //@formatter:off
@@ -24,18 +22,4 @@ public class TweetDbTable extends DbTable {
     protected String getQuery() {
         return DEFAULT_QUERY_PREFIX + (page * MAX_RESULTS) + ", " + MAX_RESULTS;
     } // getQuery()
-
-    @Override
-    protected void update() throws SQLException {
-        rs = sql.executeQuery(getQuery());
-        rs.beforeFirst();
-
-        while (rs.next()) {
-            final String[] record = new String[colCount];
-            for (int i = 0; i < colCount; i++) {
-                record[i] = rs.getString(headers[i]);
-            } // for
-            cache.addElement(record);
-        } // while
-    } // update()
 } // TweetDbTable

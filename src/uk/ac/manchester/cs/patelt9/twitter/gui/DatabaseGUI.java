@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,6 +29,47 @@ public class DatabaseGUI extends JFrame {
         init();
     } // DatabaseGUI()
 
+    private static abstract class DbTableActionListener implements ActionListener {
+        protected final DbTable tbl;
+
+        public DbTableActionListener(final DbTable tbl) {
+            this.tbl = tbl;
+        } // DbTableActionListener(DbTable)
+
+        @Override
+        public final void actionPerformed(final ActionEvent e) {
+            try {
+                actionPerformed();
+            } catch (final SQLException e1) {
+                e1.printStackTrace();
+            } // catch
+        } // actionPerformed(ActionEvent)
+
+        protected abstract void actionPerformed() throws SQLException;
+    } // DbTableActionListener
+
+    private static final class PreviousAction extends DbTableActionListener {
+        public PreviousAction(final DbTable tbl) {
+            super(tbl);
+        } // NextAction
+
+        @Override
+        protected void actionPerformed() throws SQLException {
+            tbl.previous();
+        } // actionPerformed()
+    } // PreviousAction
+
+    private static final class NextAction extends DbTableActionListener {
+        public NextAction(final DbTable tbl) {
+            super(tbl);
+        } // NextAction
+
+        @Override
+        protected void actionPerformed() throws SQLException {
+            tbl.next();
+        } // actionPerformed()
+    } // NextAction
+
     private void init() throws SQLException {
         JFrame.setDefaultLookAndFeelDecorated(true);
         final Container contents = getContentPane();
@@ -36,49 +78,46 @@ public class DatabaseGUI extends JFrame {
         final DbTable userDb = new UserDbTable();
         final DbTable tweetDb = new TweetDbTable();
 
-        final JPanel jpanel = new JPanel(new FlowLayout());
+        final JPanel mainPanel = new JPanel(new FlowLayout());
+
+        JPanel tablePanel = new JPanel();
+        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+        tablePanel.add(new JLabel("All users"));
+
         JTable table = new JTable(userDb);
         JScrollPane scroller = new JScrollPane(table);
-        scroller.setPreferredSize(new Dimension(150, 700));
-        jpanel.add(scroller);
+        scroller.setPreferredSize(new Dimension(150, 660));
+        tablePanel.add(scroller);
+        JPanel buttons = new JPanel(new FlowLayout());
+        JButton previous = new JButton("Previous");
+        previous.addActionListener(new PreviousAction(userDb));
+        buttons.add(previous);
+        JButton next = new JButton("Next");
+        next.addActionListener(new NextAction(userDb));
+        buttons.add(next);
+        tablePanel.add(buttons);
 
-        final JPanel tweets = new JPanel();
-        tweets.setLayout(new BoxLayout(tweets, BoxLayout.Y_AXIS));
+        mainPanel.add(tablePanel);
+
+        tablePanel = new JPanel();
+        tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
+        tablePanel.add(new JLabel("All tweets"));
+
         table = new JTable(tweetDb);
         scroller = new JScrollPane(table);
         scroller.setPreferredSize(new Dimension(950, 660));
-        tweets.add(scroller);
+        tablePanel.add(scroller);
 
-        final JPanel buttons = new JPanel(new FlowLayout());
-        final JButton previous = new JButton("Previous");
-        previous.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                try {
-                    tweetDb.previous();
-                } catch (final SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        buttons = new JPanel(new FlowLayout());
+        previous = new JButton("Previous");
+        previous.addActionListener(new PreviousAction(tweetDb));
         buttons.add(previous);
-        final JButton next = new JButton("Next");
-        next.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                try {
-                    tweetDb.next();
-                } catch (final SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        next = new JButton("Next");
+        next.addActionListener(new NextAction(tweetDb));
         buttons.add(next);
-        tweets.add(buttons);
-        jpanel.add(tweets);
-        contents.add(jpanel, BorderLayout.CENTER);
+        tablePanel.add(buttons);
+        mainPanel.add(tablePanel);
+        contents.add(mainPanel, BorderLayout.CENTER);
 
         final JButton update = new JButton("Refresh All");
         update.addActionListener(new ActionListener() {

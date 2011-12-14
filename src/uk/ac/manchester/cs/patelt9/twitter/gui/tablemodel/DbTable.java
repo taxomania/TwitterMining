@@ -31,11 +31,6 @@ public abstract class DbTable extends AbstractTableModel {
 
     public final void refresh() throws SQLException {
         cache.clear();
-        update();
-        fireTableChanged(null);
-    } // refresh()
-
-    protected void update() throws SQLException {
         final ResultSet rs = sql.executeQuery(getQuery());
         rs.beforeFirst();
         while (rs.next()) {
@@ -45,7 +40,8 @@ public abstract class DbTable extends AbstractTableModel {
             } // for
             cache.addElement(record);
         } // while
-    } // update()
+        fireTableChanged(null);
+    } // refresh()
 
     protected abstract String getQuery();
 
