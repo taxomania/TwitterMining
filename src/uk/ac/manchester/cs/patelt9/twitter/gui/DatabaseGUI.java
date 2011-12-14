@@ -30,9 +30,9 @@ public class DatabaseGUI extends JFrame {
         private static final int WIDTH = 150;
         private static final int HEIGHT = 660;
 
-        public UserDbPanel(final UserDbTable tbl) {
-            super(tbl, "All users", new Dimension(WIDTH, HEIGHT));
-        } // UserDbPanel(UserDbTable)
+        public UserDbPanel() throws SQLException {
+            super(new UserDbTable(), "All users", new Dimension(WIDTH, HEIGHT));
+        } // UserDbPanel()
     } // UserDbPanel()
 
     private static final class TweetDbPanel extends DbTablePanel {
@@ -40,9 +40,9 @@ public class DatabaseGUI extends JFrame {
         private static final int WIDTH = 950;
         private static final int HEIGHT = 660;
 
-        public TweetDbPanel(final TweetDbTable tbl) {
-            super(tbl, "All tweets", new Dimension(WIDTH, HEIGHT));
-        } // TweetDbPanel(TweetDbTable)
+        public TweetDbPanel() throws SQLException {
+            super(new TweetDbTable(), "All tweets", new Dimension(WIDTH, HEIGHT));
+        } // TweetDbPanel()
     } // TweetDbPanel()
 
     private void init() throws SQLException {
@@ -52,9 +52,9 @@ public class DatabaseGUI extends JFrame {
 
         final JPanel mainPanel = new JPanel(new FlowLayout());
 
-        final DbTablePanel userPanel = new UserDbPanel(new UserDbTable());
+        final DbTablePanel userPanel = new UserDbPanel();
         mainPanel.add(userPanel);
-        final DbTablePanel tweetPanel = new TweetDbPanel(new TweetDbTable());
+        final DbTablePanel tweetPanel = new TweetDbPanel();
         mainPanel.add(tweetPanel);
 
         contents.add(mainPanel, BorderLayout.CENTER);
