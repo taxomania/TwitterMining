@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class TweetDbTable extends DbTable {
     private static final long serialVersionUID = -2366349712354391578L;
-    private static final int MAX_RESULTS = 100;
+    private static final int MAX_RESULTS = 500;
 
     //@formatter:off
     private static final String QUERY_PREFIX = "SELECT u.username, t.text, "
