@@ -15,6 +15,7 @@ public abstract class DbTable extends AbstractTableModel {
     protected final Vector<String[]> cache = new Vector<String[]>();
     protected final int colCount;
     protected final TweetSQLConnector sql;
+    protected int page = 0;
 
     protected DbTable(final String metaQuery) throws SQLException {
         sql = TweetSQLConnector.getInstance();
@@ -48,12 +49,15 @@ public abstract class DbTable extends AbstractTableModel {
 
     protected abstract String getQuery();
 
-    public void next() throws SQLException {
-        cache.clear();
+    public final void next() throws SQLException {
+        page++;
+        refresh();
     } // next()
 
-    public void previous() throws SQLException {
-        cache.clear();
+    public final void previous() throws SQLException {
+        if (page == 0) return;
+        page--;
+        refresh();
     } // previous()
 
     @Override
