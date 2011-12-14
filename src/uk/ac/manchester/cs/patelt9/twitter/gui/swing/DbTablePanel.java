@@ -2,6 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.gui.swing;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.sql.SQLException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -39,4 +40,8 @@ public class DbTablePanel extends JPanel {
         buttons.add(new NextActionButton(tbl));
         this.add(buttons);
     } // addButtons()
+
+    public void refresh() throws SQLException {
+        tbl.refresh();
+    } // refresh()
 } // DbTablePanel

@@ -52,11 +52,10 @@ public class DatabaseGUI extends JFrame {
 
         final JPanel mainPanel = new JPanel(new FlowLayout());
 
-        final UserDbTable userDb = new UserDbTable();
-        mainPanel.add(new UserDbPanel(userDb));
-
-        final TweetDbTable tweetDb = new TweetDbTable();
-        mainPanel.add(new TweetDbPanel(tweetDb));
+        final DbTablePanel userPanel = new UserDbPanel(new UserDbTable());
+        mainPanel.add(userPanel);
+        final DbTablePanel tweetPanel = new TweetDbPanel(new TweetDbTable());
+        mainPanel.add(tweetPanel);
 
         contents.add(mainPanel, BorderLayout.CENTER);
 
@@ -65,8 +64,8 @@ public class DatabaseGUI extends JFrame {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 try {
-                    userDb.refresh();
-                    tweetDb.refresh();
+                    userPanel.refresh();
+                    tweetPanel.refresh();
                 } catch (final SQLException e) {
                     e.printStackTrace();
                 } // catch
