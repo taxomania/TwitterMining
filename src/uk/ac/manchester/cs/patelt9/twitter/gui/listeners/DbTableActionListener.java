@@ -4,7 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import uk.ac.manchester.cs.patelt9.twitter.gui.tablemodel.DbTable;
+import uk.ac.manchester.cs.patelt9.twitter.gui.swing.table.DbTable;
 
 public abstract class DbTableActionListener implements ActionListener {
     protected final DbTable tbl;

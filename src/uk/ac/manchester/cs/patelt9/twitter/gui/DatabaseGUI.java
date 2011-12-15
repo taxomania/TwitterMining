@@ -14,8 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import uk.ac.manchester.cs.patelt9.twitter.gui.swing.DbTablePanel;
-import uk.ac.manchester.cs.patelt9.twitter.gui.tablemodel.TweetDbTable;
-import uk.ac.manchester.cs.patelt9.twitter.gui.tablemodel.UserDbTable;
+import uk.ac.manchester.cs.patelt9.twitter.gui.swing.table.TweetDbTable;
+import uk.ac.manchester.cs.patelt9.twitter.gui.swing.table.UserDbTable;
 
 public class DatabaseGUI extends JFrame {
     private static final long serialVersionUID = 5393049585293383058L;

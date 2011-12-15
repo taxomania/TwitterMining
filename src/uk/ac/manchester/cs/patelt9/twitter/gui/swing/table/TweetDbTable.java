@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter.gui.tablemodel;
+package uk.ac.manchester.cs.patelt9.twitter.gui.swing.table;
 
 import java.sql.SQLException;
 

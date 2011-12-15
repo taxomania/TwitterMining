@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import uk.ac.manchester.cs.patelt9.twitter.gui.tablemodel.DbTable;
+import uk.ac.manchester.cs.patelt9.twitter.gui.swing.table.DbTable;
 
 public class DbTablePanel extends JPanel {
     private static final long serialVersionUID = -8909541940637552591L;
