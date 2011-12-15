@@ -139,6 +139,7 @@ public class StreamParseThread extends Thread {
     } // isTweetJsonObject(JsonObject)
 
     // TESTING THIS
+    @SuppressWarnings("unused")
     private void spellCheck(final String s) {
         final SpellRequest req = new SpellRequest(s);
         req.setIgnoreWordsWithDigits(true);
@@ -160,11 +161,11 @@ public class StreamParseThread extends Thread {
         final String tweet = jo.getAsJsonPrimitive("text").getAsString();
         final String language = langDetector.__call__(new PyString(tweet)).asString();
         if (!"English".equals(language)) {
-            System.out.println(tweet);
+            // System.out.println(tweet);
             return null;
         } // slightly inaccurate
 
-        spellCheck(tweet); // ONLY TESTING AT THIS STAGE
+        // spellCheck(tweet); // ONLY TESTING AT THIS STAGE
 
         final long userId = user.getAsJsonPrimitive("id_str").getAsLong();
         final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
