@@ -1,4 +1,4 @@
-package uk.ac.manchester.cs.patelt9.twitter;
+package uk.ac.manchester.cs.patelt9.twitter.data.db.dictionary;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,34 +9,16 @@ import java.sql.SQLException;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.db.DictionarySQLConnector;
 
-public class InsertSoftwareFromFileDictionary {
-    public static void main(final String[] args) {
-        try {
-            new InsertSoftwareFromFileDictionary().execute();
-        } catch (final SQLException e) {
-            e.printStackTrace();
-        } // catch
-    } // main(String[])
+public abstract class DictionaryFromFile {
+    private final String filepath;
+    protected final DictionarySQLConnector db;
 
-    final String filepath;
-    final DictionarySQLConnector db;
-
-    private InsertSoftwareFromFileDictionary() throws SQLException {
-        this("dictionary.txt");
-    } // InsertSoftwareFromFileDictionary()
-
-    protected InsertSoftwareFromFileDictionary(final String path) throws SQLException {
+    protected DictionaryFromFile(final String path) throws SQLException {
         filepath = path;
         db = DictionarySQLConnector.getInstance();
-    } // InsertSoftwareFromFileDictionary(String)
+    } // DictionaryFromFile(String)
 
-    protected void performTask(final String s) {
-        db.insert(s.split("\t"));
-    } // performTask(String)
-
-    public DictionarySQLConnector getDb() {
-        return db;
-    } // getDb()
+    protected abstract void insert(final String s);
 
     protected void execute() {
         BufferedReader r = null;
@@ -44,7 +26,7 @@ public class InsertSoftwareFromFileDictionary {
             r = new BufferedReader(new FileReader(new File(filepath)));
             String s;
             while ((s = r.readLine()) != null) {
-                performTask(s);
+                insert(s);
             } // while
             db.close();
         } catch (final FileNotFoundException e) {
@@ -62,4 +44,4 @@ public class InsertSoftwareFromFileDictionary {
             } // if
         } // finally
     } // execute()
-} // InsertSoftwareFromFileDictionary
+} // DictionaryFromFile

@@ -1,8 +1,8 @@
-package uk.ac.manchester.cs.patelt9.twitter;
+package uk.ac.manchester.cs.patelt9.twitter.data.db.dictionary;
 
 import java.sql.SQLException;
 
-public class InsertKeywordFromFileDictionary extends InsertSoftwareFromFileDictionary {
+public class InsertKeywordFromFileDictionary extends DictionaryFromFile {
     public static void main(final String[] args) {
         try {
             new InsertKeywordFromFileDictionary().execute();
@@ -12,15 +12,11 @@ public class InsertKeywordFromFileDictionary extends InsertSoftwareFromFileDicti
     } // main(String[])
 
     private InsertKeywordFromFileDictionary() throws SQLException {
-        this("keywords.txt");
+        super("keywords.txt");
     } // InsertKeywordFromFileDictionary()
 
-    private InsertKeywordFromFileDictionary(final String path) throws SQLException {
-        super(path);
-    } // InsertKeywordFromFileDictionary(String)
-
     @Override
-    protected void performTask(final String s) {
-        getDb().insertKeyword(s);
-    } // performTask(String)
+    protected void insert(final String s) {
+        db.insertKeyword(s);
+    } // insert(String)
 } // InsertKeywordFromFileDictionary
