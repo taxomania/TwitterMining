@@ -11,6 +11,11 @@ import java.util.Set;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
+import org.xeustechnologies.googleapi.spelling.Language;
+import org.xeustechnologies.googleapi.spelling.SpellChecker;
+import org.xeustechnologies.googleapi.spelling.SpellCorrection;
+import org.xeustechnologies.googleapi.spelling.SpellRequest;
+import org.xeustechnologies.googleapi.spelling.SpellResponse;
 
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.User;
@@ -19,6 +24,7 @@ import com.google.gson.JsonObject;
 
 public class StreamParseThread extends Thread {
     private final List<JsonObject> parseList = new ArrayList<JsonObject>();
+    private final SpellChecker spellChecker;
     private static PyObject langDetector;
     private int objectsParsed;
 
@@ -38,6 +44,8 @@ public class StreamParseThread extends Thread {
     public StreamParseThread(final String s) {
         super(s);
         objectsParsed = 0;
+        spellChecker = new SpellChecker(Language.ENGLISH);
+        spellChecker.setOverHttps(true);
     } // StreamParseThread(String)
 
     @Override
@@ -130,15 +138,34 @@ public class StreamParseThread extends Thread {
         } // else
     } // isTweetJsonObject(JsonObject)
 
+    // TESTING THIS
+    private void spellCheck(final String s) {
+        final SpellRequest req = new SpellRequest(s);
+        req.setIgnoreWordsWithDigits(true);
+        final SpellResponse resp = spellChecker.check(req);
+        try {
+            for (final SpellCorrection corr : resp.getCorrections()) {
+                System.out.println(corr.getValue());
+            } // for
+        } catch (final NullPointerException e) {
+            // No spelling errors
+        } // catch
+    } // spellCheck(String)
+
     private Tweet getTweet(final JsonObject jo) {
         final JsonObject user = jo.getAsJsonObject("user");
         if (!("en".equals(user.getAsJsonPrimitive("lang").getAsString()))) { return null; }
+        final JsonObject retweetedStatus = jo.getAsJsonObject("retweeted_status");
+        if (retweetedStatus != null) { return getTweet(retweetedStatus); }
         final String tweet = jo.getAsJsonPrimitive("text").getAsString();
         final String language = langDetector.__call__(new PyString(tweet)).asString();
         if (!"English".equals(language)) {
             System.out.println(tweet);
             return null;
         } // slightly inaccurate
+
+        spellCheck(tweet); // ONLY TESTING AT THIS STAGE
+
         final long userId = user.getAsJsonPrimitive("id_str").getAsLong();
         final String screenName = user.getAsJsonPrimitive("screen_name").getAsString();
         final long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();

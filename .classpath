@@ -9,5 +9,11 @@
 	<classpathentry kind="lib" path="lib/gson-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/mongo-2.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/jython.jar"/>
+	<classpathentry kind="lib" path="lib/google-spelling/google-api-spelling-java-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-spelling/dependencies/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-spelling/dependencies/jaxb-api-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-spelling/dependencies/jaxb-impl-2.1.5.jar"/>
+	<classpathentry kind="lib" path="lib/google-spelling/dependencies/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="lib/google-spelling/dependencies/stax-api-1.0-2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
