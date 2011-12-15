@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -30,8 +29,8 @@ public class BulkSentimentAnalysis {
             "http://partners-v1.twittersentiment.appspot.com/api/bulkClassifyJson";
     private static final String DEFAULT_QUERY = "SELECT tweet_id, text FROM tweet WHERE sentiment "
             + "IS NULL AND keyword "
-            + "IS NOT NULL "
-            //  + "='latest'"
+            // + "IS NOT NULL "
+            + "='latest'"
             + "ORDER BY id DESC LIMIT 1000;"; // 10,000 at a time
     // @formatter:on
 
@@ -84,7 +83,7 @@ public class BulkSentimentAnalysis {
         while (res.next()) {
             final JsonObject jo = new JsonObject();
             jo.add("id", new JsonPrimitive(res.getLong(1)));
-            jo.add("text", new JsonPrimitive(URLEncoder.encode(res.getString(2), "UTF-8")));
+            jo.add("text", new JsonPrimitive(res.getString(2)));
             array.add(jo);
         } // while
 
