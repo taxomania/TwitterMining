@@ -39,8 +39,7 @@ public class StreamingApiFilter extends StreamingApi {
     } // StreamingApiFilterPost(String[])
 
     private void setKeyword() throws SQLException {
-        final DictionarySQLConnector db = DictionarySQLConnector.getInstance();
-        final ResultSet filters = db.selectAll();
+        final ResultSet filters = DictionarySQLConnector.getInstance().selectAll();
         filters.beforeFirst();
         while (filters.next()) {
             keyword += filters.getString(1) + ",";
