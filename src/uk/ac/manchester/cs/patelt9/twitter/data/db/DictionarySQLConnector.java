@@ -16,6 +16,7 @@ public final class DictionarySQLConnector extends SQLConnector {
     private final Connection con = getConnection();
     private PreparedStatement insert = null;
     private PreparedStatement insertSoftware = null;
+    private PreparedStatement insertCompany = null;
     private PreparedStatement insertKeyword = null;
     private PreparedStatement dictType = null;
 
@@ -38,13 +39,19 @@ public final class DictionarySQLConnector extends SQLConnector {
                 "INSERT INTO dictionary VALUES(" +
                 "default, " +  // id
                 "?, "       +  // software_name
-                "?"         +  // type [software | company | game | prog_lang] // AS INT
+                "?"         +  // type [software | game | prog_lang | os] // AS INT
                 ");");
         insertSoftware = con.prepareStatement(
                 "INSERT INTO dictionary VALUES(" +
                 "default, " +  // id
                 "?, "       +  // software_name
                 "default"   +  // type
+                ");");
+
+        insertCompany = con.prepareStatement(
+                "INSERT INTO company VALUES(" +
+                "default, " +  // id
+                "?"       +  // name
                 ");");
 
         insertKeyword = con.prepareStatement(
@@ -92,6 +99,16 @@ public final class DictionarySQLConnector extends SQLConnector {
         } // catch
     } // insertSoftware(String)
 
+    public int insertCompany(final String name) {
+        try {
+            insertCompany.setString(1, name);
+            return executeUpdate(insertCompany);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+            return DB_ERROR;
+        } // catch
+    } // insertCompany
+
     public int insertKeyword(final String word) {
         try {
             insertKeyword.setString(1, word);
@@ -109,8 +126,12 @@ public final class DictionarySQLConnector extends SQLConnector {
 
     public ResultSet selectAll() {
         try {
+            //@formatter:off
             return con.createStatement().executeQuery(
-                    "SELECT software_name FROM dictionary UNION SELECT word FROM keyword");
+                    "SELECT software_name FROM dictionary UNION " +
+                    "SELECT name FROM company UNION " +
+                    "SELECT word FROM keyword");
+            //@formatter:on
         } catch (final SQLException e) {
             e.printStackTrace();
             return null;

@@ -1,0 +1,25 @@
+Apache
+Mozilla
+Activision
+Infinity Ward
+Blizzard
+EA
+Rockstar Games
+HP
+Codemasters
+Valve
+Adobe
+Blackberry
+Cisco
+SlingMedia
+Maxis
+Rarlabs
+VideoLan
+ATI
+Atari
+Symantec
+Nvidia
+Oracle
+Apple
+Microsoft
+Google

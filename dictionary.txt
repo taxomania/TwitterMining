@@ -128,7 +128,6 @@ xrdp
 cURL
 HTTrack
 Wget
-Apache	company
 Apache Cocoon
 AWStats
 BookmarkSync
@@ -238,7 +237,6 @@ Chandler
 KAddressBook
 Kontact
 KOrganizer
-Mozilla	company
 Novell Evolution
 OpenSync
 Rachota Timetracker
@@ -407,13 +405,6 @@ TorChat
 WASTE
 Zephyr
 Zinc
-Activision	company
-Infinity Ward	company
-Blizzard	company
-EA	company
-Rockstar Games	company
-HP	company
-Codemasters	company
 WebOS
 Android	os
 Bada	os
@@ -428,39 +419,23 @@ Spotify
 Adium
 Google Chrome
 Steam
-Valve	company
 TextMate
 Text Editor
 nedit
 gedit
 BitLord
-Adobe	company
 bittorrent
 Nero
 iTunes
-Blackberry	company
 AVG
 MS Office
 f.lux
-Cisco	company
-SlingMedia	company
-Maxis	company
-Rarlabs	company
 WinRar
 VLC
-VideoLan	company
-ATI	company
-Atari	company
 Radeon
 Daemon tools
-Nvidia	company
-Oracle	company
 SQL	prog_lang
-Symantec	company
 Windows	os
 OS X	os
-Apple	company
-Microsoft	company
-Google	company
 python	prog_lang
 java	prog_lang
