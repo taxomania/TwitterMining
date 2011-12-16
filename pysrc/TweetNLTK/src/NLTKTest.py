@@ -1,11 +1,10 @@
 '''
 Created on Dec 16, 2011
 
-@author: Tariq
+@author: Tariq Patel
 '''
 from nltk import wordpunct_tokenize
 import MySQLdb as mysql
-from MySQLdb.cursors import Cursor
 from string import split
 
 class SQLConnector:
@@ -25,7 +24,7 @@ class SQLConnector:
     def __init__(self):
         if (not SQLConnector.__userpass_retrieved):
             SQLConnector.getDetails()
-        self.db =mysql.connect(host='localhost',
+        self.db = mysql.connect(host='localhost',
                                user=SQLConnector.__user,
                                passwd=SQLConnector.__pass,
                                db='TwitterMining')
@@ -48,6 +47,9 @@ if __name__ == '__main__':
         for tweet in row:
             tweet_id = tweet[0]
             text = tweet[1]
-            print(tokenize_tweet(text))
+            words = tokenize_tweet(text)
+            print words
+            #for word in words:
+            #   print word
 
 
