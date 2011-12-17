@@ -223,7 +223,6 @@ DVDx
 Kaltura
 Kino
 Kdenlive
-LiVES
 OpenShot Video Editor
 PiTiVi
 VirtualDub
@@ -373,7 +372,6 @@ Ekiga
 Emesene
 Empathy
 Fama IM
-Fire
 Gabber
 Gajim
 Instantbird
