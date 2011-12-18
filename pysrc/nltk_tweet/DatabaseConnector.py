@@ -64,5 +64,13 @@ class SQLConnector:
     def getCompany(self):
         return self.__getEntry()
 
+    def deleteUsersNoTweets(self):
+        self.db.query("DELETE FROM user WHERE NOT EXISTS (SELECT NULL FROM tweet WHERE user.id=tweet.user_id)")
+        self.db.commit()
+
     def close(self):
         self.db.close()
+
+if __name__ == '__main__':
+    #SQLConnector().deleteUsersNoTweets()
+    pass
