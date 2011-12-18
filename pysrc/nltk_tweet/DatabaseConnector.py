@@ -67,6 +67,7 @@ class SQLConnector:
     def deleteUsersNoTweets(self):
         self.db.query("DELETE FROM user WHERE NOT EXISTS (SELECT NULL FROM tweet WHERE user.id=tweet.user_id)")
         self.db.commit()
+        print "Deleted users with no associated tweets"
 
     def close(self):
         self.db.close()
