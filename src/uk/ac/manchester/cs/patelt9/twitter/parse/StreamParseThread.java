@@ -31,11 +31,13 @@ public class StreamParseThread extends Thread {
     private int objectsParsed;
 
     static {
-        final String path = "/opt/local/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/site-packages";
         final PythonInterpreter py = new PythonInterpreter();
+        final String path = "/opt/local/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/site-packages";
         final String filepath = new File("pysrc/lang").getAbsolutePath();
-        py.exec("import sys\n" + "sys.path.append('" + filepath + "')\n");
-        py.exec("sys.path.append('" + path + "')\n" + "from lang import getLanguage");
+        py.exec("import sys\n");
+        py.exec("sys.path.append('" + path + "')\n");
+        py.exec("sys.path.append('" + filepath + "')\n");
+        py.exec("from lang import getLanguage");
         langDetector = py.get("getLanguage");
     } // static
 
