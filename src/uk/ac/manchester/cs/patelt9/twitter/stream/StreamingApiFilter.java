@@ -56,7 +56,7 @@ public class StreamingApiFilter extends StreamingApi {
         try {
             out = new DataOutputStream(con.getOutputStream());
             out.writeBytes(QUERY_PREFIX + keyword);
-            System.out.println("Filtering by " + keyword.replaceAll(",", ", "));
+            // System.out.println("Filtering by " + keyword.replaceAll(",", ", "));
         } catch (final IOException e) {
             throw new IOException(e);
         } finally {

@@ -9,3 +9,4 @@ source code
 sdk
 release
 api
+version

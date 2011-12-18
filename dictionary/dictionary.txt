@@ -432,9 +432,6 @@ WinRar
 VLC
 Radeon
 Daemon tools
-SQL	prog_lang
 Windows	os
 OS X	os
-python	prog_lang
-java	prog_lang
 iTunes Match	service

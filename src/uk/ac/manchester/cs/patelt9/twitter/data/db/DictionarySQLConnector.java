@@ -16,6 +16,7 @@ public final class DictionarySQLConnector extends SQLConnector {
     private final Connection con = getConnection();
     private PreparedStatement insert = null;
     private PreparedStatement insertSoftware = null;
+    private PreparedStatement insertLanguage = null;
     private PreparedStatement insertCompany = null;
     private PreparedStatement insertKeyword = null;
     private PreparedStatement dictType = null;
@@ -46,6 +47,12 @@ public final class DictionarySQLConnector extends SQLConnector {
                 "default, " +  // id
                 "?, "       +  // software_name
                 "default"   +  // type
+                ");");
+
+        insertLanguage = con.prepareStatement(
+                "INSERT INTO prog_lang VALUES(" +
+                "default, " +  // id
+                "?"       +  // language
                 ");");
 
         insertCompany = con.prepareStatement(
@@ -90,33 +97,29 @@ public final class DictionarySQLConnector extends SQLConnector {
     } // getType(String)
 
     private int insertSoftware(final String name) {
-        try {
-            insertSoftware.setString(1, name);
-            return executeUpdate(insertSoftware);
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return DB_ERROR;
-        } // catch
+        return insert(insertSoftware, name);
     } // insertSoftware(String)
 
-    public int insertCompany(final String name) {
+    public int insertLanguage(final String language) {
+        return insert(insertLanguage, language);
+    } // insertLanguage
+
+    private int insert(final PreparedStatement p, final String s) {
         try {
-            insertCompany.setString(1, name);
-            return executeUpdate(insertCompany);
+            p.setString(1, s);
+            return executeUpdate(p);
         } catch (final SQLException e) {
             e.printStackTrace();
             return DB_ERROR;
         } // catch
+    } // insert(PreparedStatement, String)
+
+    public int insertCompany(final String name) {
+        return insert(insertCompany, name);
     } // insertCompany
 
     public int insertKeyword(final String word) {
-        try {
-            insertKeyword.setString(1, word);
-            return executeUpdate(insertKeyword);
-        } catch (final SQLException e) {
-            e.printStackTrace();
-            return DB_ERROR;
-        } // catch
+        return insert(insertKeyword, word);
     } // insertKeyword(String)
 
     @Override
@@ -130,7 +133,8 @@ public final class DictionarySQLConnector extends SQLConnector {
             return con.createStatement().executeQuery(
                     "SELECT software_name FROM dictionary UNION " +
                     "SELECT name FROM company UNION " +
-                    "SELECT word FROM keyword");
+                    "SELECT word FROM keyword UNION " +
+                    "SELECT language FROM prog_lang");
             //@formatter:on
         } catch (final SQLException e) {
             e.printStackTrace();

@@ -23,7 +23,7 @@ public abstract class DictionaryFromFile {
     protected void execute() {
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new FileReader(new File(filepath)));
+            r = new BufferedReader(new FileReader(new File("dictionary/" + filepath)));
             String s;
             while ((s = r.readLine()) != null) {
                 insert(s);

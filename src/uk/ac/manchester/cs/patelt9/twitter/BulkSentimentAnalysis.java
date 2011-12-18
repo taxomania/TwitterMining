@@ -15,6 +15,7 @@ import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.TweetSQLConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.task.SentimentScoreTask;
+import uk.ac.manchester.cs.patelt9.twitter.parse.ScannerThread;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -31,11 +32,13 @@ public class BulkSentimentAnalysis {
             + "IS NULL AND keyword "
             // + "IS NOT NULL "
             + "='latest'"
-            + "ORDER BY id DESC LIMIT 1000;"; // 10,000 at a time
+            + "ORDER BY id DESC LIMIT 1000;"; // Max 10,000 at a time
     // @formatter:on
 
     private HttpURLConnection con = null;
     private DatabaseThread dbThread = null;
+    private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
+    private ScannerThread scanner = null;
 
     public static void main(final String[] args) throws IOException, SQLException {
         BulkSentimentAnalysis.getInstance().run();
@@ -43,10 +46,13 @@ public class BulkSentimentAnalysis {
 
     public void run() throws IOException, SQLException {
         dbThread.start();
-        while (loadDataSet()) {
+        while (loadDataSet() && stillStream) {
             connect(createJsonObject());
             response();
         } // while
+        if (scanner.isAlive()) {
+            scanner.interrupt();
+        } // if
         dbThread.interrupt();
     } // run()
 
@@ -94,6 +100,13 @@ public class BulkSentimentAnalysis {
 
     private BulkSentimentAnalysis() throws SQLException {
         dbThread = new SQLThread();
+        scanner = new ScannerThread() {
+            @Override
+            protected void performTask() {
+                stillStream = false;
+            } // performTask()
+        };
+        scanner.start();
     } // BulkSentiment()
 
     private void response() {

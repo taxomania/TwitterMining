@@ -1,7 +1,7 @@
 '''
 @author: Tariq Patel
 '''
-from nltk import wordpunct_tokenize
+from nltk.tokenize import wordpunct_tokenize
 import MySQLdb as mysql
 from string import split
 from pattern.en import polarity, singularize
@@ -30,20 +30,32 @@ class SQLConnector:
                                 db='TwitterMining')
 
     def load_data(self):
-        self.db.query("SELECT id, text, sentiment FROM tweet ORDER BY id DESC LIMIT 10")
+        self.db.query("SELECT id, text, sentiment FROM tweet ORDER BY id DESC LIMIT 46")
         return self.db.store_result()
 
-    def hasEntry(self, word):
-        self.db.query("SELECT t.type, d.id FROM dictionary d, dict_type t WHERE d.type = t.id AND d.software_name = '" + word + "'")
-        self.soft = self.db.store_result().fetch_row()
-        size = len(self.soft)
+    def isSoftware(self, word):
+        return self.__isEntry("SELECT t.type, d.id FROM dictionary d, dict_type t WHERE d.type = t.id AND d.software_name = '" + word + "'")
+
+    def getSoftware(self):
+        return self.__getEntry()
+
+    def __getEntry(self):
+        return self.result[0]
+
+    def __isEntry(self, query):
+        self.db.query(query)
+        self.result = self.db.store_result().fetch_row()
+        size = len(self.result)
         if (size == 0):
             return False
         else:
             return True
 
-    def getEntry(self):
-        return self.soft[0]
+    def isProgLang(self, word):
+        return self.__isEntry("SELECT id FROM prog_lang WHERE language = '" + word + "'")
+
+    def getProgLang(self):
+        return self.__getEntry()
 
     # This was just to test id worked
     def getSoftwareName(self, dict_id):
@@ -75,6 +87,9 @@ def singular(words):
         word_list.append(singularize(word))
     return word_list
 
+def isKey(tuples, key):
+    return key in tuples
+
 if __name__ == '__main__':
     sql = SQLConnector()
     res = sql.load_data()
@@ -82,25 +97,28 @@ if __name__ == '__main__':
     for i in range(0, res.num_rows()):
         row = res.fetch_row()
         for tweet in row:
-            tweet_id = tweet[0]
             text = tweet[1]
             words = tokenize(text)
             #print words
             # print singular(words)
 
             tagged_tweet = {}
-            tagged_tweet['tweet_id'] = str(tweet_id)
+            tagged_tweet['tweet_id'] = str(tweet[0])
+            tagged_tweet['sentiment'] = tweet[2]
             #tagged_tweet['tweet'] = text
 # TODO: NEED TO BE ABLE TO TAG SOFTWARE WITH NAMES LONGER THAN 1 WORD eg iTunes Match - finds iTunes
             for word in words:
                 try:
-                    if sql.hasEntry(word):
-                        entry = sql.getEntry()
+                    if sql.isSoftware(word):
+                        entry = sql.getSoftware()
                         #print entry
                         tagged_tweet['dict_id'] = str(entry[1])
                         tagged_tweet['name'] = word
                         tagged_tweet['type'] = entry[0]
                         #tagged_tweet[entry[0]] = word
+                    elif sql.isProgLang(word):
+                        entry = sql.getProgLang()
+                        tagged_tweet['language'] = str(entry[0])
                 except ProgrammingError: # for error tokens
                     pass
                 #if programming language stated
@@ -113,6 +131,7 @@ if __name__ == '__main__':
             #reason for tweeting
             #tagged_tweet['reason']
 
+            # if isKey(tagged_tweet, 'language'):
             print tagged_tweet
 
     sql.close()
