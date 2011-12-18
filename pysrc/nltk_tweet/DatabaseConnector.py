@@ -15,7 +15,7 @@ class SQLConnector:
 
     @staticmethod
     def getDetails():
-        fin = open("/Users/Tariq/Documents/Eclipse/workspace/TwitterMining/sqluserpass.txt")
+        fin = open("../../sqluserpass.txt")
         strings = split(fin.readline(), ":")
         SQLConnector.__user = strings[0]
         SQLConnector.__pass = strings[1]
