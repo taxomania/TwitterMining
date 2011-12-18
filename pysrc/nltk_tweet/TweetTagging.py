@@ -61,7 +61,7 @@ if __name__ == '__main__':
                     elif sql.isCompany(word):
                         entry = sql.getCompany()
                         tagged_tweet['company'] = str(entry[0])
-                except ProgrammingError: # for error tokens
+                except ProgrammingError: # for error tokens eg '
                     pass
                 #if version stated
                     #tagged_tweet['version']
