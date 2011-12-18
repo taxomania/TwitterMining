@@ -30,7 +30,7 @@ class SQLConnector:
                                 db='TwitterMining')
 
     def load_data(self):
-        self.db.query("SELECT id, text, sentiment FROM tweet ORDER BY id DESC LIMIT 10")
+        self.db.query("SELECT id, text, sentiment FROM tweet ORDER BY id DESC LIMIT 100")
         return self.db.store_result()
 
     def isSoftware(self, word):
@@ -56,6 +56,13 @@ class SQLConnector:
 
     def getProgLang(self):
         return self.__getEntry()
+
+    def isCompany(self, word):
+        return self.__isEntry("SELECT id FROM company WHERE name = '" + word + "'")
+
+    def getCompany(self):
+        return self.__getEntry()
+
 
     # This was just to test id worked
     def getSoftwareName(self, dict_id):
@@ -117,6 +124,9 @@ if __name__ == '__main__':
                     elif sql.isProgLang(word):
                         entry = sql.getProgLang()
                         tagged_tweet['language'] = str(entry[0])
+                    elif sql.isCompany(word):
+                        entry = sql.getCompany()
+                        tagged_tweet['company'] = str(entry[0])
                 except ProgrammingError: # for error tokens
                     pass
                 #if programming language stated
@@ -129,7 +139,7 @@ if __name__ == '__main__':
             #reason for tweeting
             #tagged_tweet['reason']
 
-            # if isKey(tagged_tweet, 'language'):
+            #if isKey(tagged_tweet, 'company'): # Using this for testing tags
             print tagged_tweet
 
     sql.close()
