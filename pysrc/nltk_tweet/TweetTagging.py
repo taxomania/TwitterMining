@@ -111,11 +111,9 @@ if __name__ == '__main__':
                 try:
                     if sql.isSoftware(word):
                         entry = sql.getSoftware()
-                        #print entry
                         tagged_tweet['dict_id'] = str(entry[1])
                         tagged_tweet['name'] = word
                         tagged_tweet['type'] = entry[0]
-                        #tagged_tweet[entry[0]] = word
                     elif sql.isProgLang(word):
                         entry = sql.getProgLang()
                         tagged_tweet['language'] = str(entry[0])
