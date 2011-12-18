@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!ELEMENT software (name,version?,type?,os*,language*)>
-<!ELEMENT name (#PCDATA)>
-<!ELEMENT version (#PCDATA)>
+<!ELEMENT software (software_name,version_number?,type?,os*,programming_language*, price?, license?, reason?, sentiment?)>
+<!ELEMENT software_name (#PCDATA)>
+<!ELEMENT version_number (#PCDATA)>
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT os (#PCDATA)>
-<!ELEMENT language (name, version?)>
+<!ELEMENT programming_language (name, version_number?)>
+<!ELEMENT name (#PCDATA)>
 <!ELEMENT reason (#PCDATA)>
+<!ELEMENT sentiment (#PCDATA)>
+<!ELEMENT license (#PCDATA)>
+<!ELEMENT price (#PCDATA)>

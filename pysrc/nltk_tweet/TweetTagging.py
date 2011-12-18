@@ -53,18 +53,20 @@ if __name__ == '__main__':
                     if sql.isSoftware(word):
                         entry = sql.getSoftware()
                         tagged_tweet['dict_id'] = str(entry[1])
-                        tagged_tweet['name'] = word
+                        tagged_tweet['software_name'] = word
                         tagged_tweet['type'] = entry[0]
                     elif sql.isProgLang(word):
                         entry = sql.getProgLang()
-                        tagged_tweet['language'] = str(entry[0])
+                        tagged_tweet['programming_language'] = str(entry[0])
                     elif sql.isCompany(word):
                         entry = sql.getCompany()
                         tagged_tweet['company'] = str(entry[0])
                 except ProgrammingError: # for error tokens eg '
                     pass
                 #if version stated
-                    #tagged_tweet['version']
+                    #tagged_tweet['version_number']
+                #if license type stated eg BSD, APACHE
+                    #tagged_tweet['license']
                 #if price stated
                     #tagged_tweet['price']
 
