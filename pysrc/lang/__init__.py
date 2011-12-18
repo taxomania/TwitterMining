@@ -1,1 +1,1 @@
-from lang import *
+import lang

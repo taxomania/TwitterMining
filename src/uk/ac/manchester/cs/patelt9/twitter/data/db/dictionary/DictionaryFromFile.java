@@ -10,11 +10,12 @@ import java.sql.SQLException;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.DictionarySQLConnector;
 
 public abstract class DictionaryFromFile {
-    private final String filepath;
+    private static final String DIRECTORY = "dictionary/";
+    private final String filename;
     protected final DictionarySQLConnector db;
 
     protected DictionaryFromFile(final String path) throws SQLException {
-        filepath = path;
+        filename = path;
         db = DictionarySQLConnector.getInstance();
     } // DictionaryFromFile(String)
 
@@ -23,7 +24,7 @@ public abstract class DictionaryFromFile {
     protected void execute() {
         BufferedReader r = null;
         try {
-            r = new BufferedReader(new FileReader(new File("dictionary/" + filepath)));
+            r = new BufferedReader(new FileReader(new File(DIRECTORY + filename)));
             String s;
             while ((s = r.readLine()) != null) {
                 insert(s);

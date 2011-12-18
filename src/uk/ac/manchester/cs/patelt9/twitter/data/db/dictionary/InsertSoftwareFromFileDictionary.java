@@ -3,6 +3,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data.db.dictionary;
 import java.sql.SQLException;
 
 public class InsertSoftwareFromFileDictionary extends DictionaryFromFile {
+    private static final String FILENAME = "dictionary.txt";
     public static void main(final String[] args) {
         try {
             new InsertSoftwareFromFileDictionary().execute();
@@ -12,7 +13,7 @@ public class InsertSoftwareFromFileDictionary extends DictionaryFromFile {
     } // main(String[])
 
     private InsertSoftwareFromFileDictionary() throws SQLException {
-        super("dictionary.txt");
+        super(FILENAME);
     } // InsertSoftwareFromFileDictionary()
 
     @Override

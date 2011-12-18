@@ -30,7 +30,7 @@ class SQLConnector:
                                 db='TwitterMining')
 
     def load_data(self):
-        self.db.query("SELECT id, text, sentiment FROM tweet ORDER BY id DESC LIMIT 46")
+        self.db.query("SELECT id, text, sentiment FROM tweet ORDER BY id DESC LIMIT 10")
         return self.db.store_result()
 
     def isSoftware(self, word):

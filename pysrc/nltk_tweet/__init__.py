@@ -1,1 +1,1 @@
-from TweetTagging import *
+import TweetTagging
