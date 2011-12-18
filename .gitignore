@@ -5,3 +5,4 @@ userpass.txt
 sqluserpass.txt
 alchemyapikey.txt
 db.jar
+*.pyc
