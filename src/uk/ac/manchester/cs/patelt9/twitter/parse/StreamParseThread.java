@@ -23,9 +23,11 @@ import uk.ac.manchester.cs.patelt9.twitter.data.User;
 import com.google.gson.JsonObject;
 
 public class StreamParseThread extends Thread {
+    private static PyObject langDetector;
+
     private final List<JsonObject> parseList = new ArrayList<JsonObject>();
     private final SpellChecker spellChecker;
-    private static PyObject langDetector;
+
     private int objectsParsed;
 
     static {
@@ -38,7 +40,7 @@ public class StreamParseThread extends Thread {
     } // static
 
     public StreamParseThread() {
-        this("ParseJson");
+        this("ParseStream");
     } // StreamParseThread()
 
     public StreamParseThread(final String s) {
@@ -82,11 +84,12 @@ public class StreamParseThread extends Thread {
         } // synchronized
     } // addTask(JsonObject)
 
+    //@formatter:off
     public interface ParseListener {
         void onParseComplete(Tweet t);
-
         void onParseComplete(long id);
     } // ParseListener
+    //@formatter:on
 
     private static final Set<ParseListener> listeners = new HashSet<ParseListener>();
 

@@ -19,7 +19,7 @@ public final class MongoThread extends DatabaseThread {
      * @throws MongoException
      */
     public MongoThread() throws UnknownHostException, MongoException {
-        this("Mongo");
+        this("MONGO");
     } // MongoThread()
 
     /**

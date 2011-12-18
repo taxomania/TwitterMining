@@ -21,7 +21,7 @@ public class DatabaseGUI extends JFrame {
     private static final long serialVersionUID = 5393049585293383058L;
 
     public DatabaseGUI() throws SQLException {
-        super("Twitter Statistics");
+        super("TwitterMining Database");
         init();
     } // DatabaseGUI()
 
@@ -92,5 +92,4 @@ public class DatabaseGUI extends JFrame {
             } // run()
         });
     } // main(String[])
-
 } // DatabaseGUI

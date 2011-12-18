@@ -17,5 +17,4 @@ public class UserDbTable extends DbTable {
     protected String getQuery() {
         return DEFAULT_QUERY + " LIMIT " + (page * MAX_RESULTS) + ", " + MAX_RESULTS;
     } // getQuery()
-
 } // UserDbTable

@@ -55,11 +55,12 @@ public class SentimentParseThread extends Thread {
         } // synchronized
     } // addTask(JsonObject)
 
+    //@formatter:off
     public interface ParseListener {
         void onParseComplete(long id, String sentiment);
-
         void onParseComplete(long id, String sentiment, String score);
     } // ParseListener
+    //@formatter:on
 
     private static final Set<ParseListener> listeners = new HashSet<ParseListener>();
 

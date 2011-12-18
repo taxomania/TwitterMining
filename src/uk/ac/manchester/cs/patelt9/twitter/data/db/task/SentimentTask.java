@@ -9,6 +9,7 @@ import uk.ac.manchester.cs.patelt9.twitter.data.db.DatabaseConnector;
  *
  */
 public class SentimentTask implements DatabaseTask {
+    protected static final String COLON = ": ";
     private final long id;
     private final String sentiment;
 
@@ -39,6 +40,6 @@ public class SentimentTask implements DatabaseTask {
 
     @Override
     public String toString() {
-        return Long.toString(id) + ": " + sentiment;
+        return Long.toString(id) + COLON + sentiment;
     } // toString()
 } // SentimentTask

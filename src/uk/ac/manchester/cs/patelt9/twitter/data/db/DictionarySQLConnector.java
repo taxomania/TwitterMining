@@ -135,7 +135,7 @@ public final class DictionarySQLConnector extends SQLConnector {
                     "SELECT name FROM company UNION " +
                     "SELECT word FROM keyword UNION " +
                     "SELECT language FROM prog_lang");
-            //@formatter:on
+            // @formatter:on
         } catch (final SQLException e) {
             e.printStackTrace();
             return null;

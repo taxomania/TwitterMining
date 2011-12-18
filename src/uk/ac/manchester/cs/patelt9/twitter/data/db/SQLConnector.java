@@ -86,7 +86,7 @@ public abstract class SQLConnector {
 
     public abstract int deleteAll();
 
-    protected Connection getConnection() {
+    protected final Connection getConnection() {
         return con;
     } // getConnection()
 } // SQLConnector

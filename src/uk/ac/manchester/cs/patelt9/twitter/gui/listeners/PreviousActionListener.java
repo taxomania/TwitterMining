@@ -14,4 +14,3 @@ public final class PreviousActionListener extends DbTableActionListener {
         tbl.previous();
     } // actionPerformed()
 } // PreviousActionListener
-

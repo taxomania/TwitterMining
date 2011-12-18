@@ -43,6 +43,6 @@ public class SentimentScoreTask extends SentimentTask {
 
     @Override
     public String toString() {
-        return super.toString() + ": " + sentimentScore;
+        return super.toString() + COLON + sentimentScore;
     } // toString()
 } // SentimentScoreTask
