@@ -1,6 +1,5 @@
 package uk.ac.manchester.cs.patelt9.twitter.parse;
 
-import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,9 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.util.PythonInterpreter;
 import org.xeustechnologies.googleapi.spelling.Language;
 import org.xeustechnologies.googleapi.spelling.SpellChecker;
 import org.xeustechnologies.googleapi.spelling.SpellCorrection;
@@ -20,26 +16,16 @@ import org.xeustechnologies.googleapi.spelling.SpellResponse;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
 import uk.ac.manchester.cs.patelt9.twitter.data.User;
 
+import com.cybozu.labs.langdetect.Detector;
+import com.cybozu.labs.langdetect.DetectorFactory;
+import com.cybozu.labs.langdetect.LangDetectException;
 import com.google.gson.JsonObject;
 
 public class StreamParseThread extends Thread {
-    private static PyObject langDetector;
-
     private final List<JsonObject> parseList = new ArrayList<JsonObject>();
     private final SpellChecker spellChecker;
 
     private int objectsParsed;
-
-    static {
-        final PythonInterpreter py = new PythonInterpreter();
-        final String path = "/opt/local/Library/Frameworks/Python.framework/Versions/2.6/lib/python2.6/site-packages";
-        final String filepath = new File("pysrc/lang").getAbsolutePath();
-        py.exec("import sys\n");
-        py.exec("sys.path.append('" + path + "')\n");
-        py.exec("sys.path.append('" + filepath + "')\n");
-        py.exec("from lang import getLanguage");
-        langDetector = py.get("getLanguage");
-    } // static
 
     public StreamParseThread() {
         this("ParseStream");
@@ -48,6 +34,12 @@ public class StreamParseThread extends Thread {
     public StreamParseThread(final String s) {
         super(s);
         objectsParsed = 0;
+        try {
+            DetectorFactory.loadProfile("lib/lang-detect/profiles");
+        } catch (final LangDetectException e) {
+            e.printStackTrace();
+            System.exit(1);
+        } // catch
         spellChecker = new SpellChecker(Language.ENGLISH);
         spellChecker.setOverHttps(true);
     } // StreamParseThread(String)
@@ -158,17 +150,26 @@ public class StreamParseThread extends Thread {
         } // catch
     } // spellCheck(String)
 
+    private static final String DESIRED_LANGUAGE = "en";
+
     private Tweet getTweet(final JsonObject jo) {
         final JsonObject user = jo.getAsJsonObject("user");
-        if (!("en".equals(user.getAsJsonPrimitive("lang").getAsString()))) { return null; }
+        if (!(DESIRED_LANGUAGE.equals(user.getAsJsonPrimitive("lang").getAsString()))) { return null; }
         final JsonObject retweetedStatus = jo.getAsJsonObject("retweeted_status");
         if (retweetedStatus != null) { return getTweet(retweetedStatus); }
         final String tweet = jo.getAsJsonPrimitive("text").getAsString();
-        final String language = langDetector.__call__(new PyString(tweet)).asString();
-        if (!"English".equals(language)) {
+        String language = null;
+        try {
+            final Detector detector = DetectorFactory.create();
+            detector.append(tweet);
+            language = detector.detect();
+        } catch (final LangDetectException e) {
+            e.printStackTrace();
+        } // catch
+        if (!DESIRED_LANGUAGE.equals(language)) {
             // System.out.println(tweet);
             return null;
-        } // slightly inaccurate
+        } // slightly inaccurate, better than python guess-language
 
         // spellCheck(tweet); // ONLY TESTING AT THIS STAGE
 
