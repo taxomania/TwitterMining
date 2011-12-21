@@ -135,7 +135,7 @@ def main():
                 text = text.replace(url, "").strip()
 
 
-            words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*#|\S+')
+            words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
             #print words
             prices = find_price(words)
 
