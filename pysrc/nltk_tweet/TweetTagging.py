@@ -31,7 +31,7 @@ def analyse_sentiment(text):
 
 def ngram(tokens, max_n):
     ngrams = {}
-    for n in range(0, max_n-1):
+    for n in range(0, max_n):
         candidates = []
         for i in range(len(tokens) - n):
             phrase = " ".join(tokens[i:i + n + 1])
@@ -101,9 +101,9 @@ def main():
             words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
             print words
 
-            ngrams = ngram(words, 6)
-            #for i in range(len(ngrams),0, -1):
-            #    print ngrams[i]
+            ngrams = ngram(words, 5)
+            #for j in range(len(ngrams),0, -1):
+             #   print ngrams[j]
 
             tagged_tweet = tag_tweets(ngrams)
             tagged_tweet['tweet_db_id'] = str(tweet[0])
