@@ -14,7 +14,7 @@ class SQLConnector:
     __pass = None
 
     @staticmethod
-    def getDetails():
+    def _getDetails():
         fin = open("../../sqluserpass.txt")
         strings = split(fin.readline(), ":")
         SQLConnector.__user = strings[0]
@@ -24,7 +24,7 @@ class SQLConnector:
 
     def __init__(self):
         if (not SQLConnector.__userpass_retrieved):
-            SQLConnector.getDetails()
+            SQLConnector._getDetails()
         self.db = sql.connect(host='localhost',
                               user=SQLConnector.__user,
                               passwd=SQLConnector.__pass,

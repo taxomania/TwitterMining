@@ -7,11 +7,19 @@ from _mysql_exceptions import ProgrammingError
 from DatabaseConnector import SQLConnector
 import sys
 
-def find_url(text, pattern=r"(http://[^ ]+)"):
-    return regex_tokenize(text, pattern)
-
 def regex_tokenize(text, pattern):
     return regexp_tokenize(text, pattern)
+
+def find_url(text, pattern=r'(http://[^ ]+)'):
+    return regex_tokenize(text, pattern)
+
+# Doesn't match all prices
+def find_price(text, pattern=r'^\$\??\d{0,10}(\.\d{2})?$'):
+    prices = []
+    for word in text:
+        if len(regex_tokenize(word, pattern)) > 0:
+            prices.append(word)
+    return prices
 
 def tokenize(text):
     return wordpunct_tokenize(text)
@@ -49,27 +57,27 @@ def tags_found(tagged, tags):
     return True
 
 def tag_tweets(words):
-# TODO: NEED TO BE ABLE TO TAG SOFTWARE WITH NAMES LONGER THAN 1 WORD eg iTunes Match - finds iTunes
+    # Assumes there is only one software etc per tweet
     sql_tags = ['software_name', 'programming_language_name', 'company_name']
-    tagged_tweet = {}
-    for worda in range(len(words),0, -1):
-        for word in words[worda]:
-            if not tags_found(tagged_tweet, sql_tags):
+    tweet = Dictionary()
+    for i in range(len(words),0, -1):
+        for word in words[i]:
+            if not tags_found(tweet, sql_tags):
                 try:
-                    if not isKey(tagged_tweet, 'software_name') and sql.isSoftware(word):
+                    if not isKey(tweet, 'software_name') and sql.isSoftware(word):
                         entry = sql.getSoftware()
-                        tagged_tweet['software_id'] = str(entry[1])
-                        tagged_tweet['software_name'] = word
-                        tagged_tweet['type'] = entry[0]
-                    elif (not isKey(tagged_tweet, 'programming_language_name')
+                        tweet.add('software_id', str(entry[1]))
+                        tweet.add('software_name', word)
+                        tweet.add('software_type', entry[0])
+                    elif (not isKey(tweet, 'programming_language_name')
                           and sql.isProgLang(word)):
                             entry = sql.getProgLang()
-                            tagged_tweet['programming_language_name'] = word
-                            tagged_tweet['programming_language_id'] = str(entry[0])
-                    elif not isKey(tagged_tweet, 'company_name') and sql.isCompany(word):
+                            tweet.add('programming_language_name', word)
+                            tweet.add('programming_language_id', str(entry[0]))
+                    elif not isKey(tweet, 'company_name') and sql.isCompany(word):
                         entry = sql.getCompany()
-                        tagged_tweet['company_name'] = word
-                        tagged_tweet['company_id'] = str(entry[0])
+                        tweet.add('company_name', word)
+                        tweet.add('company_id', str(entry[0]))
                 except ProgrammingError: # for error tokens eg ' or "
                     pass
 
@@ -82,7 +90,35 @@ def tag_tweets(words):
 
     #reason for tweeting
     #tagged_tweet['reason']
-    return tagged_tweet
+    return tweet
+
+def add_list(tag, name, array):
+    if len(array) == 1:
+        tag[name] = array[0]
+    elif len(array) == 0:
+        tag[name] = None
+    else:
+        tag[name] =  array
+
+class Dictionary(dict):
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+
+    def contains(self, key):
+        return key in self
+
+    def add(self, key, value):
+        if value is not None:
+            self[key] = value
+
+    def remove(self, key):
+        del self[key]
+
+    def add_list(self, key, array):
+        if len(array) == 1:
+            self.add(key, array[0])
+        elif len(array) > 1:
+            self.add(key, array)
 
 def main():
     global sql
@@ -98,22 +134,21 @@ def main():
             for url in urls:
                 text = text.replace(url, "").strip()
 
-            words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
-            print words
+
+            words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*#|\S+')
+            #print words
+            prices = find_price(words)
 
             ngrams = ngram(words, 5)
             #for j in range(len(ngrams),0, -1):
-             #   print ngrams[j]
+                #print ngrams[j]
 
             tagged_tweet = tag_tweets(ngrams)
-            tagged_tweet['tweet_db_id'] = str(tweet[0])
-            tagged_tweet['sentiment'] = tweet[2]
-            if len(urls) == 1:
-                tagged_tweet['url'] = urls[0]
-            elif len(urls) == 0:
-                tagged_tweet['url'] = None
-            else:
-                tagged_tweet['url'] =  urls
+            tagged_tweet.add('tweet_db_id', str(tweet[0]))
+            tagged_tweet.add('sentiment', tweet[2])
+            tagged_tweet.add_list('url', urls)
+            tagged_tweet.add_list('price', prices)
+
             #tagged_tweet['tweet'] = text
 
 
