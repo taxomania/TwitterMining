@@ -31,17 +31,34 @@ def singular(words):
 def isKey(tuples, key):
     return key in tuples
 
+
+def ngram(tokens, max_n):
+    ngrams = {}
+    for n in range(0, max_n-1):
+        candidates = []
+        for i in range(len(tokens) - n):
+            phrase = " ".join(tokens[i:i + n + 1])
+            candidates.append(phrase)
+        ngrams[n+1] = candidates
+    return ngrams
+
 if __name__ == '__main__':
     sql = SQLConnector()
     res = sql.load_data()
 
-    for i in range(0, res.num_rows()):
+    for i in range(0, 1):#res.num_rows()):
         row = res.fetch_row()
         for tweet in row:
             text = tweet[1]
+
+            # Need improved tokenizer to take hyperlinks
             words = tokenize(text)
-            #print words
-            # print singular(words)
+
+            ngram_search = ngram(words, 6)
+
+            # print all ngrams
+            for i in range(len(ngram_search),0, -1):
+                print ngram_search[i]
 
             tagged_tweet = {}
             tagged_tweet['tweet_id'] = str(tweet[0])
@@ -76,4 +93,4 @@ if __name__ == '__main__':
             #if isKey(tagged_tweet, 'company'): # Using this for testing tags
             print tagged_tweet
 
-    sql.close()
+            sql.close()
