@@ -1,10 +1,19 @@
 '''
 @author: Tariq Patel
 '''
-from nltk.tokenize import wordpunct_tokenize
+from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
 from pattern.en import polarity, singularize
 from _mysql_exceptions import ProgrammingError
 from DatabaseConnector import SQLConnector
+import re
+import sys
+
+def find_url(text):
+    regex = re.compile(r"(http://[^ ]+)")
+    return regexp_tokenize(text, regex)
+
+def regex_tokenize(text, pattern):
+    return regexp_tokenize(text, pattern)
 
 def tokenize(text):
     return wordpunct_tokenize(text)
@@ -42,7 +51,8 @@ def ngram(tokens, max_n):
         ngrams[n+1] = candidates
     return ngrams
 
-if __name__ == '__main__':
+
+def main():
     sql = SQLConnector()
     res = sql.load_data()
 
@@ -51,7 +61,7 @@ if __name__ == '__main__':
         for tweet in row:
             text = tweet[1]
 
-            # Need improved tokenizer to take hyperlinks
+            urls = find_url(text)
             words = tokenize(text)
 
             ngram_search = ngram(words, 6)
@@ -63,6 +73,10 @@ if __name__ == '__main__':
             tagged_tweet = {}
             tagged_tweet['tweet_id'] = str(tweet[0])
             tagged_tweet['sentiment'] = tweet[2]
+            if len(urls) == 1:
+                tagged_tweet['url'] = urls[0]
+            else:
+                tagged_tweet['url'] =  urls
             #tagged_tweet['tweet'] = text
 # TODO: NEED TO BE ABLE TO TAG SOFTWARE WITH NAMES LONGER THAN 1 WORD eg iTunes Match - finds iTunes
             for word in words:
@@ -80,6 +94,7 @@ if __name__ == '__main__':
                         tagged_tweet['company'] = str(entry[0])
                 except ProgrammingError: # for error tokens eg '
                     pass
+
                 #if version stated
                     #tagged_tweet['version_number']
                 #if license type stated eg BSD, APACHE
@@ -94,3 +109,7 @@ if __name__ == '__main__':
             print tagged_tweet
 
             sql.close()
+            return 0
+
+if __name__ == '__main__':
+    sys.exit(main())
