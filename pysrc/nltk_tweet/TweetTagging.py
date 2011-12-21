@@ -62,6 +62,8 @@ def main():
             text = tweet[1]
 
             urls = find_url(text)
+            for url in urls:
+                text = text.replace(url, "").strip()
             words = tokenize(text)
 
             ngram_search = ngram(words, 6)
