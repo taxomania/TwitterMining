@@ -33,7 +33,6 @@ Tryton
 TurboCASH
 WebERP
 refbase
-Evergreen
 Koha
 NewGenLib
 OpenBiblio
@@ -55,7 +54,6 @@ Ascalaph Designer
 GROMACS
 LAMMPS
 MDynaMix
-TINKER
 NAMD
 Chemistry Development Kit
 JOELib
@@ -90,7 +88,6 @@ jHepWork
 Konstanz Information Miner
 KNIME
 ELKI
-Jumper
 Lucene
 Solr
 Xapian
@@ -104,10 +101,7 @@ OpenX
 RSS Bandit
 RSSOwl
 Akregator
-Sage
 Liferea
-Bots
-Asterisk
 Ekiga
 FreePBX
 FreeSWITCH
@@ -115,17 +109,14 @@ Jitsi
 QuteCom
 sipX
 Slrn
-Twinkle
 FreeNX
 OpenVPN
 rdesktop
-Synergy
 VNC
 RealVNC
 TightVNC
 UltraVNC
 xrdp
-cURL
 HTTrack
 Wget
 Apache Cocoon
@@ -155,13 +146,10 @@ GlassFish
 CORBA
 JacORB
 Jakarta Tomcat
-Tomcat
 JBoss
 ObjectWeb JOnAS
-JOnAS
 OpenSplice DDS
 SmartVariables
-TAO
 OpenLDAP
 JXplorer
 openVXI
@@ -181,7 +169,6 @@ ILIAS
 Kiten
 KVerbos
 KTouch
-Tux
 KGeography
 KEduca
 openlp.org
@@ -203,9 +190,6 @@ Kphotoalbum
 Dream DRM Receiver
 KToon
 Synfig
-Pencil
-Blender
-Art of Illusion
 K-3D
 OpenFX
 Seamless3d
@@ -232,7 +216,6 @@ KeePass
 Password Safe
 TeamLab
 Project.net
-Chandler
 KAddressBook
 Kontact
 KOrganizer
@@ -240,13 +223,11 @@ Novell Evolution
 OpenSync
 Rachota Timetracker
 Bugzilla
-Mantis
 Mindquarry
 Redmine
 Trac
 Open Scene Graph
 OpenSCDP
-Bison
 CodeSynthesis XSD
 CodeSynthesis XSD/e
 xmlbeansxx
@@ -255,7 +236,6 @@ Kodos
 phpCodeGenie
 ^txt2regex$
 SableCC
-SWIG
 Autoconf
 Automake
 Xnee
@@ -265,7 +245,7 @@ GNU Debugger
 ClamAV
 ClamWin
 Gateway Anti-Virus
-AVG
+AVG antivirus
 Winpooch
 MyDLP
 GnuPG
@@ -284,9 +264,7 @@ IPCop
 IPFire
 M0n0wall
 PeerGuardian
-PF
 pfSense
-Rope
 SmoothWall
 Shorewall
 Untangle
@@ -297,7 +275,6 @@ OpenSSH
 PuTTY
 Cyberduck
 Agorum
-Alpine
 Anti-Spam SMTP Proxy
 Balsa
 Bogofilter
@@ -306,7 +283,6 @@ Claws Mail
 Dada Mail
 DSPAM
 Enigmail
-Evolution
 Exim
 Fdm
 Fetchmail
@@ -318,7 +294,6 @@ Gnus
 Gnuzilla
 GPGMail
 GroupServer
-Hula
 Hypermail
 I-sense
 IlohaMail
@@ -330,7 +305,6 @@ Mailx
 Majordomo
 MH Message Handling System
 MIMEDefang
-Modest
 Movemail
 Mozilla Mail & Newsgroups
 Mozilla Thunderbird
@@ -354,7 +328,6 @@ Universal village collaboration suite
 UW IMAP
 Vpopmail
 Xuheki
-YAM
 Yet Another Mailer
 YPOPs!
 Zarafa
@@ -370,7 +343,6 @@ Climm
 Coccinella
 Ekiga
 Emesene
-Empathy
 Fama IM
 Gabber
 Gajim
@@ -389,20 +361,15 @@ Neustradamus
 Pandion
 Pidgin
 Proteus
-Psi
 QuteCom
 Retroshare
 SFLphone
 Tapioca
-Telepathy
 TerraIM
 Tkabber
 Tmsnc
-TNT
 TorChat
-WASTE
 Zephyr
-Zinc
 WebOS
 Android	os
 Bada	os
@@ -414,16 +381,15 @@ uTorrent
 Skype
 Sopcast
 Spotify
-Adium
 Google Chrome
 Steam
 TextMate
 Text Editor
+TextEdit
 nedit
 gedit
 BitLord
 bittorrent
-Nero
 iTunes
 AVG
 MS Office
