@@ -2,13 +2,13 @@
 @author: Tariq Patel
 '''
 from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
-from pattern.en import polarity, singularize
+from pattern.en import polarity
 from _mysql_exceptions import ProgrammingError
 from DatabaseConnector import SQLConnector
 import sys
 
-def find_url(text):
-    return regexp_tokenize(text, pattern=r"(http://[^ ]+)")
+def find_url(text, pattern=r"(http://[^ ]+)"):
+    return regex_tokenize(text, pattern)
 
 def regex_tokenize(text, pattern):
     return regexp_tokenize(text, pattern)
@@ -29,15 +29,6 @@ def analyse_sentiment(text):
 
     return sentiment
 
-def singular(words):
-    word_list = []
-    for word in words:
-        word_list.append(singularize(word))
-    return word_list
-
-def isKey(tuples, key):
-    return key in tuples
-
 def ngram(tokens, max_n):
     ngrams = {}
     for n in range(0, max_n-1):
@@ -48,27 +39,39 @@ def ngram(tokens, max_n):
         ngrams[n+1] = candidates
     return ngrams
 
+def isKey(tuples, key):
+    return key in tuples
+
+def tags_found(tagged, tags):
+    for tag in tags:
+        if not isKey(tagged, tag):
+            return False
+    return True
+
 def tag_tweets(words):
 # TODO: NEED TO BE ABLE TO TAG SOFTWARE WITH NAMES LONGER THAN 1 WORD eg iTunes Match - finds iTunes
+    sql_tags = ['software_name', 'programming_language_name', 'company_name']
     tagged_tweet = {}
     for worda in range(len(words),0, -1):
         for word in words[worda]:
-            try:
-                if not isKey(tagged_tweet, 'software_name') and sql.isSoftware(word):
-                    entry = sql.getSoftware()
-                    tagged_tweet['software_id'] = str(entry[1])
-                    tagged_tweet['software_name'] = word
-                    tagged_tweet['type'] = entry[0]
-                elif not isKey(tagged_tweet, 'programming_language_name') and sql.isProgLang(word):
-                    entry = sql.getProgLang()
-                    tagged_tweet['programming_language_name'] = word
-                    tagged_tweet['programming_language_id'] = str(entry[0])
-                elif not isKey(tagged_tweet, 'company_name') and sql.isCompany(word):
-                    entry = sql.getCompany()
-                    tagged_tweet['company_name'] = word
-                    tagged_tweet['company_id'] = str(entry[0])
-            except ProgrammingError: # for error tokens eg ' or "
-                pass
+            if not tags_found(tagged_tweet, sql_tags):
+                try:
+                    if not isKey(tagged_tweet, 'software_name') and sql.isSoftware(word):
+                        entry = sql.getSoftware()
+                        tagged_tweet['software_id'] = str(entry[1])
+                        tagged_tweet['software_name'] = word
+                        tagged_tweet['type'] = entry[0]
+                    elif (not isKey(tagged_tweet, 'programming_language_name')
+                          and sql.isProgLang(word)):
+                            entry = sql.getProgLang()
+                            tagged_tweet['programming_language_name'] = word
+                            tagged_tweet['programming_language_id'] = str(entry[0])
+                    elif not isKey(tagged_tweet, 'company_name') and sql.isCompany(word):
+                        entry = sql.getCompany()
+                        tagged_tweet['company_name'] = word
+                        tagged_tweet['company_id'] = str(entry[0])
+                except ProgrammingError: # for error tokens eg ' or "
+                    pass
 
         #if version stated
             #tagged_tweet['version_number']
@@ -114,7 +117,6 @@ def main():
             #tagged_tweet['tweet'] = text
 
 
-            #if isKey(tagged_tweet, 'company'): # Using this for testing tags
             print tagged_tweet
 
     sql.close()
