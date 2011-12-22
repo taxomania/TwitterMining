@@ -38,10 +38,8 @@ NewGenLib
 OpenBiblio
 PMB
 SimPy
-Blender
 CellProfiler
 ImageJ
-FIJI
 Endrov
 Jmol
 Molekel
@@ -132,7 +130,6 @@ nginx
 NetKernel
 Piwik
 Qcodo
-Squid
 Web-Developer Server Suite
 XAMPP
 Zope

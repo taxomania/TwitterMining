@@ -79,32 +79,39 @@ def tags_found(tagged, tags):
     return True
 
 def tag_tweets(ngrams):
+    import re
     tweet = Dictionary()
     prev_is_software = False
+    prev_is_number = False
+    prev = ""
+    #  print ngrams[2]
     for i in range(len(ngrams), 0, -1):
         for word in ngrams[i]:
             if prev_is_software:
                 if check_version(word):
                     tweet.add('version', word)
+                prev_is_software = False
+            elif prev_is_number:
+                if word in ('cents', 'cent', 'pence'):
+                    tweet.add('price', prev + " " + word)
+                prev_is_number = False
             try:
                 if sql.isSoftware(word):
                     entry = sql.getSoftware()
-                    tweet.add('software_id', str(entry[1]))
+                    tweet.add('software_id', str(entry[0]))
                     tweet.add('software_name', word)
-                    tweet.add('software_type', entry[0])
                     prev_is_software = True
                 elif sql.isProgLang(word):
                     entry = sql.getProgLang()
                     tweet.add('programming_language_name', word)
                     tweet.add('programming_language_id', str(entry[0]))
-                    prev_is_software = False
                 elif sql.isCompany(word):
                     entry = sql.getCompany()
                     tweet.add('company_name', word)
                     tweet.add('company_id', str(entry[0]))
-                    prev_is_software = False
-                else:
-                    prev_is_software = False
+                elif re.match(r'^\d+$', word):
+                    prev = word
+                    prev_is_number = True
             except ProgrammingError: # for error tokens eg ' or "
                 pass
             # Still need to deduce other reasons for tweeting eg review, notify others
@@ -149,39 +156,48 @@ class Dictionary(dict):
 def main():
     global sql
     sql = SQLConnector()
-    res = sql.load_data()
+    for page in range(0,1):
+        res = sql.load_data(page)
 
-    for i in range(0, res.num_rows()):
-        row = res.fetch_row()
-        for tweet in row:
-            text = tweet[1]
-            #text = "Version 2 Microsoft just released MS Office ver 3.20.2"
+        for i in range(0, res.num_rows()):
+            row = res.fetch_row()
+            for tweet in row:
+                tweet_id = str(tweet[0])
+                if sql.tweetIsTagged(tweet_id):
+                    print "tagged"
+                    continue
+                text = tweet[1]
+                text = "Version 2 Microsoft just released MS Office ver 3.20.2 for 99 cent 100c 10ps 13pence 10 pence"
 
-            urls = find_url(text)
-            for url in urls:
-                text = text.replace(url, "").strip()
+                urls = find_url(text)
+                for url in urls:
+                    text = text.replace(url, "").strip()
 
-            versions = find_version(text)
+                versions = find_version(text)
 
-            words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
-            #print words
-            prices = find_price(words)
+                words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
+                #print words
+                prices = find_price(words)
 
-            ngrams = ngram(words, 5)
-            #for j in range(len(ngrams),0, -1):
-                #print ngrams[j]
+                ngrams = ngram(words, 5)
+                #for j in range(len(ngrams),0, -1):
+                    #print ngrams[j]
 
-            tagged_tweet = tag_tweets(ngrams)
-            tagged_tweet.add('tweet_db_id', str(tweet[0]))
-            tagged_tweet.add('sentiment', tweet[2])
-            tagged_tweet.add_list('url', urls)
-            tagged_tweet.add_list('version', versions)
-            tagged_tweet.add_list('price', prices)
+                tagged_tweet = tag_tweets(ngrams)
+                tagged_tweet.add('tweet_db_id', tweet_id)
+                tagged_tweet.add('sentiment', tweet[2])
+                tagged_tweet.add_list('url', urls)
+                tagged_tweet.add_list('version', versions)
+                tagged_tweet.add_list('price', prices)
 
-            # testing
-            #if tagged_tweet.contains('version'):
-            #   tagged_tweet.add('tweet', text)
-            print tagged_tweet
+                # testing
+                #if tagged_tweet.contains('software_id'):
+                #   tagged_tweet.add('tweet', text)
+                if tagged_tweet.contains('price'):
+                    print tweet
+                    print tagged_tweet
+                    print
+                #sql.insert(tagged_tweet)
 
     sql.close()
     return 0

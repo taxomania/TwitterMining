@@ -36,7 +36,7 @@ class SQLConnector:
         return self.db.store_result()
 
     def isSoftware(self, word):
-        return self.__isEntry("SELECT t.type, d.id FROM dictionary d, dict_type t "
+        return self.__isEntry("SELECT d.id FROM dictionary d, dict_type t "
                               + "WHERE d.type = t.id AND d.software_name = '" + word + "'")
 
     def getSoftware(self):
@@ -53,6 +53,9 @@ class SQLConnector:
             return False
         else:
             return True
+
+    def tweetIsTagged(self, id_):
+        return self.__isEntry("SELECT NULL FROM tagged_tweets WHERE tweet_id ='" + id_ + "'")
 
     def isProgLang(self, word):
         return self.__isEntry("SELECT id FROM prog_lang WHERE language = '" + word + "'")
@@ -71,6 +74,14 @@ class SQLConnector:
                       + "WHERE user.id=tweet.user_id)")
         self.db.commit()
         print "Deleted users with no associated tweets"
+
+
+    def insert(self, tags):
+        #for i in range(0, len(tags.get('software_id'))):
+            #cursor = self.db.cursor()
+            #cursor.execute("INSERT INTO tagged_tweets VALUES(default")
+        pass
+        #self.db.commit()
 
     def close(self):
         self.db.close()
