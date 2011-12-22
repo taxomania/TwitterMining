@@ -400,4 +400,7 @@ Radeon
 Daemon tools
 Windows	os
 OS X	os
+MacOS	os
+FreeBSD	os
 iTunes Match	service
+emacs

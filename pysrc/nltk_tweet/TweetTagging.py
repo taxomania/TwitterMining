@@ -78,45 +78,41 @@ def tags_found(tagged, tags):
             return False
     return True
 
-def tag_tweets(words):
-    # Assumes there is only one software etc per tweet
-    sql_tags = ['software_name', 'programming_language_name', 'company_name']
+def tag_tweets(ngrams):
     tweet = Dictionary()
     prev_is_software = False
-    for i in range(len(words), 0, -1):
-        for word in words[i]:
+    for i in range(len(ngrams), 0, -1):
+        for word in ngrams[i]:
             if prev_is_software:
                 if check_version(word):
                     tweet.add('version', word)
-            if not tags_found(tweet, sql_tags):
-                try:
-                    if not tweet.contains('software_name') and sql.isSoftware(word):
-                        entry = sql.getSoftware()
-                        tweet.add('software_id', str(entry[1]))
-                        tweet.add('software_name', word)
-                        tweet.add('software_type', entry[0])
-                        prev_is_software = True
-                    elif not tweet.contains('programming_language_name') and sql.isProgLang(word):
-                        entry = sql.getProgLang()
-                        tweet.add('programming_language_name', word)
-                        tweet.add('programming_language_id', str(entry[0]))
-                        prev_is_software = False
-                    elif not tweet.contains('company_name') and sql.isCompany(word):
-                        entry = sql.getCompany()
-                        tweet.add('company_name', word)
-                        tweet.add('company_id', str(entry[0]))
-                        prev_is_software = False
-                    else:
-                        prev_is_software = False
-                except ProgrammingError: # for error tokens eg ' or "
-                    pass
+            try:
+                if sql.isSoftware(word):
+                    entry = sql.getSoftware()
+                    tweet.add('software_id', str(entry[1]))
+                    tweet.add('software_name', word)
+                    tweet.add('software_type', entry[0])
+                    prev_is_software = True
+                elif sql.isProgLang(word):
+                    entry = sql.getProgLang()
+                    tweet.add('programming_language_name', word)
+                    tweet.add('programming_language_id', str(entry[0]))
+                    prev_is_software = False
+                elif sql.isCompany(word):
+                    entry = sql.getCompany()
+                    tweet.add('company_name', word)
+                    tweet.add('company_id', str(entry[0]))
+                    prev_is_software = False
+                else:
+                    prev_is_software = False
+            except ProgrammingError: # for error tokens eg ' or "
+                pass
             # Still need to deduce other reasons for tweeting eg review, notify others
             if word == 'release':
                 tweet.add('reason', word)
 
         #if license type stated eg BSD, APACHE
             #tagged_tweet['license']
-
     return tweet
 
 class Dictionary(dict):
@@ -182,9 +178,10 @@ def main():
             tagged_tweet.add_list('version', versions)
             tagged_tweet.add_list('price', prices)
 
-            if tagged_tweet.contains('version'):
-                tagged_tweet.add('tweet', text)
-                print tagged_tweet
+            # testing
+            #if tagged_tweet.contains('version'):
+            #   tagged_tweet.add('tweet', text)
+            print tagged_tweet
 
     sql.close()
     return 0
