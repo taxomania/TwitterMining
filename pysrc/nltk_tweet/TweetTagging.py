@@ -114,7 +114,18 @@ class Dictionary(dict):
 
     def add(self, key, value):
         if value is not None:
-            self[key] = value
+            if not self.contains(key):
+                self[key] = value
+            else:
+                obj = self[key]
+                try: # Assume obj is a list
+                    obj.append(value)
+                    self[key] = obj
+                except: # if obj is not a list
+                    list_ = []
+                    list_.append(obj)
+                    list_.append(value)
+                    self[key] = list_
 
     def remove(self, key):
         del self[key]
