@@ -49,14 +49,12 @@ def tokenize(text):
 # This function seems fairly inaccurate compared to Twitter Sentiment API
 def analyse_sentiment(text):
     pol = polarity(text)
-
     if pol < -0.1:
         sentiment = "negative"
     elif pol > 0.1:
         sentiment = "positive"
     else:
         sentiment = "neutral"
-
     return sentiment
 
 def ngram(tokens, max_n):
@@ -69,12 +67,9 @@ def ngram(tokens, max_n):
         ngrams[n + 1] = candidates
     return ngrams
 
-def isKey(tuples, key):
-    return key in tuples
-
 def tags_found(tagged, tags):
     for tag in tags:
-        if not isKey(tagged, tag):
+        if not tagged.contains(tag):
             return False
     return True
 
@@ -86,24 +81,21 @@ def tag_tweets(words):
         for word in words[i]:
             if not tags_found(tweet, sql_tags):
                 try:
-                    if not isKey(tweet, 'software_name') and sql.isSoftware(word):
+                    if not tweet.contains('software_name') and sql.isSoftware(word):
                         entry = sql.getSoftware()
                         tweet.add('software_id', str(entry[1]))
                         tweet.add('software_name', word)
                         tweet.add('software_type', entry[0])
-                    elif (not isKey(tweet, 'programming_language_name')
-                          and sql.isProgLang(word)):
+                    elif not tweet.contains('programming_language_name') and sql.isProgLang(word):
                             entry = sql.getProgLang()
                             tweet.add('programming_language_name', word)
                             tweet.add('programming_language_id', str(entry[0]))
-                    elif not isKey(tweet, 'company_name') and sql.isCompany(word):
+                    elif not tweet.contains('company_name') and sql.isCompany(word):
                         entry = sql.getCompany()
                         tweet.add('company_name', word)
                         tweet.add('company_id', str(entry[0]))
                 except ProgrammingError: # for error tokens eg ' or "
                     pass
-        #if version stated
-            #tagged_tweet['version_number']
         #if license type stated eg BSD, APACHE
             #tagged_tweet['license']
 
