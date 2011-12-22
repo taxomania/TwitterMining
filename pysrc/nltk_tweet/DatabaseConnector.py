@@ -36,7 +36,8 @@ class SQLConnector:
         return self.db.store_result()
 
     def isSoftware(self, word):
-        return self.__isEntry("SELECT t.type, d.id FROM dictionary d, dict_type t WHERE d.type = t.id AND d.software_name = '" + word + "'")
+        return self.__isEntry("SELECT t.type, d.id FROM dictionary d, dict_type t "
+                              + "WHERE d.type = t.id AND d.software_name = '" + word + "'")
 
     def getSoftware(self):
         return self.__getEntry()
@@ -66,7 +67,8 @@ class SQLConnector:
         return self.__getEntry()
 
     def deleteUsersNoTweets(self):
-        self.db.query("DELETE FROM user WHERE NOT EXISTS (SELECT NULL FROM tweet WHERE user.id=tweet.user_id)")
+        self.db.query("DELETE FROM user WHERE NOT EXISTS (SELECT NULL FROM tweet "
+                      + "WHERE user.id=tweet.user_id)")
         self.db.commit()
         print "Deleted users with no associated tweets"
 
