@@ -10,14 +10,36 @@ import sys
 def regex_tokenize(text, pattern):
     return regexp_tokenize(text, pattern)
 
+# call before tokenization
 def find_url(text, pattern=r'(http://[^ ]+)'):
     return regex_tokenize(text, pattern)
 
+# call before tokenization
+def find_version(text, pattern=None):
+    digit_pattern = r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)'
+    pattern = '\s?[vV]ersion\s?'+ digit_pattern
+    pattern += '| [vV]er\s?\.?\s?' + digit_pattern
+    pattern += '| [vV]\s?\.?\s?' + digit_pattern
+    version_matches = regex_tokenize(text, pattern)
+    pattern = digit_pattern + '$'
+    versions = []
+    for version in version_matches:
+        matches = regex_tokenize(version, pattern)
+        for match in matches:
+            versions.append(match)
+    return versions
+
 # Doesn't match all prices
-def find_price(text, pattern=r'^\$\??\d{0,10}(\.\d{2})?$'):
+# Possible regexs to use:
+#'^\$(\d*(\d\.?|\.\d{1,2}))$'
+#'^\$\??\d{0,10}(\.\d{2})?$'
+# call after tokenization
+def find_price(text, pattern=r'^\$(\d*(\d\.?|\.\d{1,2}))$'):
+    import re
+    pattern = re.compile(pattern)
     prices = []
     for word in text:
-        if len(regex_tokenize(word, pattern)) > 0:
+        if re.match(pattern, word):
             prices.append(word)
     return prices
 
@@ -44,7 +66,7 @@ def ngram(tokens, max_n):
         for i in range(len(tokens) - n):
             phrase = " ".join(tokens[i:i + n + 1])
             candidates.append(phrase)
-        ngrams[n+1] = candidates
+        ngrams[n + 1] = candidates
     return ngrams
 
 def isKey(tuples, key):
@@ -60,7 +82,7 @@ def tag_tweets(words):
     # Assumes there is only one software etc per tweet
     sql_tags = ['software_name', 'programming_language_name', 'company_name']
     tweet = Dictionary()
-    for i in range(len(words),0, -1):
+    for i in range(len(words), 0, -1):
         for word in words[i]:
             if not tags_found(tweet, sql_tags):
                 try:
@@ -80,25 +102,14 @@ def tag_tweets(words):
                         tweet.add('company_id', str(entry[0]))
                 except ProgrammingError: # for error tokens eg ' or "
                     pass
-
         #if version stated
             #tagged_tweet['version_number']
         #if license type stated eg BSD, APACHE
             #tagged_tweet['license']
-        #if price stated
-            #tagged_tweet['price']
 
     #reason for tweeting
     #tagged_tweet['reason']
     return tweet
-
-def add_list(tag, name, array):
-    if len(array) == 1:
-        tag[name] = array[0]
-    elif len(array) == 0:
-        tag[name] = None
-    else:
-        tag[name] =  array
 
 class Dictionary(dict):
     def __init__(self, *args, **kwargs):
@@ -129,11 +140,13 @@ def main():
         row = res.fetch_row()
         for tweet in row:
             text = tweet[1]
+            #text = "Version 2 Microsoft just released MS Office ver 3.20.2"
 
             urls = find_url(text)
             for url in urls:
                 text = text.replace(url, "").strip()
 
+            versions = find_version(text)
 
             words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
             #print words
@@ -147,12 +160,12 @@ def main():
             tagged_tweet.add('tweet_db_id', str(tweet[0]))
             tagged_tweet.add('sentiment', tweet[2])
             tagged_tweet.add_list('url', urls)
+            tagged_tweet.add_list('version', versions)
             tagged_tweet.add_list('price', prices)
 
-            #tagged_tweet['tweet'] = text
-
-
-            print tagged_tweet
+            if tagged_tweet.contains("version"):
+                tagged_tweet.add('tweet', text)
+                print tagged_tweet
 
     sql.close()
     return 0
