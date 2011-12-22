@@ -82,19 +82,14 @@ def tag_tweets(ngrams):
     import re
     tweet = Dictionary()
     prev_is_software = False
-    prev_is_number = False
-    prev = ""
-    #  print ngrams[2]
     for i in range(len(ngrams), 0, -1):
         for word in ngrams[i]:
+            if re.match(r'^\d+\s?(cents?|pence|[cp])+$', word):
+                tweet.add('price', word)
             if prev_is_software:
                 if check_version(word):
                     tweet.add('version', word)
                 prev_is_software = False
-            elif prev_is_number:
-                if word in ('cents', 'cent', 'pence'):
-                    tweet.add('price', prev + " " + word)
-                prev_is_number = False
             try:
                 if sql.isSoftware(word):
                     entry = sql.getSoftware()
@@ -109,9 +104,6 @@ def tag_tweets(ngrams):
                     entry = sql.getCompany()
                     tweet.add('company_name', word)
                     tweet.add('company_id', str(entry[0]))
-                elif re.match(r'^\d+$', word):
-                    prev = word
-                    prev_is_number = True
             except ProgrammingError: # for error tokens eg ' or "
                 pass
             # Still need to deduce other reasons for tweeting eg review, notify others
@@ -167,7 +159,7 @@ def main():
                     print "tagged"
                     continue
                 text = tweet[1]
-                text = "Version 2 Microsoft just released MS Office ver 3.20.2 for 99 cent 100c 10ps 13pence 10 pence"
+               # text = "Version 2 Microsoft just released MS Office ver 3.20.2 for 99 cent 100c 10ps 13pence 10 pence"
 
                 urls = find_url(text)
                 for url in urls:
