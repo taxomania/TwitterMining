@@ -29,6 +29,15 @@ def find_version(text, pattern=None):
             versions.append(match)
     return versions
 
+def check_version(word):
+    import re
+    regex = re.compile(pattern=r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)')
+    return re.match(regex, word)
+    #if len(regex_tokenize(word, pattern=)) > 0:
+    #   return True
+    #else:
+    #   return False
+
 # Doesn't match all prices
 # Possible regexs to use:
 #'^\$(\d*(\d\.?|\.\d{1,2}))$'
@@ -77,8 +86,12 @@ def tag_tweets(words):
     # Assumes there is only one software etc per tweet
     sql_tags = ['software_name', 'programming_language_name', 'company_name']
     tweet = Dictionary()
+    prev_is_software = False
     for i in range(len(words), 0, -1):
         for word in words[i]:
+            if prev_is_software:
+                if check_version(word):
+                    tweet.add('version', word)
             if not tags_found(tweet, sql_tags):
                 try:
                     if not tweet.contains('software_name') and sql.isSoftware(word):
@@ -86,14 +99,19 @@ def tag_tweets(words):
                         tweet.add('software_id', str(entry[1]))
                         tweet.add('software_name', word)
                         tweet.add('software_type', entry[0])
+                        prev_is_software = True
                     elif not tweet.contains('programming_language_name') and sql.isProgLang(word):
-                            entry = sql.getProgLang()
-                            tweet.add('programming_language_name', word)
-                            tweet.add('programming_language_id', str(entry[0]))
+                        entry = sql.getProgLang()
+                        tweet.add('programming_language_name', word)
+                        tweet.add('programming_language_id', str(entry[0]))
+                        prev_is_software = False
                     elif not tweet.contains('company_name') and sql.isCompany(word):
                         entry = sql.getCompany()
                         tweet.add('company_name', word)
                         tweet.add('company_id', str(entry[0]))
+                        prev_is_software = False
+                    else:
+                        prev_is_software = False
                 except ProgrammingError: # for error tokens eg ' or "
                     pass
             # Still need to deduce other reasons for tweeting eg review, notify others
@@ -168,9 +186,9 @@ def main():
             tagged_tweet.add_list('version', versions)
             tagged_tweet.add_list('price', prices)
 
-            #if tagged_tweet.contains('reason'):
-            #    tagged_tweet.add('tweet', text)
-            print tagged_tweet
+            if tagged_tweet.contains('version'):
+                tagged_tweet.add('tweet', text)
+                print tagged_tweet
 
     sql.close()
     return 0
