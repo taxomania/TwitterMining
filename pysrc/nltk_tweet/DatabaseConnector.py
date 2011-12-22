@@ -42,6 +42,14 @@ class SQLConnector:
     def getSoftware(self):
         return self.__getEntry()
 
+    def insertSoftware(self, name):
+        c = self.db.cursor()
+        c.execute("INSERT INTO dictionary(software_name) VALUES('"+name+"')")
+        id_ = self.db.insert_id()
+        c.close()
+        self.db.commit()
+        return id_
+
     def __getEntry(self):
         return self.result[0]
 
@@ -54,13 +62,16 @@ class SQLConnector:
         else:
             return True
 
-    def tweetIsTagged(self, id_):
-        return self.__isEntry("SELECT NULL FROM tagged_tweets WHERE tweet_id ='" + id_ + "'")
-
     def isProgLang(self, word):
         return self.__isEntry("SELECT id FROM prog_lang WHERE language = '" + word + "'")
 
     def getProgLang(self):
+        return self.__getEntry()
+
+    def isOS(self, name):
+        return self.__isEntry("SELECT id FROM os WHERE os = '" + name + "'")
+
+    def getOS(self):
         return self.__getEntry()
 
     def isCompany(self, word):
@@ -74,14 +85,6 @@ class SQLConnector:
                       + "WHERE user.id=tweet.user_id)")
         self.db.commit()
         print "Deleted users with no associated tweets"
-
-
-    def insert(self, tags):
-        #for i in range(0, len(tags.get('software_id'))):
-            #cursor = self.db.cursor()
-            #cursor.execute("INSERT INTO tagged_tweets VALUES(default")
-        pass
-        #self.db.commit()
 
     def close(self):
         self.db.close()

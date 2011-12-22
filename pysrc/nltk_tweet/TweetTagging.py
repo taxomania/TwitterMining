@@ -6,6 +6,7 @@ from pattern.en import polarity
 from _mysql_exceptions import ProgrammingError
 from DatabaseConnector import SQLConnector
 import sys
+import re
 
 def regex_tokenize(text, pattern):
     return regexp_tokenize(text, pattern)
@@ -30,7 +31,6 @@ def find_version(text, pattern=None):
     return versions
 
 def check_version(word):
-    import re
     regex = re.compile(pattern=r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)')
     return re.match(regex, word)
 
@@ -40,7 +40,6 @@ def check_version(word):
 #'^\$\??\d{0,10}(\.\d{2})?$'
 # call after tokenization
 def find_price(text, pattern=r'^\$(\d*(\d\.?|\.\d{1,2}))$'):
-    import re
     pattern = re.compile(pattern)
     prices = []
     for word in text:
@@ -72,24 +71,24 @@ def ngram(tokens, max_n):
         ngrams[n + 1] = candidates
     return ngrams
 
-def tags_found(tagged, tags):
-    for tag in tags:
-        if not tagged.contains(tag):
-            return False
-    return True
-
 def tag_tweets(ngrams):
-    import re
     tweet = Dictionary()
     prev_is_software = False
     for i in range(len(ngrams), 0, -1):
         for word in ngrams[i]:
-            if re.match(r'^\d+\s?(cents?|pence|[cp])+$', word):
-                tweet.add('price', word)
             if prev_is_software:
                 if check_version(word):
                     tweet.add('version', word)
                 prev_is_software = False
+            elif re.match(r'^[Gg]et[\w\s]*[Ff][Rr][Ee][Ee]$', word):
+                software = word.replace(re.findall(re.compile(r'^[Gg]et'), word)[0], "").strip()
+                software = software.replace(
+                                re.findall(re.compile(r'[Ff][Rr][Ee][Ee]$'), word)[0], "").strip()
+                if not sql.isSoftware(software):
+                    sql.insertSoftware(software)
+                tweet.add('price', 'free')
+            elif re.match(r'^\d+\s?(cents?|pence|[cp])+$', word):
+                tweet.add('price', word)
             try:
                 if sql.isSoftware(word):
                     entry = sql.getSoftware()
@@ -104,6 +103,10 @@ def tag_tweets(ngrams):
                     entry = sql.getCompany()
                     tweet.add('company_name', word)
                     tweet.add('company_id', str(entry[0]))
+                elif sql.isOS(word):
+                    entry = sql.getOS()
+                    tweet.add('operating_system_name', word)
+                    tweet.add('operating_system_id', str(entry[0]))
             except ProgrammingError: # for error tokens eg ' or "
                 pass
             # Still need to deduce other reasons for tweeting eg review, notify others
@@ -151,15 +154,12 @@ def main():
     for page in range(0,1):
         res = sql.load_data(page)
 
-        for i in range(0, res.num_rows()):
+        for _i_ in range(0, res.num_rows()):
             row = res.fetch_row()
             for tweet in row:
                 tweet_id = str(tweet[0])
-                if sql.tweetIsTagged(tweet_id):
-                    print "tagged"
-                    continue
                 text = tweet[1]
-               # text = "Version 2 Microsoft just released MS Office ver 3.20.2 for 99 cent 100c 10ps 13pence 10 pence"
+                # text = "Version 2 Microsoft just released MS Office ver 3.20.2 for 99 cent 100c 10ps 13pence 10 pence"
 
                 urls = find_url(text)
                 for url in urls:
@@ -185,10 +185,10 @@ def main():
                 # testing
                 #if tagged_tweet.contains('software_id'):
                 #   tagged_tweet.add('tweet', text)
-                if tagged_tweet.contains('price'):
-                    print tweet
-                    print tagged_tweet
-                    print
+                #if tagged_tweet.contains('price'):
+                print tweet
+                print tagged_tweet
+                print
                 #sql.insert(tagged_tweet)
 
     sql.close()

@@ -338,7 +338,6 @@ Bombusmod
 Centericq
 Climm
 Coccinella
-Ekiga
 Emesene
 Fama IM
 Gabber
@@ -346,7 +345,6 @@ Gajim
 Instantbird
 JabberMixClient
 Jimm
-Jitsi
 JWChat
 Kadu
 Kopete
@@ -358,7 +356,6 @@ Neustradamus
 Pandion
 Pidgin
 Proteus
-QuteCom
 Retroshare
 SFLphone
 Tapioca
@@ -368,12 +365,6 @@ Tmsnc
 TorChat
 Zephyr
 WebOS
-Android	os
-Bada	os
-Symbian	os
-Linux	os
-Fedora	os
-Ubuntu	os
 uTorrent
 Skype
 Sopcast
@@ -395,9 +386,5 @@ WinRar
 VLC
 Radeon
 Daemon tools
-Windows	os
-OS X	os
-MacOS	os
-FreeBSD	os
 iTunes Match	service
 emacs

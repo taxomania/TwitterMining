@@ -19,6 +19,7 @@ public final class DictionarySQLConnector extends SQLConnector {
     private PreparedStatement insertLanguage = null;
     private PreparedStatement insertCompany = null;
     private PreparedStatement insertKeyword = null;
+    private PreparedStatement insertOS = null;
     private PreparedStatement dictType = null;
 
     /**
@@ -66,6 +67,12 @@ public final class DictionarySQLConnector extends SQLConnector {
                 "default, " +  // id
                 "?"         +  // word
                 ");");
+
+        insertOS = con.prepareStatement(
+                "INSERT INTO os VALUES(" +
+                "default, " +  // id
+                "?"         +  // os
+                ");");
         dictType = con.prepareStatement("SELECT id FROM dict_type WHERE type=?");
         // @formatter:on
     } // DictionarySQLConnector()
@@ -100,6 +107,10 @@ public final class DictionarySQLConnector extends SQLConnector {
         return insert(insertSoftware, name);
     } // insertSoftware(String)
 
+    public int insertOS(final String name) {
+        return insert(insertOS, name);
+    } // insertOS(String)
+
     public int insertLanguage(final String language) {
         return insert(insertLanguage, language);
     } // insertLanguage
@@ -116,7 +127,7 @@ public final class DictionarySQLConnector extends SQLConnector {
 
     public int insertCompany(final String name) {
         return insert(insertCompany, name);
-    } // insertCompany
+    } // insertCompany(String)
 
     public int insertKeyword(final String word) {
         return insert(insertKeyword, word);
