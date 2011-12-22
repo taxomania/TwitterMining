@@ -33,10 +33,6 @@ def check_version(word):
     import re
     regex = re.compile(pattern=r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)')
     return re.match(regex, word)
-    #if len(regex_tokenize(word, pattern=)) > 0:
-    #   return True
-    #else:
-    #   return False
 
 # Doesn't match all prices
 # Possible regexs to use:
