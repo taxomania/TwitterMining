@@ -96,11 +96,13 @@ def tag_tweets(words):
                         tweet.add('company_id', str(entry[0]))
                 except ProgrammingError: # for error tokens eg ' or "
                     pass
+            # Still need to deduce other reasons for tweeting eg review, notify others
+            if word == 'release':
+                tweet.add('reason', word)
+
         #if license type stated eg BSD, APACHE
             #tagged_tweet['license']
 
-    #reason for tweeting
-    #tagged_tweet['reason']
     return tweet
 
 class Dictionary(dict):
@@ -155,9 +157,9 @@ def main():
             tagged_tweet.add_list('version', versions)
             tagged_tweet.add_list('price', prices)
 
-            if tagged_tweet.contains("version"):
-                tagged_tweet.add('tweet', text)
-                print tagged_tweet
+            #if tagged_tweet.contains('reason'):
+            #    tagged_tweet.add('tweet', text)
+            print tagged_tweet
 
     sql.close()
     return 0
