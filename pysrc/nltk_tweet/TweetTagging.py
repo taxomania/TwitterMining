@@ -80,8 +80,10 @@ def tag_tweets(ngrams):
                 if check_version(word):
                     tweet.add('version', word)
                 prev_is_software = False
-            elif re.match(r'^[Gg]et[\w\s]*[Ff][Rr][Ee][Ee]$', word):
-                software = word.replace(re.findall(re.compile(r'^[Gg]et'), word)[0], "").strip()
+            # Look for 'Get x free'
+            # TODO: Also look for 'Get x now' / 'Get x on' etc
+            elif re.match(r'^[Gg][Ee][Tt][\w\s]*[Ff][Rr][Ee][Ee]$', word):
+                software = word.replace(re.findall(re.compile(r'^[Gg][Ee][Tt]'), word)[0], "").strip()
                 software = software.replace(
                                 re.findall(re.compile(r'[Ff][Rr][Ee][Ee]$'), word)[0], "").strip()
                 if not sql.isSoftware(software):

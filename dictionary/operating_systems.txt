@@ -1,0 +1,12 @@
+WebOS
+Android
+Bada
+Symbian
+Linux
+Fedora
+Ubuntu
+Windows
+iOS
+OS X
+MacOS
+FreeBSD
