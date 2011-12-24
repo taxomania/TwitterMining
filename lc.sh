@@ -7,9 +7,8 @@ let "COUNT=${LINES/total/}"
 printf 'Python:\t%7s lines\n' $COUNT
 
 LINES=`wc -l \`find src -name *.java\` | grep "total"`
-COUNT2=${LINES/total/}
-let "LINES=COUNT2"
-printf 'Java:\t%7s lines\n' $LINES
+let "COUNT2=${LINES/total/}"
+printf 'Java:\t%7s lines\n' $COUNT2
 
 echo "---------------------"
 
