@@ -10,3 +10,4 @@ sdk
 release
 api
 version
+game

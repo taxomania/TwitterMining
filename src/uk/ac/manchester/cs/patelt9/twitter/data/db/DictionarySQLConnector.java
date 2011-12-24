@@ -145,6 +145,7 @@ public final class DictionarySQLConnector extends SQLConnector {
                     "SELECT software_name FROM dictionary UNION " +
                     "SELECT name FROM company UNION " +
                     "SELECT word FROM keyword UNION " +
+                    "SELECT os FROM os UNION " +
                     "SELECT language FROM prog_lang");
             // @formatter:on
         } catch (final SQLException e) {
