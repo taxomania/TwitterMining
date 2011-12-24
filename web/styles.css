@@ -1,0 +1,171 @@
+body
+{
+  font-family:helvetica;
+  font-size:small;
+  background-color:rgb(245,245,245);
+  min-width:500px;
+}
+
+header, footer, nav
+{
+  clear:both;
+}
+
+header #title
+{
+  margin-bottom:0;
+  line-height:0.5;
+  height:46px;
+  text-align:center;
+}
+
+header h1
+{
+  font-size:large;
+  padding-top:14px;
+}
+
+header h2
+{
+  font-size:smaller;
+}
+
+header #logo
+{
+  float:left; 
+  height:46px;
+  width:110px;
+}
+
+header, footer
+{
+  background-color:rgb(230,230,230);
+}
+
+footer
+{
+  padding:4px;
+  font-size:x-small;
+  text-align:left;
+}
+
+footer .right
+{
+  float:right;
+}
+
+footer a:hover, .content a:hover
+{
+  text-decoration: underline; 
+  color: blue;
+}
+
+a, abbr
+{
+  text-decoration:underline;
+  color:black;
+}
+
+nav
+{
+  background-color:rgb(240,240,240);
+  height:550px;
+  width:107px;
+  float:left;
+  font-size:smaller;
+  border-left-color:rgb(230,230,230);
+  border-left-width:2px; 
+  border-left-style:solid;
+}
+
+nav a {
+  text-decoration:none;
+  padding:5px;
+  font-weight: bold;
+  display: block;
+  border-bottom: 2px solid rgb(230,230,230);
+}
+nav a:hover 
+{
+  border-bottom: 2px solid rgb(240,240,240);
+  background-color: rgb(225,225,225);
+}
+
+nav, .content
+{
+  border-right-color:rgb(230,230,230);
+  border-right-width:1px; 
+  border-right-style:solid;
+}
+
+.content 
+{
+  line-height:normal;
+  text-align:justify;
+  height:550px;
+  float:left;
+  width:74%;
+  overflow:scroll;
+  padding-right:26%;
+}
+
+#contact
+{
+  line-height:0.6;
+}
+
+h3
+{
+  font-size:small;
+}
+
+#container
+{
+  padding-left:120px;
+}
+
+h3.trigger 
+{
+  background-color:rgb(240,240,240);
+  display:block;
+  margin: 0 0 5px 0;
+  height: 46px;
+  line-height: 46px;
+  font-weight: normal;
+}
+
+h3.trigger a 
+{
+  padding: 0 0 0 50px;
+  text-decoration: none;
+  display: block;
+}
+
+h3.trigger a:hover 
+{
+  color:black;
+  font-weight:bold;
+  text-decoration: none;
+  background-color: rgb(225,225,225); 
+}
+
+h3.active 
+{
+  font-weight:bold;
+  background-color: rgb(225,225,225); 
+}
+
+.toggle_container
+{
+  margin: 0 0 5px;
+  padding: 0;
+  border: 1px solid rgb(230,230,230);
+  font-size:smaller;
+  clear: both;
+}
+
+.toggle_container .block
+{
+  padding: 5px; /*--Padding of Container--*/
+  line-height:normal;
+}

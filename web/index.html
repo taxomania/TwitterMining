@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Twitter Text Mining by Tariq Patel</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script type="text/javascript" src="jquery-1.6.4.js"> </script>
+    <script type="text/javascript" src="nav.js"></script>
+    <script type="text/javascript">
+	  $(document).ready(function(){
+
+	  //Hide (Collapse) the toggle containers on load
+	  $(".toggle_container").hide(); 
+
+	  //Switch the "Open" and "Close" state per click then slide up/down (depending on open/close state)
+	  $("h3.trigger").click(function(){
+	 	$(this).toggleClass("active").next().slideToggle("fast");
+		return false; //Prevent the browser jump to the link anchor
+	  });
+
+	});
+	</script>
+  </head>
+  <body>
+    <header>
+      <a href="http://www.manchester.ac.uk/" target="_blank" target="_blank"><img id="logo" alt="The University of Manchester" src="images/logomanchester.gif" /></a>
+      <div id="title">
+        <h1>Twitter Text Mining</h1>
+        <h2>Tariq Patel / Dr Goran Nenadic</h2>
+      </div>
+    </header>
+    <nav>
+	  <a id="homebutton" href="#home">Home</a>
+	  <a href="#tasks">Tasks</a>
+	  <a href="#technologies">Technology</a>
+	  <a href="#contact">Contact</a>
+	</nav>
+	<div id="container">
+	  <section id="home" class="content">
+		<h2>Analysing Twitter Posts to Discover and Review New Software Tools</h2>
+		<p>Twitter is one of the most active microblogging social networks in use today. Millions of users post 140 character snippets every day to Twitter, many of which express opinions about different topics. Many organisations and institutions find this information interesting, be it in biomedicine, marketing or the financial sector, and as such has led to several research projects focussed on text mining Twitter.</p>
+		<p>Text mining is the process of extracting useful information from unstructured texts by means of structuring the data, deriving patterns from the structured text and then interpreting the output.</p>
+		<p>The aim of this project is to text mine Twitter posts to find new software or tools, such as software development tools, and to discover public perception of these releases.</p>
+
+		<p>Twitter is being used as a <abbr title="A collection of written or spoken material in machine-readable form, assembled for the purpose of studying linguistic structures, frequencies, etc.">corpus</abbr> as it is a rich source of data for opinion mining and sentiment analysis with over <a href="http://blog.twitter.com/2011/06/200-million-tweets-per-day.html" target="_blank">200 million tweets every day</a>.
+	  </section>
+	  <section id="technologies" class="content">
+		<h2>Technologies Used</h2>
+		<section id="java" class="tech">
+		  <h3 class="trigger"><a href="#">Java + Eclipse</a></h3>
+		  <div class="toggle_container">
+		    <div class="block">
+		      <p><a href="http://www.java.com/" target="_blank" target="_blank">Java</a> is my choice of programming language for this task as there are already many libraries available for the task at hand. It is also the language I feel most comfortable working with due to my previous experiences with it.</p>
+		      <p>I have been using the <a href="http://www.eclipse.org/" target="_blank">Eclipse IDE</a> due to its ease of use and also because I have used it before for many of my own projects.</p>
+		    </div>
+		  </div>
+		</section>
+
+		<section id="python" class="tech">
+		  <h3 class="trigger"><a href="#">Python + NLTK(Natural Language ToolKit)</a></h3>
+		  <div class="toggle_container">
+		    <div class="block">
+		      <p>I have decided to use <a href="http://www.python.org/" target="_blank" target="_blank">Python</a> in this project to work with 
+		      <a href="http://www.nltk.org/" target="_blank">NLTK</a>. NLTK is the Natural Language ToolKit developed for all sorts of natural language processing tasks, including but not 
+		  	  limited to tokenization, classification and sentiment analysis. I chose to use this toolkit ahead of others such as 
+			  <a href="http://minorthird.sourceforge.net/" target="_blank">MinorThird</a> and 
+			  <a href="http://gate.ac.uk/" target="_blank">GATE</a> due to its extensive documentation and for the sheer power the Python programming language possesses. Python is a 
+			  language I have had to learn solely for this task in my project, but I made this decision to provide a better grounding in other technologies, rather than limit
+			  myself to Java.</p>
+		    </div>
+		  </div>
+		</section>
+
+
+
+		<section id="mysql" class="tech">
+ 		  <h3 class="trigger"><a href="#">MySQL</a></h3>
+ 		  <div class="toggle_container">
+ 		    <div class="block">
+ 		      <p>I am using <a href="http://www.mysql.com/" target="_blank">MySQL</a> to store my all of my data as it is readily available on the <a href="http://www.cs.manchester.ac.uk/" target="_blank">school's</a> computers and I have worked with it on many occasions in the past.</p>
+ 		      <p>The database for this project stores users of the Twitter service, with all of their tweets, as well as tools discovered on the site as can be seen below.
+ 		      <figure><img src="images/tables.png" alt="Database Tables"/></figure></p>
+ 		    </div>
+ 		  </div>
+		</section>
+		<section id="twitter" class="tech">
+		  <h3 class="trigger"><a href="#">Twitter's Streaming API</a></h3>
+		  <div class="toggle_container">
+		    <div class="block">
+		      <p>Twitter provide 3 APIs for developers. The standard <a href="https://dev.twitter.com/docs/api" target="_blank">REST API</a>, <a href="https://dev.twitter.com/docs/using-search" target="_blank" target="_blank">Search API</a> and the <a href="https://dev.twitter.com/docs/streaming-api" target="_blank" target="_blank">Streaming API</a>.</p>
+		      <p>The Streaming API provides near-realtime access to public tweets filtered in various ways. I have chosen to filter these tweets by keywords that are somewhat likely to appear in software-related tweets, such as names of operating systems and programming languages.</p>
+		    </div>
+		  </div>
+		</section>
+
+		<section id="twittersentiment" class="tech">
+		  <h3 class="trigger"><a href="#">Twitter Sentiment</a></h3>
+		  <div class="toggle_container">
+		    <div class="block">
+		      <p><a href="https://sites.google.com/site/twittersentimenthelp/api" target="_blank">Twitter Sentiment</a> provides a bulk classification service for analysing the sentiment of texts. The service is free of charge, with no limit, except that there is a maximum number of 10,000 texts you can have analysed at a time.</p>
+			 <p>I am using this service ahead of others such as <a href="http://www.alchemyapi.com/" target="_blank">AlchemyAPI</a>, which offers clients many services including but not limited to sentiment analysis, named entity recogition and concept tagging, because it allows unlimited use, whereas AlchemyAPI only allows clients to make 30,000 API calls per day across the service.</p>
+		    </div>
+		  </div>
+		</section>
+	  </section>
+	  <section id="tasks" class="content">
+		<h2>Key Tasks</h2>
+		<h3>Objectives:</h3>
+		<ol>
+		  <li>Collect tweets.</li>
+		  <li>Filter through tweets initially by keyword to find software-related posts. E.g. names of software, operating systems, games.</li>
+		  <li>Create linguistic preprocessing tools.</li>
+		  <li>Analyse tweet sentiment.</li>
+		  <li>Structure and integrate data.</li>
+		  <li>Visualise data through GUI.</li>
+		  <li>Evaluate system.</li>
+		</ol>
+		<h3>Deliverables:</h3>
+		<ol>
+		  <li>Integrate Twitter Streaming API into stub application.</li>
+		  <li>MySQL database with tables holding Twitter users, tweets and discovered tools.</li>
+		  <li>Named-entity recogniser for tools.</li>
+		  <li>Create or integrate existing sentiment classifier.</li>
+		  <li>Improve information retrieval and filtering algorithms based on data.</li>
+		  <li>Produce GUI</li>
+		</ol>
+	  </section>
+	  <section id="contact" class="content">
+		<h2>Contact</h2>
+		<p style="padding-top:10px;">Email: <a href="mailto:patelt9@cs.man.ac.uk">patelt9@cs.man.ac.uk</a></p>
+		<p>Twitter: <a href="http://twitter.com/taxomania" target="_blank">@taxomania</a></p>
+	  </section>
+	</div>
+    <footer>
+        &copy; 2011 Tariq Patel
+      	<div class="right"><a href="http://www.cs.manchester.ac.uk/" target="_blank">School of Computer Science</a>, The University of Manchester, Oxford Road, Manchester, M13 9PL, UK</div>
+  	</footer>
+  </body>
+</html>
