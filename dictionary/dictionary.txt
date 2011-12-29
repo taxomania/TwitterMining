@@ -364,7 +364,6 @@ Tkabber
 Tmsnc
 TorChat
 Zephyr
-WebOS
 uTorrent
 Skype
 Sopcast

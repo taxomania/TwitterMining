@@ -5,11 +5,56 @@ import re
 import sys
 
 from _mysql_exceptions import ProgrammingError
+from httplib2 import ServerNotFoundError
 from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
 from pattern.en import polarity
 
 from bing import BingSearch
 from database_connector import SQLConnector
+
+# This exception class is used to differentiate between errors, but has no extra functionality
+class ServerError(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+class IncompleteTaggingError(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
+    def __str__(self, *args, **kwargs):
+        return "Tweet tagging incomplete"
+
+class Dictionary(dict):
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+
+    def contains(self, key):
+        return key in self
+
+    def add(self, key, value):
+        if value is not None:
+            if not self.contains(key):
+                self[key] = value
+            else:
+                obj = self[key]
+                try: # Assume obj is a list
+                    obj.append(value)
+                    self[key] = obj
+                except: # if obj is not a list
+                    list_ = []
+                    list_.append(obj)
+                    list_.append(value)
+                    self[key] = list_
+
+    def remove(self, key):
+        del self[key]
+
+    def add_list(self, key, array):
+        if len(array) == 1:
+            self.add(key, array[0])
+        elif len(array) > 1:
+            self.add(key, array)
+
 
 def regex_tokenize(text, pattern):
     return regexp_tokenize(text, pattern)
@@ -76,19 +121,22 @@ def ngram(tokens, max_n):
 
 # This function is still slightly inaccurate
 def check_bing(name):
+    try:
         music = len(bing.search("\""+name+" music \"")) # STUB
         movie = len(bing.search("\""+name+" movie\"")) # STUB
         response = bing.search("\""+name+"\""+" software game") # STUB
         # print response
         size = len(response)
-        #print size # COULD BE IMPORTANT FOR JUDGEMENT
         if size > music and size > movie:
             results = response.get_results() # len(results) always 15
             total = 0
+            pattern = '[Aa][Pp][Pp]'
+            pattern += '| [Gg][Aa][Mm][Ee]'
+            regex = re.compile(pattern)
             for result in results:
                 string = result['Title'] + " " + result['Description']
                 # CAN USE `string` to find company name as well POTENTIALLY
-                size = len(re.findall(re.compile(r'[Aa][Pp][Pp]'), string)) # STUB
+                size = len(re.findall(regex, string)) # STUB
                 if size > 0:
                     print string # STUB
                     total += size
@@ -96,6 +144,8 @@ def check_bing(name):
                 return True
             else:
                 return False
+    except ServerNotFoundError:
+        raise ServerError("Could not connect to Bing")
 
 def tag_tweets(ngrams):
     tweet = Dictionary()
@@ -107,15 +157,20 @@ def tag_tweets(ngrams):
                     tweet.add('version', word)
                 prev_is_software = False
             # Look for 'Get x free'
+            # This doesn't always work, eg 'get your free ...' / 'get it free'
             # TODO: Also look for 'Get x now' / 'Get x on' etc
             elif re.match(r'^[Gg][Ee][Tt][\w\s]*[Ff][Rr][Ee][Ee]$', word):
                 software = word.replace(re.findall(re.compile(r'^[Gg][Ee][Tt]'), word)[0], "").strip()
                 software = software.replace(
                                 re.findall(re.compile(r'[Ff][Rr][Ee][Ee]$'), word)[0], "").strip()
                 if not sql.isSoftware(software):
-                    if check_bing(software):
-                        pass
-                        #sql.insertSoftware(software)
+                    try:
+                        if check_bing(software):
+                            pass
+                            #sql.insertSoftware(software)
+                    except ServerError as e:
+                        print e
+                        raise IncompleteTaggingError()
                 tweet.add('price', 'free')
             elif re.match(r'^\d+\s?(cents?|pence|[cp])+$', word):
                 tweet.add('price', word)
@@ -143,52 +198,21 @@ def tag_tweets(ngrams):
             if word == 'release':
                 tweet.add('reason', word)
 
-        #if license type stated eg BSD, APACHE
-            #tagged_tweet['license']
     return tweet
-
-
-class Dictionary(dict):
-    def __init__(self, *args, **kwargs):
-        dict.__init__(self, *args, **kwargs)
-
-    def contains(self, key):
-        return key in self
-
-    def add(self, key, value):
-        if value is not None:
-            if not self.contains(key):
-                self[key] = value
-            else:
-                obj = self[key]
-                try: # Assume obj is a list
-                    obj.append(value)
-                    self[key] = obj
-                except: # if obj is not a list
-                    list_ = []
-                    list_.append(obj)
-                    list_.append(value)
-                    self[key] = list_
-
-    def remove(self, key):
-        del self[key]
-
-    def add_list(self, key, array):
-        if len(array) == 1:
-            self.add(key, array[0])
-        elif len(array) > 1:
-            self.add(key, array)
-
 
 def main():
     global sql
     sql = SQLConnector()
     global bing
     bing = BingSearch()
-    for page in range(0,1):
+    for page in range(0,10):
         res = sql.load_data(page)
+        rows = res.num_rows()
+        if rows == 0:
+            print "No tweets left to analyse"
+            break
 
-        for _i_ in range(0, 4):#res.num_rows()):
+        for _i_ in range(0, rows):
             row = res.fetch_row()
             for tweet in row:
                 tweet_id = str(tweet[0])
@@ -209,21 +233,27 @@ def main():
                 #for j in range(len(ngrams),0, -1):
                     #print ngrams[j]
 
-                tagged_tweet = tag_tweets(ngrams)
-                tagged_tweet.add('tweet_db_id', tweet_id)
-                tagged_tweet.add('sentiment', tweet[2])
-                tagged_tweet.add_list('url', urls)
-                tagged_tweet.add_list('version', versions)
-                tagged_tweet.add_list('price', prices)
+                try:
+                    tagged_tweet = tag_tweets(ngrams)
+                    tagged_tweet.add('tweet_db_id', tweet_id)
+                    tagged_tweet.add('sentiment', tweet[2])
+                    tagged_tweet.add_list('url', urls)
+                    tagged_tweet.add_list('version', versions)
+                    tagged_tweet.add_list('price', prices)
 
-                # testing
-                #if tagged_tweet.contains('software_id'):
-                #   tagged_tweet.add('tweet', text)
-                #if tagged_tweet.contains('price'):
-                print tweet
-                print tagged_tweet
-                print
-                #sql.insert(tagged_tweet)
+                    # testing
+                    #if tagged_tweet.contains('software_id'):
+                    #   tagged_tweet.add('tweet', text)
+                    #if tagged_tweet.contains('price'):
+                    print tweet
+                    print tagged_tweet
+                    print
+                    #sql.insert(tagged_tweet)
+                except IncompleteTaggingError as e:
+                    # This will allow the tweet to be tagged again at a later stage
+                    print tweet_id +":", e
+                    print tweet
+                    print
 
     sql.close()
     return 0

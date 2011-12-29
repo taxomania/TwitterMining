@@ -21,8 +21,7 @@ class BingSearch:
             'Web.Count': max_results or '15'
         })
 
-        query_string = urlencode(kwargs)
-        response, contents = Http().request('http://api.bing.net/json.aspx?' + query_string)
+        _response_, contents = Http().request('http://api.bing.net/json.aspx?' + urlencode(kwargs))
         return _BingResponse(json.loads(contents)['SearchResponse']['Web'])
 
 class _BingResponse(dict):
