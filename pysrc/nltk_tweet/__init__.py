@@ -1,3 +1,3 @@
-import DatabaseConnector
-import TweetTagging
-import Bing
+import bing
+import database_connector
+import tweet_tagging

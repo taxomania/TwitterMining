@@ -1,14 +1,15 @@
 '''
 @author: Tariq Patel
 '''
+import re
+import sys
+
+from _mysql_exceptions import ProgrammingError
 from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
 from pattern.en import polarity
-from _mysql_exceptions import ProgrammingError
-from DatabaseConnector import SQLConnector
-import sys
-import re
-from Bing import BingQuery
-#from pybing.query import WebQuery
+
+from bing import BingSearch
+from database_connector import SQLConnector
 
 def regex_tokenize(text, pattern):
     return regexp_tokenize(text, pattern)
@@ -146,6 +147,7 @@ def tag_tweets(ngrams):
             #tagged_tweet['license']
     return tweet
 
+
 class Dictionary(dict):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
@@ -177,11 +179,12 @@ class Dictionary(dict):
         elif len(array) > 1:
             self.add(key, array)
 
+
 def main():
     global sql
     sql = SQLConnector()
     global bing
-    bing = BingQuery()
+    bing = BingSearch()
     for page in range(0,1):
         res = sql.load_data(page)
 

@@ -4,8 +4,9 @@ Created on Dec 18, 2011
 @author: Tariq Patel
 '''
 
-import MySQLdb as sql
 from string import split
+
+import MySQLdb as sql
 
 class SQLConnector:
 
@@ -88,6 +89,7 @@ class SQLConnector:
 
     def close(self):
         self.db.close()
+
 
 if __name__ == '__main__':
     #SQLConnector().deleteUsersNoTweets()
