@@ -7,6 +7,8 @@ from _mysql_exceptions import ProgrammingError
 from DatabaseConnector import SQLConnector
 import sys
 import re
+from Bing import BingQuery
+#from pybing.query import WebQuery
 
 def regex_tokenize(text, pattern):
     return regexp_tokenize(text, pattern)
@@ -71,6 +73,29 @@ def ngram(tokens, max_n):
         ngrams[n + 1] = candidates
     return ngrams
 
+# This function is still slightly inaccurate
+def check_bing(name):
+        music = len(bing.search("\""+name+" music \"")) # STUB
+        movie = len(bing.search("\""+name+" movie\"")) # STUB
+        response = bing.search("\""+name+"\""+" software game") # STUB
+        # print response
+        size = len(response)
+        #print size # COULD BE IMPORTANT FOR JUDGEMENT
+        if size > music and size > movie:
+            results = response.get_results() # len(results) always 15
+            total = 0
+            for result in results:
+                string = result['Title'] + " " + result['Description']
+                # CAN USE `string` to find company name as well POTENTIALLY
+                size = len(re.findall(re.compile(r'[Aa][Pp][Pp]'), string)) # STUB
+                if size > 0:
+                    print string # STUB
+                    total += size
+            if total > 0:
+                return True
+            else:
+                return False
+
 def tag_tweets(ngrams):
     tweet = Dictionary()
     prev_is_software = False
@@ -87,7 +112,9 @@ def tag_tweets(ngrams):
                 software = software.replace(
                                 re.findall(re.compile(r'[Ff][Rr][Ee][Ee]$'), word)[0], "").strip()
                 if not sql.isSoftware(software):
-                    sql.insertSoftware(software)
+                    if check_bing(software):
+                        pass
+                        #sql.insertSoftware(software)
                 tweet.add('price', 'free')
             elif re.match(r'^\d+\s?(cents?|pence|[cp])+$', word):
                 tweet.add('price', word)
@@ -153,10 +180,12 @@ class Dictionary(dict):
 def main():
     global sql
     sql = SQLConnector()
+    global bing
+    bing = BingQuery()
     for page in range(0,1):
         res = sql.load_data(page)
 
-        for _i_ in range(0, res.num_rows()):
+        for _i_ in range(0, 4):#res.num_rows()):
             row = res.fetch_row()
             for tweet in row:
                 tweet_id = str(tweet[0])
