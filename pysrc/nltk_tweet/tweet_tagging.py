@@ -7,6 +7,7 @@ import sys
 from _mysql_exceptions import ProgrammingError
 from httplib2 import ServerNotFoundError
 from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
+from nltk.util import flatten
 from pattern.en import polarity
 
 from bing import BingSearch
@@ -36,15 +37,7 @@ class Dictionary(dict):
             if not self.contains(key):
                 self[key] = value
             else:
-                obj = self[key]
-                try: # Assume obj is a list
-                    obj.append(value)
-                    self[key] = obj
-                except: # if obj is not a list
-                    list_ = []
-                    list_.append(obj)
-                    list_.append(value)
-                    self[key] = list_
+                self[key] = flatten(self[key], value)
 
     def remove(self, key):
         del self[key]
@@ -109,7 +102,7 @@ def analyse_sentiment(text):
         sentiment = "neutral"
     return sentiment
 
-def ngram(tokens, max_n):
+def ngrams(tokens, max_n):
     ngrams = {}
     for n in range(0, max_n):
         candidates = []
@@ -229,12 +222,10 @@ def main():
                 #print words
                 prices = find_price(words)
 
-                ngrams = ngram(words, 5)
-                #for j in range(len(ngrams),0, -1):
-                    #print ngrams[j]
+                ngram = ngrams(words, 5)
 
                 try:
-                    tagged_tweet = tag_tweets(ngrams)
+                    tagged_tweet = tag_tweets(ngram)
                     tagged_tweet.add('tweet_db_id', tweet_id)
                     tagged_tweet.add('sentiment', tweet[2])
                     tagged_tweet.add_list('url', urls)
