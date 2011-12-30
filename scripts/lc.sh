@@ -1,5 +1,11 @@
 #!/bin/bash
 
+DIR=`pwd`
+if [[ $DIR == *scripts ]]
+then
+  cd ..
+fi
+
 LINEBREAK="---------------------"
 echo $LINEBREAK
 

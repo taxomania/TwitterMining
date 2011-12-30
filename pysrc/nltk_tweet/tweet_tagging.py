@@ -124,14 +124,14 @@ def check_bing(name):
     try:
         music = len(bing.search("\""+name+" music \"")) # STUB
         movie = len(bing.search("\""+name+" movie\"")) # STUB
-        response = bing.search("\""+name+"\""+" software game") # STUB
+        response = bing.search("\""+name+"\""+" software game") # STUB - BUGGY
         # print response
         size = len(response)
         if size > music and size > movie:
             results = response.get_results() # len(results) always 15
             total = 0
             pattern = '[Aa][Pp][Pp]'
-            pattern += '| [Gg][Aa][Mm][Ee]'
+            #pattern += '| [Gg][Aa][Mm][Ee]' # Not yet working
             regex = re.compile(pattern)
             for result in results:
                 string = result['Title'] + " " + result['Description']
@@ -205,7 +205,7 @@ def main():
     sql = SQLConnector()
     global bing
     bing = BingSearch()
-    for page in range(0,10):
+    for page in range(0,5):
         res = sql.load_data(page)
         rows = res.num_rows()
         if rows == 0:
