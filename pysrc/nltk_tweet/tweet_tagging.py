@@ -13,7 +13,7 @@ from pattern.en import polarity
 from bing import BingSearch
 from database_connector import SQLConnector
 
-# This exception class is used to differentiate between errors, but has no extra functionality
+# These exception classes are used to differentiate between errors, but have no extra functionality
 class ServerError(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)
