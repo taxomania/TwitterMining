@@ -33,20 +33,17 @@ class Dictionary(dict):
         return key in self
 
     def add(self, key, value):
-        if value is not None:
+        if value is not None and len(value) > 0:
             if not self.contains(key):
-                self[key] = value
+                if len(value)==1:
+                    self[key] = value[0]
+                else:
+                    self[key] = value
             else:
                 self[key] = flatten(self[key], value)
 
     def remove(self, key):
         del self[key]
-
-    def add_list(self, key, array):
-        if len(array) == 1:
-            self.add(key, array[0])
-        elif len(array) > 1:
-            self.add(key, array)
 
 
 def regex_tokenize(text, pattern):
@@ -228,10 +225,12 @@ def main():
                     tagged_tweet = tag_tweets(ngram)
                     tagged_tweet.add('tweet_db_id', tweet_id)
                     tagged_tweet.add('sentiment', tweet[2])
-                    tagged_tweet.add_list('url', urls)
-                    tagged_tweet.add_list('version', versions)
-                    tagged_tweet.add_list('price', prices)
+                    tagged_tweet.add('url', urls)
+                    tagged_tweet.add('version', versions)
+                    tagged_tweet.add('price', prices)
 
+                    print tagged_tweet
+                    return
                     # testing
                     #if tagged_tweet.contains('software_id'):
                     #   tagged_tweet.add('tweet', text)
