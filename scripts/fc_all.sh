@@ -6,4 +6,4 @@ then
   cd ..
 fi
 
-echo "`(find src -name *.java; find pysrc -name *.py) | wc -l` files"
+echo "`(find src -name *.java; find pysrc -name *.py; find scripts -name *.sh) | wc -l` files"
