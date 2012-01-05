@@ -11,7 +11,7 @@ from nltk.util import flatten
 from pattern.en import polarity
 
 from bing import BingSearch
-from database_connector import SQLConnector
+from database_connector import SQLConnector, MongoConnector
 
 # These exception classes are used to differentiate between errors, but have no extra functionality
 class ServerError(Exception):
@@ -195,7 +195,8 @@ def main():
     sql = SQLConnector()
     global bing
     bing = BingSearch()
-    for page in range(0,5):
+    mongo = MongoConnector()
+    for page in range(0,2):
         res = sql.load_data(page)
         rows = res.num_rows()
         if rows == 0:
@@ -229,8 +230,8 @@ def main():
                     tagged_tweet.add('version', versions)
                     tagged_tweet.add('price', prices)
 
-                    print tagged_tweet
-                    return
+                    #print tagged_tweet
+                    #return
                     # testing
                     #if tagged_tweet.contains('software_id'):
                     #   tagged_tweet.add('tweet', text)
@@ -238,13 +239,14 @@ def main():
                     print tweet
                     print tagged_tweet
                     print
-                    #sql.insert(tagged_tweet)
+                    mongo.insert(tagged_tweet)
+                    sql.setTagged(tagged_tweet.get('tweet_db_id'))
                 except IncompleteTaggingError as e:
                     # This will allow the tweet to be tagged again at a later stage
                     print tweet_id +":", e
                     print tweet
                     print
-
+    mongo.close()
     sql.close()
     return 0
 

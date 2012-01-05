@@ -7,9 +7,9 @@ Created on Dec 18, 2011
 from string import split
 
 import MySQLdb as sql
+import pymongo
 
 class SQLConnector:
-
     __userpass_retrieved = False
     __user = None
     __pass = None
@@ -32,7 +32,8 @@ class SQLConnector:
                               db='TwitterMining')
 
     def load_data(self, page=0, max_results=100):
-        self.db.query("SELECT id, text, sentiment FROM tweet WHERE keyword='latest' ORDER BY id DESC LIMIT "
+        self.db.query("SELECT id, text, sentiment FROM tweet WHERE keyword='latest' "
+                      + "AND tagged=FALSE ORDER BY id DESC LIMIT "
                       + str(page * max_results) + ', ' + str(max_results))
         return self.db.store_result()
 
@@ -87,10 +88,44 @@ class SQLConnector:
         self.db.commit()
         print "Deleted users with no associated tweets"
 
+    def setTagged(self, id_):
+        c = self.db.cursor()
+        c.execute("UPDATE tweet SET tagged=TRUE WHERE id='" + id_ + "'")
+        c.close()
+        self.db.commit()
+
+    def setUntagged(self, id_):
+        c = self.db.cursor()
+        c.execute("UPDATE tweet SET tagged=FALSE WHERE id='" + id_ + "'")
+        c.close()
+        self.db.commit()
+
+    def setAllUntagged(self):
+        c = self.db.cursor()
+        c.execute("UPDATE tweet SET tagged=FALSE WHERE tagged=true")
+        c.close()
+        self.db.commit()
+
     def close(self):
         self.db.close()
 
+class MongoConnector:
+    def __init__(self):
+        self.conn = pymongo.Connection()
+        db = self.conn['TwitterMining']
+        self.tags = db.tagged_tweets
+
+    def insert(self, tagged_tweet):
+        self.tags.insert(tagged_tweet)
+
+    def _drop(self):
+        self.tags.drop()
+        SQLConnector().setAllUntagged()
+
+    def close(self):
+        self.conn.close()
 
 if __name__ == '__main__':
     #SQLConnector().deleteUsersNoTweets()
+    #MongoConnector()._drop()
     pass
