@@ -149,6 +149,7 @@ def tag_tweets(ngrams):
             # Look for 'Get x free'
             # This doesn't always work, eg 'get your free ...' / 'get it free'
             # TODO: Also look for 'Get x now' / 'Get x on' etc
+            # Also look for 'Download x now' etc
             elif re.match(r'^[Gg][Ee][Tt][\w\s]*[Ff][Rr][Ee][Ee]$', word):
                 software = word.replace(re.findall(re.compile(r'^[Gg][Ee][Tt]'), word)[0], "").strip()
                 software = software.replace(
@@ -239,7 +240,8 @@ def main():
                     print tweet
                     print tagged_tweet
                     print
-                    mongo.insert(tagged_tweet)
+                    if (tagged_tweet.contains("software_id")):
+                        mongo.insert(tagged_tweet)
                     sql.setTagged(tagged_tweet.get('tweet_db_id'))
                 except IncompleteTaggingError as e:
                     # This will allow the tweet to be tagged again at a later stage
