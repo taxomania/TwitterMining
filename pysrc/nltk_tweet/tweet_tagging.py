@@ -35,7 +35,7 @@ class Dictionary(dict):
     def add(self, key, value):
         if value is not None and len(value) > 0:
             if not self.contains(key):
-                if len(value)==1:
+                if len(value) == 1:
                     self[key] = value[0]
                 else:
                     self[key] = value
@@ -45,6 +45,25 @@ class Dictionary(dict):
     def remove(self, key):
         del self[key]
 
+class NewSoftware(dict):
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+
+    def contains(self, software_name):
+        return software_name in self
+
+    def add(self, software_name, tweet_id):
+        software_name = software_name.lower()
+        if self.contains(software_name):
+            self[software_name]['tweets'] = flatten(self[software_name]['tweets'], tweet_id)
+            self[software_name]['weight'] = self[software_name]['weight'] + 1
+        else:
+            self[software_name] = {'tweets':tweet_id, 'weight': 1}
+
+    def remove(self, software_name):
+        software_name = software_name.lower()
+        if self.contains(software_name):
+            del self[software_name]
 
 def regex_tokenize(text, pattern):
     return regexp_tokenize(text, pattern)
@@ -56,7 +75,7 @@ def find_url(text, pattern=r'(http://[^ ]+)'):
 # call before tokenization
 def find_version(text, pattern=None):
     digit_pattern = r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)'
-    pattern = '\s?[vV]ersion\s?'+ digit_pattern
+    pattern = '\s?[vV]ersion\s?' + digit_pattern
     pattern += '| [vV]er\s?\.?\s?' + digit_pattern
     pattern += '| [vV]\s?\.?\s?' + digit_pattern
     version_matches = regex_tokenize(text, pattern)
@@ -112,9 +131,9 @@ def ngrams(tokens, max_n):
 # This function is still slightly inaccurate
 def check_bing(name):
     try:
-        music = len(bing.search("\""+name+" music \"")) # STUB
-        movie = len(bing.search("\""+name+" movie\"")) # STUB
-        response = bing.search("\""+name+"\""+" software game") # STUB - BUGGY
+        music = len(bing.search("\"" + name + " music \"")) # STUB
+        movie = len(bing.search("\"" + name + " movie\"")) # STUB
+        response = bing.search("\"" + name + "\"" + " software game") # STUB - BUGGY
         # print response
         size = len(response)
         if size > music and size > movie:
@@ -137,8 +156,9 @@ def check_bing(name):
     except ServerNotFoundError:
         raise ServerError("Could not connect to Bing")
 
-def tag_tweets(ngrams):
+def tag_tweets(ngrams, tweet_id):
     tweet = Dictionary()
+    tweet.add('tweet_db_id', tweet_id)
     prev_is_software = False
     for i in range(len(ngrams), 0, -1):
         for word in ngrams[i]:
@@ -157,8 +177,10 @@ def tag_tweets(ngrams):
                 if not sql.isSoftware(software):
                     try:
                         if check_bing(software):
-                            pass
-                            #sql.insertSoftware(software)
+                            # Add newly-found software names to list, add to dictionary at end
+                            new_software.add(software, tweet)
+                            possible_tags.append(tweet_id)
+                            #sql.insertSoftware(software) # This task now done at end
                     except ServerError as e:
                         print e
                         raise IncompleteTaggingError()
@@ -196,8 +218,12 @@ def main():
     sql = SQLConnector()
     global bing
     bing = BingSearch()
+    global new_software
+    new_software = NewSoftware()
+    global possible_tags
+    possible_tags = []
     mongo = MongoConnector()
-    for page in range(0,2):
+    for page in range(0, 2):
         res = sql.load_data(page)
         rows = res.num_rows()
         if rows == 0:
@@ -224,30 +250,31 @@ def main():
                 ngram = ngrams(words, 5)
 
                 try:
-                    tagged_tweet = tag_tweets(ngram)
-                    tagged_tweet.add('tweet_db_id', tweet_id)
+                    tagged_tweet = tag_tweets(ngram, tweet_id)
+                    tagged_tweet.add('tweet_text', text)
                     tagged_tweet.add('sentiment', tweet[2])
                     tagged_tweet.add('url', urls)
                     tagged_tweet.add('version', versions)
                     tagged_tweet.add('price', prices)
 
-                    #print tagged_tweet
-                    #return
-                    # testing
-                    #if tagged_tweet.contains('software_id'):
-                    #   tagged_tweet.add('tweet', text)
-                    #if tagged_tweet.contains('price'):
-                    print tweet
-                    print tagged_tweet
-                    print
-                    if (tagged_tweet.contains("software_id")):
-                        mongo.insert(tagged_tweet)
-                    sql.setTagged(tagged_tweet.get('tweet_db_id'))
+                    if tweet_id in possible_tags:
+                        print tweet_id
+                    else:
+                        if tagged_tweet.contains('software_id'):
+                            print tweet
+                            print tagged_tweet
+                            print
+                            mongo.insert(tagged_tweet)
+                        else:
+                            print tweet, "No software"
+                        sql.setTagged(tagged_tweet.get('tweet_db_id'))
                 except IncompleteTaggingError as e:
                     # This will allow the tweet to be tagged again at a later stage
-                    print tweet_id +":", e
+                    print tweet_id + ":", e
                     print tweet
                     print
+    print new_software # evaluation purposes
+    # TODO: Add new_software to dictionary, need to automate this process
     mongo.close()
     sql.close()
     return 0
