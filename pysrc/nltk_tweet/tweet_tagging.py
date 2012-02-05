@@ -52,13 +52,13 @@ class NewSoftware(dict):
     def contains(self, software_name):
         return software_name in self
 
-    def add(self, software_name, tweet_id):
+    def add(self, software_name, tweet):
         software_name = software_name.lower()
         if self.contains(software_name):
-            self[software_name]['tweets'] = flatten(self[software_name]['tweets'], tweet_id)
+            self[software_name]['tweets'] = flatten(self[software_name]['tweets'], tweet)
             self[software_name]['weight'] = self[software_name]['weight'] + 1
         else:
-            self[software_name] = {'tweets':tweet_id, 'weight': 1}
+            self[software_name] = {'tweets':tweet, 'weight': 1}
 
     def remove(self, software_name):
         software_name = software_name.lower()
@@ -168,9 +168,9 @@ def tag_tweets(ngrams, tweet_id):
                 prev_is_software = False
             # Look for 'Get x free'
             # This doesn't always work, eg 'get your free ...' / 'get it free'
-            # TODO: Also look for 'Get x now' / 'Get x on' etc
+            # TODO: Also look for 'Get x on' etc
             # Also look for 'Download x now' etc
-            elif re.match(r'^[Gg][Ee][Tt][\w\s]*[Ff][Rr][Ee][Ee]$', word):
+            elif re.match(r'^[Gg][Ee][Tt][\w.\s]*[Ff][Rr][Ee][Ee]$', word):
                 software = word.replace(re.findall(re.compile(r'^[Gg][Ee][Tt]'), word)[0], "").strip()
                 software = software.replace(
                                 re.findall(re.compile(r'[Ff][Rr][Ee][Ee]$'), word)[0], "").strip()
@@ -185,6 +185,22 @@ def tag_tweets(ngrams, tweet_id):
                         print e
                         raise IncompleteTaggingError()
                 tweet.add('price', 'free')
+
+            # REQUIRES REFACTORING
+            elif re.match(r'^[Gg][Ee][Tt][\w.\s]*[Nn][Oo][Ww]$', word):
+                software = word.replace(re.findall(re.compile(r'^[Gg][Ee][Tt]'), word)[0], "").strip()
+                software = software.replace(
+                                re.findall(re.compile(r'[Nn][Oo][Ww]$'), word)[0], "").strip()
+                if not sql.isSoftware(software):
+                    try:
+                        if check_bing(software):
+                            # Add newly-found software names to list, add to dictionary at end
+                            new_software.add(software, tweet)
+                            possible_tags.append(tweet_id)
+                    except ServerError as e:
+                        print e
+                        raise IncompleteTaggingError()
+
             elif re.match(r'^\d+\s?(cents?|pence|[cp])+$', word):
                 tweet.add('price', word)
             try:
@@ -256,7 +272,6 @@ def main():
                     tagged_tweet.add('url', urls)
                     tagged_tweet.add('version', versions)
                     tagged_tweet.add('price', prices)
-
                     if tweet_id in possible_tags:
                         print tweet_id
                     else:
@@ -273,7 +288,11 @@ def main():
                     print tweet_id + ":", e
                     print tweet
                     print
-    print new_software # evaluation purposes
+    print
+    #print new_software # evaluation purposes
+    for software in new_software:
+        print software, new_software.get(software)
+    print possible_tags
     # TODO: Add new_software to dictionary, need to automate this process
     mongo.close()
     sql.close()
