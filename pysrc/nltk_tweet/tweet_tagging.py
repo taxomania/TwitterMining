@@ -56,7 +56,7 @@ class NewSoftware(dict):
         software_name = software_name.lower()
         if self.contains(software_name):
             self[software_name]['tweets'] = flatten(self[software_name]['tweets'], tweet)
-            self[software_name]['weight'] = self[software_name]['weight'] + 1
+            self[software_name]['weight'] += 1
         else:
             self[software_name] = {'tweets':tweet, 'weight': 1}
 

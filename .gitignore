@@ -6,3 +6,4 @@ sqluserpass.txt
 alchemyapikey.txt
 db.jar
 *.pyc
+*.swp
