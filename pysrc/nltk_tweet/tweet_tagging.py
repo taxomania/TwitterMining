@@ -242,7 +242,7 @@ def main():
     for page in range(0, 2):
         res = sql.load_data(page)
         rows = res.num_rows()
-        if rows == 0:
+        if not rows:
             print "No tweets left to analyse"
             break
 
