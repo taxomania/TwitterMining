@@ -36,7 +36,6 @@ public final class SoftwareMongoConnector extends MongoConnector {
     private SoftwareMongoConnector() throws UnknownHostException, MongoException {
         super();
         collection = getDb().getCollection("tagged_tweets");
-        // System.out.println(collection.getFullName()); // Test
     } // SoftwareMongoConnector()
 
     public static void main(String[] args) throws MongoException, UnknownHostException {

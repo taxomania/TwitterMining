@@ -25,7 +25,7 @@ public abstract class MongoConnector implements DatabaseConnector {
         db = mongo.getDB(DB_NAME);
     } // MongoConnector()
 
-    public final DB getDb() {
+    protected final DB getDb() {
         return db;
     } // getDb()
 
