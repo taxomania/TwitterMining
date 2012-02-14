@@ -6,7 +6,7 @@ Created on Feb 7, 2012
 
 import re
 import sys
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 
 import nltk
 

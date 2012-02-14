@@ -275,14 +275,15 @@ def main():
                     if tweet_id in possible_tags:
                         print tweet_id
                     else:
-                        if tagged_tweet.contains('software_id'):
+                        if (tagged_tweet.contains('software_id') or 
+                        tagged_tweet.contains('operating_system_id')):
                             print tweet
                             print tagged_tweet
                             print
-                            mongo.insert(tagged_tweet)
+                            #mongo.insert(tagged_tweet)
                         else:
                             print tweet, "No software"
-                        sql.setTagged(tagged_tweet.get('tweet_db_id'))
+                 #       sql.setTagged(tagged_tweet.get('tweet_db_id'))
                 except IncompleteTaggingError as e:
                     # This will allow the tweet to be tagged again at a later stage
                     print tweet_id + ":", e
