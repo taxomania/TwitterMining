@@ -16,7 +16,7 @@ import com.mysql.jdbc.MysqlDataTruncation;
  * @author Tariq Patel
  *
  */
-public final class TweetSQLConnector extends SQLConnector implements DatabaseConnector {
+public final class TweetSQLConnector extends SQLConnector implements TweetDatabaseConnector {
     private PreparedStatement insertUser = null;
     private PreparedStatement insertFilteredTweet = null;
     private PreparedStatement insertTweet = null;
@@ -182,6 +182,10 @@ public final class TweetSQLConnector extends SQLConnector implements DatabaseCon
     public ResultSet executeQuery(final String sqlStatement) throws SQLException {
         return con.createStatement().executeQuery(sqlStatement);
     } // executeQuery(String)
+
+    public int resetTweetTaggedField() throws SQLException {
+        return executeUpdate("UPDATE tweet SET tagged=FALSE WHERE tagged=true");
+    } // resetTweetTaggedField()
 
     @Override
     public int deleteAll() {

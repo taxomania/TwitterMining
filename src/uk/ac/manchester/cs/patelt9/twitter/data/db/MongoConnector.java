@@ -19,7 +19,7 @@ import com.mongodb.MongoException;
  * @author Tariq Patel
  *
  */
-public final class MongoConnector implements DatabaseConnector {
+public final class MongoConnector implements TweetDatabaseConnector {
     private static final String DB_NAME = "TwitterMining";
 
     private static MongoConnector mongoConnector = null;
@@ -139,5 +139,4 @@ public final class MongoConnector implements DatabaseConnector {
         mongo.close();
         mongoConnector = null;
     } // close()
-
 } // MongoConnector

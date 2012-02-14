@@ -1,6 +1,6 @@
 package uk.ac.manchester.cs.patelt9.twitter.data.db.task;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.db.DatabaseConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.TweetDatabaseConnector;
 
 /**
  * DatabaseTask which updates the sentiment of a tweet
@@ -37,9 +37,9 @@ public class SentimentScoreTask extends SentimentTask {
     } // SentimentScoreTask(long, String, String)
 
     @Override
-    public int doTask(final DatabaseConnector db) {
+    public int doTask(final TweetDatabaseConnector db) {
         return db.updateSentiment(getId(), getSentiment(), sentimentScore);
-    } // doTask(DatabaseConnector)
+    } // doTask(TweetDatabaseConnector)
 
     @Override
     public String toString() {

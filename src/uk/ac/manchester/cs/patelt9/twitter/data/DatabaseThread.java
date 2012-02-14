@@ -3,7 +3,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.db.DatabaseConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.TweetDatabaseConnector;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.task.DatabaseTask;
 
 /**
@@ -17,7 +17,7 @@ import uk.ac.manchester.cs.patelt9.twitter.data.db.task.DatabaseTask;
 public abstract class DatabaseThread extends Thread {
     private final List<DatabaseTask> taskList = new ArrayList<DatabaseTask>();
     private int affectedRows = 0;
-    private DatabaseConnector db;
+    private TweetDatabaseConnector db;
 
     /**
      * Constructor taking thread name and a DatabaseConnector object
@@ -25,12 +25,12 @@ public abstract class DatabaseThread extends Thread {
      * @param s
      *            Thread name
      * @param connector
-     *            DatabaseConnector object
+     *            TweetDatabaseConnector object
      */
-    public DatabaseThread(final String s, final DatabaseConnector connector) {
+    public DatabaseThread(final String s, final TweetDatabaseConnector connector) {
         super(s);
         db = connector;
-    } // DatabaseThread(String)
+    } // DatabaseThread(String, TweetDatabaseConnector)
 
     /**
      * Call doTask() method for each DatabaseTask in the queue.

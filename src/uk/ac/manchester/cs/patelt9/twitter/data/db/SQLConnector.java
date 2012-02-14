@@ -16,7 +16,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
  * @author Tariq Patel
  *
  */
-public abstract class SQLConnector {
+public abstract class SQLConnector implements DatabaseConnector {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining";
     public static final int DB_ERROR = -1;
@@ -73,6 +73,7 @@ public abstract class SQLConnector {
         } // catch
     } // executeUpdate(String)
 
+    @Override
     public void close() {
         if (con != null) {
             try {
@@ -83,8 +84,6 @@ public abstract class SQLConnector {
             } // catch
         } // if
     } // close()
-
-    public abstract int deleteAll();
 
     protected final Connection getConnection() {
         return con;
