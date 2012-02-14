@@ -14,7 +14,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
-public class MongoDbTable extends AbstractTableModel {
+public final class MongoDbTable extends AbstractTableModel {
     private static final long serialVersionUID = -8921742154153487037L;
     private final SoftwareMongoConnector mongo;
     private final Set<String> keys = new HashSet<String>();
@@ -25,25 +25,22 @@ public class MongoDbTable extends AbstractTableModel {
     public MongoDbTable() throws UnknownHostException, MongoException {
         mongo = SoftwareMongoConnector.getInstance();
         refresh();
-    } // DbTable(String)
+    } // MongoDbTable(String)
 
     private void loadHeaders(final Iterator<DBObject> ite) {
         while (ite.hasNext()) {
             final DBObject obj = ite.next();
             keys.addAll(obj.keySet());
-            if (keys.contains("id")) {
-                System.out.println("A");
-            }
-            // publish(obj.toString() + "\n");
         } // while()
         colCount = keys.size();
 
         headers = new String[colCount];
+
         final Iterator<String> it = keys.iterator();
         for (int i = 0; it.hasNext(); i++) {
             headers[i] = it.next();
         } // for
-    } // loadHeaders()
+    }// loadHeaders()
 
     public final void refresh() {
         final DBCursor c = mongo.selectAll();
