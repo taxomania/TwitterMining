@@ -3,9 +3,8 @@ package uk.ac.manchester.cs.patelt9.twitter.data.db;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
 
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoException;
 
 /**
@@ -14,12 +13,9 @@ import com.mongodb.MongoException;
  * @author Tariq Patel
  *
  */
-public final class SoftwareMongoConnector implements DatabaseConnector {
-    private static final String DB_NAME = "TwitterMining";
-
+public final class SoftwareMongoConnector extends MongoConnector {
     private static SoftwareMongoConnector mongoConnector = null;
 
-    private final Mongo mongo;
     private final DBCollection collection;
 
     /**
@@ -38,15 +34,18 @@ public final class SoftwareMongoConnector implements DatabaseConnector {
     } // getInstance()
 
     private SoftwareMongoConnector() throws UnknownHostException, MongoException {
-        mongo = new Mongo(/* ip, port */);
-        final DB db = mongo.getDB(DB_NAME);
-        collection = db.getCollection("tagged_tweets");
+        super();
+        collection = getDb().getCollection("tagged_tweets");
         // System.out.println(collection.getFullName()); // Test
     } // SoftwareMongoConnector()
 
     public static void main(String[] args) throws MongoException, UnknownHostException {
         getInstance().close();
     }
+
+    public DBCursor selectAll() {
+        return collection.find();
+    } // selectAll()
 
     @Override
     public int deleteAll() {
@@ -63,7 +62,7 @@ public final class SoftwareMongoConnector implements DatabaseConnector {
 
     @Override
     public void close() {
-        mongo.close();
+        super.close();
         mongoConnector = null;
     } // close()
 } // SoftwareMongoConnector

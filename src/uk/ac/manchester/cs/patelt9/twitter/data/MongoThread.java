@@ -2,7 +2,7 @@ package uk.ac.manchester.cs.patelt9.twitter.data;
 
 import java.net.UnknownHostException;
 
-import uk.ac.manchester.cs.patelt9.twitter.data.db.MongoConnector;
+import uk.ac.manchester.cs.patelt9.twitter.data.db.TweetMongoConnector;
 
 import com.mongodb.MongoException;
 
@@ -32,9 +32,9 @@ public final class MongoThread extends DatabaseThread {
      *
      * @throws UnknownHostException
      * @throws MongoException
-     * @see MongoConnector
+     * @see TweetMongoConnector
      */
     public MongoThread(final String s) throws UnknownHostException, MongoException {
-        super(s, MongoConnector.getInstance());
+        super(s, TweetMongoConnector.getInstance());
     } // MongoThread(String)
 } // MongoThread
