@@ -118,6 +118,9 @@ class MongoConnector:
     def insert(self, tagged_tweet):
         self.tags.insert(tagged_tweet)
 
+    def find(self, value):
+        return self.tags.find({"software_name": value.lower()})
+
     def _drop(self):
         self.tags.drop()
         SQLConnector().setAllUntagged()

@@ -53,7 +53,6 @@ class NewSoftware(dict):
         return software_name in self
 
     def add(self, software_name, tweet):
-        software_name = software_name.lower()
         if self.contains(software_name):
             self[software_name]['tweets'] = flatten(self[software_name]['tweets'], tweet)
             self[software_name]['weight'] += 1
@@ -250,7 +249,7 @@ def main():
             row = res.fetch_row()
             for tweet in row:
                 tweet_id = str(tweet[0])
-                text = tweet[1]
+                text = tweet[1].lower()
                 # text = "Version 2 Microsoft just released MS Office ver 3.20.2 for 99 cent 100c 10ps 13pence 10 pence"
 
                 urls = find_url(text)
@@ -280,10 +279,10 @@ def main():
                             print tweet
                             print tagged_tweet
                             print
-                            #mongo.insert(tagged_tweet)
+                            mongo.insert(tagged_tweet)
                         else:
                             print tweet, "No software"
-                 #       sql.setTagged(tagged_tweet.get('tweet_db_id'))
+                        sql.setTagged(tagged_tweet.get('tweet_db_id'))
                 except IncompleteTaggingError as e:
                     # This will allow the tweet to be tagged again at a later stage
                     print tweet_id + ":", e
