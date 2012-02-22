@@ -118,8 +118,14 @@ class MongoConnector:
     def insert(self, tagged_tweet):
         self.tags.insert(tagged_tweet)
 
+    def find_os(self, value):
+        return self.tags.find({"operating_system_name": value.lower()})
+
     def find(self, value):
         return self.tags.find({"software_name": value.lower()})
+
+    def find_all(self):
+        return self.tags.find()
 
     def _drop(self):
         self.tags.drop()
