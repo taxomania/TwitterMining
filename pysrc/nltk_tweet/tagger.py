@@ -14,10 +14,14 @@ from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
 from utils import Dictionary
 
-class TweetTagger():
+class TweetTagger(object):
     def __init__(self):
+        super(TweetTagger, self).__init__()
         self.sql = SQLConnector()
         self.mongo = MongoConnector()
+
+    def _tag(self, row):
+        for tweet in row:
 
     def tag(self, range_):
         for page in xrange(range_):
@@ -26,9 +30,9 @@ class TweetTagger():
             if not rows:
                 print "No tweets left to analyse"
                 break
+        for _i_ in range(0, rows):
+            _tag(res.fetch_row())
     
-
-
     def close(self):
         self.sql.close()
         self.mongo.close()

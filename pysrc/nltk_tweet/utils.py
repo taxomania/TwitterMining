@@ -1,6 +1,9 @@
 '''
 @author: Tariq Patel
 '''
+from nltk.util import flatten
+from pattern.en import polarity
+
 class Dictionary(dict):
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)

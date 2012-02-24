@@ -9,26 +9,26 @@ from string import split
 import MySQLdb as sql
 import pymongo
 
-class SQLConnector:
-    __userpass_retrieved = False
-    __user = None
-    __pass = None
+class SQLConnector(object):
+    _userpass_retrieved = False
+    _user = None
+    _pass = None
 
-    @staticmethod
-    def _getDetails():
+    @classmethod
+    def _getDetails(cls):
         fin = open("../../sqluserpass.txt")
         strings = split(fin.readline(), ":")
-        SQLConnector.__user = strings[0]
-        SQLConnector.__pass = strings[1]
+        cls._user = strings[0]
+        cls._pass = strings[1]
         fin.close()
-        SQLConnector.__userpass_retrieved = True
+        cls._userpass_retrieved = True
 
     def __init__(self):
-        if (not SQLConnector.__userpass_retrieved):
+        if (not SQLConnector._userpass_retrieved):
             SQLConnector._getDetails()
         self.db = sql.connect(host='localhost',
-                              user=SQLConnector.__user,
-                              passwd=SQLConnector.__pass,
+                              user=SQLConnector._user,
+                              passwd=SQLConnector._pass,
                               db='TwitterMining')
 
     def load_data(self, page=0, max_results=100):

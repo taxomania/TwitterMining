@@ -8,11 +8,10 @@ from _mysql_exceptions import ProgrammingError
 from httplib2 import ServerNotFoundError
 from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
 from nltk.util import flatten
-from pattern.en import polarity
 
 from bing import BingSearch
 from database_connector import SQLConnector, MongoConnector
-from pos_tagger import pos
+from text_utils import *
 from utils import Dictionary, ServerError
 
 # These exception classes are used to differentiate between errors, but have no extra functionality
@@ -41,45 +40,6 @@ class NewSoftware(dict):
         software_name = software_name.lower()
         if self.contains(software_name):
             del self[software_name]
-
-def regex_tokenize(text, pattern):
-    return regexp_tokenize(text, pattern)
-
-# call before tokenization
-def find_url(text, pattern=r'(http://[^ ]+)'):
-    return regex_tokenize(text, pattern)
-
-# call before tokenization
-def find_version(text, pattern=None):
-    digit_pattern = r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)'
-    pattern = '\s?[vV]ersion\s?' + digit_pattern
-    pattern += '| [vV]er\s?\.?\s?' + digit_pattern
-    pattern += '| [vV]\s?\.?\s?' + digit_pattern
-    version_matches = regex_tokenize(text, pattern)
-    pattern = digit_pattern + '$'
-    versions = []
-    for version in version_matches:
-        matches = regex_tokenize(version, pattern)
-        for match in matches:
-            versions.append(match)
-    return versions
-
-def check_version(word):
-    regex = re.compile(pattern=r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)')
-    return re.match(regex, word)
-
-# Doesn't match all prices
-# Possible regexs to use:
-#'^\$(\d*(\d\.?|\.\d{1,2}))$'
-#'^\$\??\d{0,10}(\.\d{2})?$'
-# call after tokenization
-def find_price(text, pattern=r'^\$(\d*(\d\.?|\.\d{1,2}))$'):
-    pattern = re.compile(pattern)
-    prices = []
-    for word in text:
-        if re.match(pattern, word):
-            prices.append(word)
-    return prices
 
 def tokenize(text):
     return wordpunct_tokenize(text)
@@ -225,7 +185,7 @@ def main():
 
                 versions = find_version(text)
 
-                words = regex_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
+                words = regexp_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
                 #print words
                 prices = find_price(words)
 
@@ -246,10 +206,10 @@ def main():
                             print tweet
                             print tagged_tweet
                             print
-                            mongo.insert(tagged_tweet)
+                            #mongo.insert(tagged_tweet)
                         else:
                             print tweet, "No software"
-                        sql.setTagged(tagged_tweet.get('tweet_db_id'))
+                        #sql.setTagged(tagged_tweet.get('tweet_db_id'))
                 except IncompleteTaggingError as e:
                     # This will allow the tweet to be tagged again at a later stage
                     print tweet_id + ":", e
