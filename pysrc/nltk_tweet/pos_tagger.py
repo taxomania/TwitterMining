@@ -15,7 +15,7 @@ from tweet_tagging import find_url
 
 def trim(words):   
     for word in words:
-        if re.match(re.compile(r'[.,!]'),word):
+        if re.match(re.compile(r'[.,!"]'),word):
             words.remove(word)
     return words
 
@@ -34,7 +34,12 @@ def pos(tweet):
     print words #testing
     print
 
-    pos = nltk.pos_tag(words)
+    tagged_words = nltk.pos_tag(words)
+    pos = []
+
+    for tags in tagged_words:
+        if not re.match(re.compile(r'[.,:]'), tags[1]):
+            pos.append(tags)
     print pos
     print
 
