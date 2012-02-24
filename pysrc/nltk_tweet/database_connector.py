@@ -37,6 +37,14 @@ class SQLConnector:
                       + str(page * max_results) + ', ' + str(max_results))
         return self.db.store_result()
 
+    def get_tweet(self, tweet_id):
+        self.db.query("SELECT id, text FROM tweet WHERE id='" + tweet_id + "'")
+        tweet_tuple = self.db.store_result().fetch_row()
+        if not len(tweet_tuple):
+            return None
+        else:
+            return tweet_tuple[0]
+
     def isSoftware(self, word):
         return self.__isEntry("SELECT d.id FROM dictionary d, dict_type t "
                               + "WHERE d.type = t.id AND d.software_name = '" + word + "'")

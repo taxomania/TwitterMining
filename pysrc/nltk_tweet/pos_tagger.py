@@ -19,29 +19,32 @@ def trim(words):
             words.remove(word)
     return words
 
+def pos(tweet):
+    tweet_id = str(tweet[0])
+    text = tweet[1]
+
+    urls = find_url(text)
+    for url in urls:
+        text = text.replace(url,"").strip()
+
+    print text  #testing
+    print
+
+    words = trim(nltk.word_tokenize(text))
+    print words #testing
+    print
+
+    pos = nltk.pos_tag(words)
+    print pos
+    print
+
 def task(res, rows):
     for _i_ in range(0,2):#rows):
         row = res.fetch_row()
         for tweet in row:
-            tweet_id = str(tweet[0])
-            text = tweet[1]
-            
-            urls = find_url(text)
-            for url in urls:
-                text = text.replace(url,"").strip()
-            print text  #testing
-            print
+            pos(tweet)
 
-            words = trim(nltk.word_tokenize(text))
-            print words #testing
-            print
-
-            pos = nltk.pos_tag(words)
-            print pos
-            print
-
-def main():
-    sql = SQLConnector()
+def pos_all(sql):
     queue =[]
     for page in range(0,3):
         res = sql.load_data(page)
@@ -56,8 +59,23 @@ def main():
 
     for t in queue:
         t.join()
+
+def pos_tweet(sql, tweet_id):
+    tweet = sql.get_tweet(tweet_id)
+    if not tweet:
+        print "Tweet does not exist"
+    else:
+        pos(tweet)
+
+def main():
+    sql = SQLConnector()
+    if len(sys.argv) == 1:
+        pos_all(sql)
+    else:
+        pos_tweet(sql, sys.argv[1])
     sql.close()
     return 0
 
 if __name__ == "__main__":
     sys.exit(main())
+
