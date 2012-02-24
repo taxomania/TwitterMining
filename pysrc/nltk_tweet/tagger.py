@@ -12,6 +12,7 @@ from nltk.util import flatten
 
 from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
+from text_utils import *
 from utils import Dictionary
 
 class TweetTagger(object):
@@ -22,6 +23,22 @@ class TweetTagger(object):
 
     def _tag(self, row):
         for tweet in row:
+            tweet_id = str(tweet[0])
+            text = tweet[1].lower()
+
+            urls = find_url(text)
+            for url in urls:
+                text = text.replace(url, "").strip()
+
+            versions = find_version(text)
+
+            words = regexp_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
+            #print words
+            prices = find_price(words)
+
+            # MAIN TAGGING DONE HERE
+            pos_ = pos(words)
+
 
     def tag(self, range_):
         for page in xrange(range_):
@@ -31,7 +48,7 @@ class TweetTagger(object):
                 print "No tweets left to analyse"
                 break
         for _i_ in range(0, rows):
-            _tag(res.fetch_row())
+            self._tag(res.fetch_row())
     
     def close(self):
         self.sql.close()

@@ -8,6 +8,7 @@ import re
 
 from nltk.tokenize import regexp_tokenize
 
+# Call during main tagging process
 def check_version(word):
     regex = re.compile(pattern=r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)')
     return re.match(regex, word)

@@ -19,7 +19,8 @@ def trim(words):
             words.remove(word)
     return words
 
-def pos(tweet):
+# This is to allow pos() function to be called from elsewhere
+def pre_process(tweet):
     tweet_id = str(tweet[0])
     text = tweet[1]
 
@@ -34,6 +35,9 @@ def pos(tweet):
     print words #testing
     print
 
+    return words
+
+def pos(words):
     tagged_words = nltk.pos_tag(words)
     pos = []
 
@@ -42,12 +46,13 @@ def pos(tweet):
             pos.append(tags)
     print pos
     print
+    return pos
 
 def task(res, rows):
     for _i_ in range(0,2):#rows):
         row = res.fetch_row()
         for tweet in row:
-            pos(tweet)
+            pos(pre_process(tweet))
 
 def pos_all(sql):
     queue =[]
@@ -70,7 +75,7 @@ def pos_tweet(sql, tweet_id):
     if not tweet:
         print "Tweet does not exist"
     else:
-        pos(tweet)
+        pos(pre_process(tweet))
 
 def main():
     sql = SQLConnector()
