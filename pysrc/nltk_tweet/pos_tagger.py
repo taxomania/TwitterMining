@@ -72,7 +72,9 @@ def main():
     if len(sys.argv) == 1:
         pos_all(sql)
     else:
-        pos_tweet(sql, sys.argv[1])
+        args = sys.argv[1:]
+        for arg in args:
+            pos_tweet(sql, arg)
     sql.close()
     return 0
 
