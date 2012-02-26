@@ -6,11 +6,12 @@ import sys
 
 from _mysql_exceptions import ProgrammingError
 from httplib2 import ServerNotFoundError
-from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
+from nltk.tokenize import regexp_tokenize
 from nltk.util import flatten
 
 from bing import BingSearch
 from database_connector import SQLConnector, MongoConnector
+from pos_tagger import pos
 from text_utils import *
 from utils import Dictionary, ServerError
 
@@ -41,12 +42,9 @@ class NewSoftware(dict):
         if self.contains(software_name):
             del self[software_name]
 
-def tokenize(text):
-    return wordpunct_tokenize(text)
-
 def ngrams(tokens, max_n):
     ngrams = {}
-    for n in range(0, max_n):
+    for n in range(max_n):
         candidates = []
         for i in range(len(tokens) - n):
             phrase = " ".join(tokens[i:i + n + 1])
@@ -165,16 +163,15 @@ def main():
     global possible_tags
     possible_tags = []
     mongo = MongoConnector()
-    for page in range(0, 2):
+    for page in range(1):
         res = sql.load_data(page)
         rows = res.num_rows()
         if not rows:
             print "No tweets left to analyse"
             break
 
-        for _i_ in range(0, rows):
-            row = res.fetch_row()
-            for tweet in row:
+        for _i_ in range(5):#rows):
+            for tweet in res.fetch_row():
                 tweet_id = str(tweet[0])
                 text = tweet[1].lower()
                 # text = "Version 2 Microsoft just released MS Office ver 3.20.2 for 99 cent 100c 10ps 13pence 10 pence"
@@ -189,6 +186,7 @@ def main():
                 #print words
                 prices = find_price(words)
 
+                pos_ = pos(words)
                 ngram = ngrams(words, 5)
 
                 try:

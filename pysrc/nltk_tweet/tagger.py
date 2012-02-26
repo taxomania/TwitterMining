@@ -1,5 +1,5 @@
 '''
-Created on 24 Feb 2012
+Created on Feb 24, 2012
 
 @author: Tariq Patel
 '''
@@ -8,7 +8,7 @@ import re
 import sys
 
 from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
-from nltk.util import flatten
+from nltk.util import flatten,ngrams
 
 from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
@@ -19,26 +19,34 @@ class TweetTagger(object):
     def __init__(self):
         super(TweetTagger, self).__init__()
         self.sql = SQLConnector()
-        self.mongo = MongoConnector()
+        #self.mongo = MongoConnector()
 
-    def _tag(self, row):
-        for tweet in row:
-            tweet_id = str(tweet[0])
-            text = tweet[1].lower()
+    def _tag(self, tweet):
+        tweet_id = str(tweet[0])
+        text = tweet[1].lower()
 
-            urls = find_url(text)
-            for url in urls:
-                text = text.replace(url, "").strip()
+        urls = find_url(text)
+        for url in urls:
+            text = text.replace(url, "").strip()
 
-            versions = find_version(text)
+        versions = find_version(text)
 
-            words = regexp_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
-            #print words
-            prices = find_price(words)
+        words = regexp_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
+        #print words
+        prices = find_price(words)
 
-            # MAIN TAGGING DONE HERE
-            pos_ = pos(words)
+        # MAIN TAGGING DONE HERE
+        pos_ = pos(words)
+        print pos_
 
+        print self._ngrams(pos_, 2)
+        print
+
+    def _ngrams(self, pos_words, max_n):
+        ngram = {}
+        for n in range(1, max_n):
+            ngram[n] = ngrams(pos_words, n)
+        return ngram
 
     def tag(self, range_):
         for page in xrange(range_):
@@ -47,16 +55,17 @@ class TweetTagger(object):
             if not rows:
                 print "No tweets left to analyse"
                 break
-        for _i_ in range(0, rows):
-            self._tag(res.fetch_row())
+        for _i_ in range(5):#rows):
+            for tweet in res.fetch_row():
+                self._tag(tweet)
     
     def close(self):
         self.sql.close()
-        self.mongo.close()
+        #self.mongo.close()
 
 def main():
     tagger = TweetTagger()
-    tagger.tag(2)
+    tagger.tag(1)
     tagger.close()
     return 0
 

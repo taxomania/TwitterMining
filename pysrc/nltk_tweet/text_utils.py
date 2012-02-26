@@ -1,5 +1,5 @@
 '''
-Created at Feb 24, 2012
+Created on Feb 24, 2012
 
 @author: Tariq Patel
 '''
@@ -31,7 +31,7 @@ def find_url(text, pattern=r'(http://[^ ]+)'):
     return regexp_tokenize(text, pattern)
 
 # call before tokenization
-def find_version(text, pattern=None):
+def find_version(text):
     digit_pattern = r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)'
     pattern = '\s?[vV]ersion\s?' + digit_pattern
     pattern += '| [vV]er\s?\.?\s?' + digit_pattern

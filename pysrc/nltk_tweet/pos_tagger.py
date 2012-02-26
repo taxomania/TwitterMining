@@ -11,7 +11,7 @@ from multiprocessing import Process
 import nltk
 
 from database_connector import SQLConnector
-from tweet_tagging import find_url
+from text_utils import find_url
 
 def trim(words):   
     for word in words:
@@ -42,10 +42,10 @@ def pos(words):
     pos = []
 
     for tags in tagged_words:
-        if not re.match(re.compile(r'[.,:]'), tags[1]):
+        if not re.match(re.compile(r'[.,:]|(-NONE-)'), tags[1]):
             pos.append(tags)
-    print pos
-    print
+    #print pos
+    #print
     return pos
 
 def task(res, rows):
