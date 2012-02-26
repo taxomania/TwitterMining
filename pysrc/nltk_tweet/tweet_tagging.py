@@ -9,11 +9,11 @@ from httplib2 import ServerNotFoundError
 from nltk.tokenize import regexp_tokenize
 from nltk.util import flatten
 
-from bing import BingSearch
+from bing import BingSearch, ServerError
 from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
 from text_utils import *
-from utils import Dictionary, ServerError, IncompleteTaggingError
+from utils import Dictionary, IncompleteTaggingError
 
 class NewSoftware(dict):
     def __init__(self, *args, **kwargs):

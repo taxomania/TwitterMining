@@ -24,12 +24,6 @@ class Dictionary(dict):
     def remove(self, key):
         del self[key]
 
-# These exception classes differentiate between errors
-# but add no extra functionality
-class ServerError(Exception):
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)
-
 class IncompleteTaggingError(Exception):
     def __init__(self, *args, **kwargs):
         Exception.__init__(self, *args, **kwargs)

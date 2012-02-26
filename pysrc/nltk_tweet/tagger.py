@@ -68,6 +68,7 @@ class TweetTagger(object):
                 for tweet in res.fetch_row():
                     try:
                         tagged_tweet = self._tag(tweet)
+                        print tagged_tweet
                         # CHECK TAGS, ADD TO DB ETC HERE
                     except IncompleteTaggingError as e:
                         # Allow tagging again at a later stage

@@ -33,3 +33,8 @@ class _BingResponse(dict):
 
     def __len__(self):
         return self['Total']
+
+class ServerError(Exception):
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
+
