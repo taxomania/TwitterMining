@@ -49,11 +49,20 @@ class TweetTagger(object):
         return tagged_tweet
 
     def _tagger(self, ngram, tweet_id):
-        return Dictionary()
+        tags = Dictionary()
+        tags.add('tweet_db_id', tweet_id)
+
+        for i in range(len(ngram), 0, -1):
+            for words in ngram[i]:
+                for pos in words:
+                    word = pos[0]
+                    tag = pos[1]
+                    # START TAGGING HERE
+
 
     def _ngrams(self, pos_words, max_n):
         ngram = {}
-        for n in range(1, max_n):
+        for n in range(1, max_n+1):
             ngram[n] = ngrams(pos_words, n)
         return ngram
 
