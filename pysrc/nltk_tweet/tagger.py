@@ -13,7 +13,7 @@ from nltk.util import flatten,ngrams
 from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
 from text_utils import *
-from utils import Dictionary
+from utils import Dictionary, IncompleteTaggingError
 
 class TweetTagger(object):
     def __init__(self):
@@ -37,10 +37,19 @@ class TweetTagger(object):
 
         # MAIN TAGGING DONE HERE
         pos_ = pos(words)
-        print pos_
 
-        print self._ngrams(pos_, 2)
-        print
+        ngrams_ = self._ngrams(pos_, 2)
+
+        tagged_tweet = self._tagger(ngrams_, tweet_id)
+        tagged_tweet.add('sentiment', tweet[2])
+        tagged_tweet.add('tweet', text)
+        tagged_tweet.add('url', urls)
+        tagged_tweet.add('version', versions)
+        tagged_tweet.add('price', prices)
+        return tagged_tweet
+
+    def _tagger(self, ngram, tweet_id):
+        return Dictionary()
 
     def _ngrams(self, pos_words, max_n):
         ngram = {}
@@ -55,17 +64,24 @@ class TweetTagger(object):
             if not rows:
                 print "No tweets left to analyse"
                 break
-        for _i_ in range(5):#rows):
-            for tweet in res.fetch_row():
-                self._tag(tweet)
-    
+            for _i_ in range(1):#rows):
+                for tweet in res.fetch_row():
+                    try:
+                        tagged_tweet = self._tag(tweet)
+                        # CHECK TAGS, ADD TO DB ETC HERE
+                    except IncompleteTaggingError as e:
+                        # Allow tagging again at a later stage
+                        print tweet_id + ":", e
+                        print tweet
+                        print
+
     def close(self):
         self.sql.close()
         #self.mongo.close()
 
 def main():
     tagger = TweetTagger()
-    tagger.tag(1)
+    tagger.tag(2)
     tagger.close()
     return 0
 

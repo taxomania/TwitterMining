@@ -13,15 +13,7 @@ from bing import BingSearch
 from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
 from text_utils import *
-from utils import Dictionary, ServerError
-
-# These exception classes are used to differentiate between errors, but have no extra functionality
-class IncompleteTaggingError(Exception):
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)
-
-    def __str__(self, *args, **kwargs):
-        return "Tweet tagging incomplete"
+from utils import Dictionary, ServerError, IncompleteTaggingError
 
 class NewSoftware(dict):
     def __init__(self, *args, **kwargs):
