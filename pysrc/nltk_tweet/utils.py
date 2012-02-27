@@ -19,7 +19,8 @@ class Dictionary(dict):
                 else:
                     self[key] = value
             else:
-                self[key] = flatten(self[key], value)
+                if not self[key] == value:
+                    self[key] = flatten(self[key], value)
 
     def remove(self, key):
         del self[key]
