@@ -35,12 +35,12 @@ class TweetTagger(object):
         words = regexp_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
         #print words
         prices = find_price(words)
-
+        print prices
         pos_ = pos(words)
 
         #ngrams_ = self._ngrams(pos_, 2)
         five_gram = ngrams(pos_, 5)
-        print five_gram
+        #print five_gram
 
         tagged_tweet = self._ngram_tagger(five_gram, tweet_id)
         tagged_tweet.add('sentiment', tweet[2])
@@ -55,24 +55,49 @@ class TweetTagger(object):
         tags.add('tweet_db_id', tweet_id)
 
         for tagged_words in ngram:
-            self._tagger(tagged_words)
+            self._tagger(tagged_words, tags)
 
         return tags
 
-    def _tagger(self, gram):
+    def _tagger(self, gram, tags):
         words = []
-        tags = []
+        tags_ = []
         phrase = ""
         for tagged_word in gram:
             word = tagged_word[0]
-            words.append(word)
-            tags.append(tagged_word[1])
             phrase += word + " "
+            if re.match(re.compile(r'free', re.IGNORECASE), word):
+                #print word
+                #print words
+                try:
+                    prev = words.pop()
+                    words.append(prev)
+                    print tags
+                    if re.match(re.compile(r'is', re.IGNORECASE), prev):
+                        tags.add('price', word)
+                    else:
+                        prev = tags_.pop()
+                        tags_.append(prev)
+                        print prev
+                        if tagIsNoun(prev):
+                            tags.add('price', word)
+                            print prev_tag
+                            print tags
+                    print tags
+                except:
+                    pass
+            words.append(word)
+            tags_.append(tagged_word[1])
         phrase = phrase.strip()
-        print words
-        print tags
-        print phrase
+        #print words
+        #print tags
+        #print phrase
 
+        regex = re.compile(r'get[\w.\s]+', re.IGNORECASE)
+        #('free')
+        matches = re.findall(regex, phrase)
+        if len(matches) > 0:
+            print matches
 
     '''
     def _ngrams_tagger(self, ngrams_, tweet_id):

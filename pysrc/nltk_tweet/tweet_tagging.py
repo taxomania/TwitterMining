@@ -117,8 +117,6 @@ def tag_tweets(ngrams, tweet_id):
                         print e
                         raise IncompleteTaggingError()
 
-            elif re.match(r'^\d+\s?(cents?|pence|[cp])+$', word):
-                tweet.add('price', word)
             try:
                 if sql.isSoftware(word):
                     entry = sql.getSoftware()
@@ -162,7 +160,7 @@ def main():
             print "No tweets left to analyse"
             break
 
-        for _i_ in range(5):#rows):
+        for _i_ in range(1):#rows):
             for tweet in res.fetch_row():
                 tweet_id = str(tweet[0])
                 text = tweet[1].lower()
