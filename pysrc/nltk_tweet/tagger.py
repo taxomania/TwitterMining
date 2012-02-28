@@ -55,11 +55,11 @@ class TweetTagger(object):
         tags.add('tweet_db_id', tweet_id)
 
         for tagged_words in ngram:
-            self._gram_tagger(tagged_words)
+            self._tagger(tagged_words)
 
         return tags
 
-    def _gram_tagger(self, gram):
+    def _tagger(self, gram):
         words = []
         tags = []
         phrase = ""
@@ -74,7 +74,7 @@ class TweetTagger(object):
         print phrase
 
 
-
+    '''
     def _ngrams_tagger(self, ngrams_, tweet_id):
         tags = Dictionary()
         tags.add('tweet_db_id', tweet_id)
@@ -84,25 +84,15 @@ class TweetTagger(object):
                 self._tagger(words, tags)
         return tags
 
-    def _tagger(self, ngram, tweet):
-        word= ""
-        tags = []
-        for pos in ngram:
-            tags.append(pos[1])
-            word += pos[0] +" "
-        word = word.strip()
-        # START TAGGING HERE
-        print word
-        print tags
-
     def _ngrams(self, pos_words, max_n):
         ngram = {}
         for n in range(1, max_n+1):
             ngram[n] = ngrams(pos_words, n)
         return ngram
+    '''
 
-    def tag(self, range_):
-        for page in xrange(range_):
+    def tag(self, pages):
+        for page in xrange(pages):
             res = self.sql.load_data(page)
             rows = res.num_rows()
             if not rows:
