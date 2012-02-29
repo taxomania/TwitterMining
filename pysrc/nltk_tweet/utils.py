@@ -21,10 +21,11 @@ class Dictionary(dict):
         if value is not None and len(value) > 0:
             if not self.contains(key):
                 if len(value) == 1:
-                    self[key] = value[0]
-                else:
-                    self[key] = value
+                    value = value[0]
+                self[key] = value
             else:
+                if len(value) == 1:
+                    value = value[0]
                 if not self[key] == value:
                     self[key] = flatten(self[key], value)
 

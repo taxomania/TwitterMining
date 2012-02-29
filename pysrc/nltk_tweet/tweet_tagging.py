@@ -5,7 +5,6 @@ import re
 import sys
 
 from _mysql_exceptions import ProgrammingError
-from httplib2 import ServerNotFoundError
 from nltk.tokenize import regexp_tokenize
 from nltk.util import flatten
 

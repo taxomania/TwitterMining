@@ -4,6 +4,7 @@ Created on Feb 24, 2012
 @author: Tariq Patel
 '''
 
+from httplib2 import ServerNotFoundError
 import re
 
 from nltk.tokenize import regexp_tokenize
@@ -23,19 +24,40 @@ def check_version(word):
 def find_price(text, pattern=r'^\$(\d*(\d\.?|\.\d{1,2}))$'):
     pattern = re.compile(pattern)
     number = re.compile(r'^\d+$')
-    currency = re.compile(r'^(cents?|pence|[cp])+$')
+    quantifier = re.compile(r'[mb]illion|thousand|hundred', re.IGNORECASE)
+    currency = re.compile(r'^(dollars?|pounds?|cents?|pence|[cp])$', re.IGNORECASE)
     prices = []
+    prev_is_price = False
+    prev_is_number = False
+    price = ""
     for word in text:
         if re.match(pattern, word):
             prices.append(word)
+            prev_is_price = True
+        elif re.match(number, word):
+            price += word
+            prev_is_number = True
+        elif re.match(quantifier, word):
+            if prev_is_price:
+                price_ = prices.pop()
+                prices.append(price_ + " " + word)
+            elif prev_is_number:
+                price += " " + word
         elif re.match(currency, word):
             try:
-                if re.match(number, prev):
-                    prices.append(prev + " " + word)
+                if prev_is_price:
+                    price_ = prices.pop()
+                    prices.append(price_ + " " + word)
+                elif prev_is_number:
+                    price += " " + word
+                    prices.append(price.strip())
+                    price = ""
             except:
                 pass
-        prev = word
-
+        else:
+            prev_is_price = False
+            prev_is_number = False
+            price = ""
     return prices
 
 # call before tokenization

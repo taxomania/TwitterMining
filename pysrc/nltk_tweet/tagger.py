@@ -27,7 +27,7 @@ class TweetTagger(object):
     def _tag(self, tweet):
         tweet_id = str(tweet[0])
         text = tweet[1].lower()
-        #text = "download holiday havoc in itunes for free"
+        #text = "download 60 hundred pounds 72 million $800 billion pounds holiday havoc v2 in itunes for free 99"
 
         urls = find_url(text)
         for url in urls:
@@ -40,6 +40,7 @@ class TweetTagger(object):
         prices = find_price(words)
 
         pos_ = pos(words)
+        #print pos_
 
         #ngrams_ = self._ngrams(pos_, 2)
         n = 5
@@ -74,9 +75,9 @@ class TweetTagger(object):
         possible_software = False
         # Compile regular expressions outside of for loop
         # for efficiency purposes
-        free_price = re.compile(r'free', re.IGNORECASE)
-        check_is = re.compile(r'is|for', re.IGNORECASE)
-        check_get = re.compile(r'download|get', re.IGNORECASE)
+        free_price = re.compile(r'^free$', re.IGNORECASE)
+        check_is = re.compile(r'^is$|^for$', re.IGNORECASE)
+        check_get = re.compile(r'^download$|^get$', re.IGNORECASE)
         for tagged_word in gram:
             word = tagged_word[0]
             tag = tagged_word[1]
@@ -87,6 +88,11 @@ class TweetTagger(object):
                     if word == gram[len(gram)-1][0]:
                         pos_soft = ""
                 else:
+                    prev = words.pop()
+                    words.append(prev)
+                    if not re.match(check_get, prev):
+                        if check_version(word):
+                            tags.add('version', word)
                     possible_software = False
             if re.match(free_price, word):
                 try:
@@ -114,10 +120,10 @@ class TweetTagger(object):
 
         phrase = phrase.strip()
         if len(pos_soft) > 0:
-            # should do bing search here!
             pos_soft = pos_soft.strip()
             if not tags.get('software_name'):
                 if check_bing(pos_soft, self._bing):
+                    # Insert into dictionary db?
                     tags.add('software_name', pos_soft)
 
         # CHECK DB HERE? OR ABOVE
@@ -129,7 +135,7 @@ class TweetTagger(object):
             if not rows:
                 print "No tweets left to analyse"
                 break
-            for _i_ in range(1):#rows):
+            for _i_ in range(6):#rows):
                 for tweet in res.fetch_row():
                     try:
                         tagged_tweet = self._tag(tweet)
