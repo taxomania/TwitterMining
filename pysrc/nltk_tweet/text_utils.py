@@ -9,6 +9,8 @@ import re
 from nltk.tokenize import regexp_tokenize
 from nltk.util import ngrams
 
+from bing import BingSearch, ServerError
+
 # Call during main tagging process
 def check_version(word):
     regex = re.compile(pattern=r'(?:(\d+)\.)?(?:(\d+)\.)?(\*|\d+)')
@@ -57,3 +59,32 @@ def find_version(text):
 
 def tagIsNoun(tag):
     return tag == "NN"
+
+# This function is still slightly inaccurate
+def check_bing(term, bing=BingSearch()):
+    print "Searching Bing for", term
+    try:
+        music = len(bing.search("\"" + term + " music \""))
+        movie = len(bing.search("\"" + term + " movie\""))
+        response = bing.search("\"" + term + "\"" + " software game") # STUB - BUGGY
+        # print response
+        size = len(response)
+        if size > music and size > movie:
+            results = response.get_results() # len(results) always 15
+            total = 0
+            pattern = 'app|game'
+            regex = re.compile(pattern, re.IGNORECASE)
+            for result in results:
+                string = result['Title'] + " " + result['Description']
+                # CAN USE `string` to find company name as well POTENTIALLY
+                size = len(re.findall(regex, string)) # STUB
+                if size > 0:
+                    #print string # STUB
+                    total += size
+            if total > 0:
+                return True
+            else:
+                return False
+    except ServerNotFoundError:
+        raise ServerError("Could not connect to Bing")
+

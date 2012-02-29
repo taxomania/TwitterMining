@@ -9,7 +9,7 @@ from httplib2 import ServerNotFoundError
 from nltk.tokenize import regexp_tokenize
 from nltk.util import flatten
 
-from bing import BingSearch, ServerError
+from bing import BingSearch
 from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
 from text_utils import *
@@ -44,34 +44,6 @@ def ngrams(tokens, max_n):
         ngrams[n + 1] = candidates
     return ngrams
 
-# This function is still slightly inaccurate
-def check_bing(name):
-    try:
-        music = len(bing.search("\"" + name + " music \"")) # STUB
-        movie = len(bing.search("\"" + name + " movie\"")) # STUB
-        response = bing.search("\"" + name + "\"" + " software game") # STUB - BUGGY
-        # print response
-        size = len(response)
-        if size > music and size > movie:
-            results = response.get_results() # len(results) always 15
-            total = 0
-            pattern = '[Aa][Pp][Pp]'
-            #pattern += '| [Gg][Aa][Mm][Ee]' # Not yet working
-            regex = re.compile(pattern)
-            for result in results:
-                string = result['Title'] + " " + result['Description']
-                # CAN USE `string` to find company name as well POTENTIALLY
-                size = len(re.findall(regex, string)) # STUB
-                if size > 0:
-                    print string # STUB
-                    total += size
-            if total > 0:
-                return True
-            else:
-                return False
-    except ServerNotFoundError:
-        raise ServerError("Could not connect to Bing")
-
 def tag_tweets(ngrams, tweet_id):
     tweet = Dictionary()
     tweet.add('tweet_db_id', tweet_id)
@@ -92,7 +64,7 @@ def tag_tweets(ngrams, tweet_id):
                                 re.findall(re.compile(r'[Ff][Rr][Ee][Ee]$'), word)[0], "").strip()
                 if not sql.isSoftware(software):
                     try:
-                        if check_bing(software):
+                        if check_bing(software,bing):
                             # Add newly-found software names to list, add to dictionary at end
                             new_software.add(software, tweet)
                             possible_tags.append(tweet_id)
@@ -109,7 +81,7 @@ def tag_tweets(ngrams, tweet_id):
                                 re.findall(re.compile(r'[Nn][Oo][Ww]$'), word)[0], "").strip()
                 if not sql.isSoftware(software):
                     try:
-                        if check_bing(software):
+                        if check_bing(software, bing):
                             # Add newly-found software names to list, add to dictionary at end
                             new_software.add(software, tweet)
                             possible_tags.append(tweet_id)

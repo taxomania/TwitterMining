@@ -11,6 +11,7 @@ from _mysql_exceptions import ProgrammingError
 from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
 from nltk.util import flatten,ngrams
 
+from bing import BingSearch
 from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
 from text_utils import *
@@ -21,11 +22,12 @@ class TweetTagger(object):
         super(TweetTagger, self).__init__()
         self._sql = SQLConnector()
         #self._mongo = MongoConnector()
+        self._bing = BingSearch()
 
     def _tag(self, tweet):
         tweet_id = str(tweet[0])
         text = tweet[1].lower()
-        #text = "download holiday havoc in itunes"
+        #text = "download holiday havoc in itunes for free"
 
         urls = find_url(text)
         for url in urls:
@@ -73,7 +75,7 @@ class TweetTagger(object):
         # Compile regular expressions outside of for loop
         # for efficiency purposes
         free_price = re.compile(r'free', re.IGNORECASE)
-        check_is = re.compile(r'is', re.IGNORECASE)
+        check_is = re.compile(r'is|for', re.IGNORECASE)
         check_get = re.compile(r'download|get', re.IGNORECASE)
         for tagged_word in gram:
             word = tagged_word[0]
@@ -112,8 +114,11 @@ class TweetTagger(object):
 
         phrase = phrase.strip()
         if len(pos_soft) > 0:
+            # should do bing search here!
             pos_soft = pos_soft.strip()
-            tags.add('software_name', pos_soft)
+            if not tags.get('software_name'):
+                if check_bing(pos_soft, self._bing):
+                    tags.add('software_name', pos_soft)
 
         # CHECK DB HERE? OR ABOVE
 

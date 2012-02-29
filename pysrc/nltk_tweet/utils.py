@@ -11,6 +11,12 @@ class Dictionary(dict):
     def contains(self, key):
         return key in self
 
+    def get(self, key):
+        if self.contains(key):
+            return self[key]
+        else:
+            return None
+
     def add(self, key, value):
         if value is not None and len(value) > 0:
             if not self.contains(key):
