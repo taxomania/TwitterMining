@@ -46,8 +46,8 @@ class SQLConnector(object):
             return tweet_tuple[0]
 
     def isSoftware(self, word):
-        return self.__isEntry("SELECT d.id FROM dictionary d, dict_type t "
-                              + "WHERE d.type = t.id AND d.software_name = '" + word + "'")
+        return self.__isEntry("SELECT d.id, d.software_name FROM dictionary d, dict_type t "
+                              +"WHERE d.type = t.id AND d.software_name = '" + word + "'")
 
     def getSoftware(self):
         return self.__getEntry()
@@ -73,19 +73,19 @@ class SQLConnector(object):
             return True
 
     def isProgLang(self, word):
-        return self.__isEntry("SELECT id FROM prog_lang WHERE language = '" + word + "'")
+        return self.__isEntry("SELECT id, language FROM prog_lang WHERE language = '" + word + "'")
 
     def getProgLang(self):
         return self.__getEntry()
 
     def isOS(self, name):
-        return self.__isEntry("SELECT id FROM os WHERE os = '" + name + "'")
+        return self.__isEntry("SELECT id, os FROM os WHERE os = '" + name + "'")
 
     def getOS(self):
         return self.__getEntry()
 
     def isCompany(self, word):
-        return self.__isEntry("SELECT id FROM company WHERE name = '" + word + "'")
+        return self.__isEntry("SELECT id, name FROM company WHERE name = '" + word + "'")
 
     def getCompany(self):
         return self.__getEntry()

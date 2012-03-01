@@ -50,7 +50,7 @@ def main():
         # OR SHOW ALL TWEETS
         cursor = mongo.find_all()
         software = cursor.distinct("software_name")
-        os = cursor.distinct("operating_system_name")
+        os = cursor.distinct("os_name")
         tools = flatten(software,os)
         print tools
         cursor.close()

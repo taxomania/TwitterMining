@@ -80,7 +80,10 @@ def find_version(text):
     return versions
 
 def tagIsNoun(tag):
-    return tag == "NN"
+    return tag == "NN" or tag == "NNS"
+
+def tagIsDeterminantOrPreposition(tag):
+    return tag == "DT" or tag == "IN"
 
 # This function is still slightly inaccurate
 def check_bing(term, bing=BingSearch()):

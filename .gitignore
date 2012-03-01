@@ -3,6 +3,7 @@ doc/
 .DS_Store
 userpass.txt
 sqluserpass.txt
+sqlgnode.txt
 alchemyapikey.txt
 db.jar
 *.pyc

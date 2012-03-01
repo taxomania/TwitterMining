@@ -78,10 +78,58 @@ class TweetTagger(object):
         free_price = re.compile(r'^free$', re.IGNORECASE)
         check_is = re.compile(r'^is$|^for$', re.IGNORECASE)
         check_get = re.compile(r'^download$|^get$', re.IGNORECASE)
+        check_on = re.compile(r'^on$|^for$', re.IGNORECASE)
         for tagged_word in gram:
             word = tagged_word[0]
             tag = tagged_word[1]
             phrase += word + " "
+            #print word, tag
+            if tagIsNoun(tag):
+                if self._sql.isSoftware(word):
+                    entry = self._sql.getSoftware()
+                    try:
+                        prev_tag = tags_.pop()
+                        tags_.append(prev_tag)
+                        if not tagIsDeterminantOrPreposition(prev_tag):
+                            raise # Add to tags
+                    except:
+                        tags.add('software_name', str(entry[1]))
+                        tags.add('software_id', str(entry[0]))
+                elif self._sql.isCompany(word):
+                    entry = self._sql.getCompany()
+                    try:
+                        prev_tag = tags_.pop()
+                        tags_.append(prev_tag)
+                        if not tagIsDeterminantOrPreposition(prev_tag):
+                            raise # Add to tags
+                    except:
+                        tags.add('company_name', str(entry[1]))
+                        tags.add('company_id', str(entry[0]))
+                elif self._sql.isOS(word):
+                    entry = self._sql.getOS()
+                    try:
+                        prev_tag = tags_.pop()
+                        tags_.append(prev_tag)
+                        prev = words.pop()
+                        words.append(prev)
+                        if not tagIsDeterminantOrPreposition(prev_tag) or re.match(check_on, prev):
+                            raise # Add to tags
+                    except:
+                        tags.add('os_name', str(entry[1]))
+                        tags.add('os_id', str(entry[0]))
+                elif self._sql.isProgLang(word):
+                    entry = self._sql.getProgLang()
+                    try:
+                        prev_tag = tags_.pop()
+                        tags_.append(prev_tag)
+                        if not tagIsDeterminantOrPreposition(prev_tag):
+                            raise # Add to tags
+                    except:
+                        tags.add('programming_language_name', str(entry[1]))
+                        tags.add('programming_language__id', str(entry[0]))
+
+
+
             if possible_software:
                 if tagIsNoun(tag):
                     pos_soft += word + " "

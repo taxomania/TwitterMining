@@ -104,8 +104,8 @@ def tag_tweets(ngrams, tweet_id):
                     tweet.add('company_id', str(entry[0]))
                 elif sql.isOS(word):
                     entry = sql.getOS()
-                    tweet.add('operating_system_name', word)
-                    tweet.add('operating_system_id', str(entry[0]))
+                    tweet.add('os_name', word)
+                    tweet.add('os_id', str(entry[0]))
             except ProgrammingError: # for error tokens eg ' or "
                 pass
             # Still need to deduce other reasons for tweeting eg review, notify others
