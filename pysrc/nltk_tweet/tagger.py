@@ -11,6 +11,7 @@ from _mysql_exceptions import ProgrammingError
 from nltk.tokenize import wordpunct_tokenize, regexp_tokenize
 from nltk.util import flatten,ngrams
 
+import argument_parser
 from bing import BingSearch
 from database_connector import SQLConnector, MongoConnector
 from pos_tagger import pos
@@ -18,9 +19,9 @@ from text_utils import *
 from utils import Dictionary, IncompleteTaggingError
 
 class TweetTagger(object):
-    def __init__(self):
+    def __init__(self, args):
         super(TweetTagger, self).__init__()
-        self._sql = SQLConnector()
+        self._sql = SQLConnector(args.host, args.port, args.user, args.password, args.d)
         #self._mongo = MongoConnector()
         self._bing = BingSearch()
 
@@ -199,12 +200,12 @@ class TweetTagger(object):
         self._sql.close()
         #self._mongo.close()
 
-def main():
-    tagger = TweetTagger()
+def main(args):
+    tagger = TweetTagger(args)
     tagger.tag(2)
     tagger.close()
     return 0
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(argument_parser.main()))
 

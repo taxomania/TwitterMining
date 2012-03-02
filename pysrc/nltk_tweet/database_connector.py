@@ -10,26 +10,13 @@ import MySQLdb as sql
 import pymongo
 
 class SQLConnector(object):
-    _userpass_retrieved = False
-    _user = None
-    _pass = None
 
-    @classmethod
-    def _getDetails(cls):
-        fin = open("../../sqluserpass.txt")
-        strings = split(fin.readline(), ":")
-        cls._user = strings[0]
-        cls._pass = strings[1]
-        fin.close()
-        cls._userpass_retrieved = True
-
-    def __init__(self):
-        if (not SQLConnector._userpass_retrieved):
-            SQLConnector._getDetails()
-        self.db = sql.connect(host='localhost',
-                              user=SQLConnector._user,
-                              passwd=SQLConnector._pass,
-                              db='TwitterMining')
+    def __init__(self, host, port, user, passwd, db):
+        self.db = sql.connect(host=host,
+                              port=port,
+                              user=user,
+                              passwd=passwd,
+                              db=db)
 
     def load_data(self, page=0, max_results=100):
         self.db.query("SELECT id, text, sentiment FROM tweet WHERE keyword='latest' "
