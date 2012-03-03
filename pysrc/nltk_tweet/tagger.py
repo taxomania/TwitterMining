@@ -171,10 +171,13 @@ class TweetTagger(object):
         if len(pos_soft) > 0:
             pos_soft = pos_soft.strip()
             if not tags.get('software_name'):
-                if check_bing(pos_soft, self._bing):
-                    # Insert into dictionary db?
-                    tags.add('software_name', pos_soft)
-
+                try:
+                    if check_bing(pos_soft, self._bing):
+                        # Insert into dictionary db?
+                        tags.add('software_name', pos_soft)
+                except ServerError, e:
+                    print e
+                    raise IncompleteTaggingError()
         # CHECK DB HERE? OR ABOVE
 
     def tag(self, pages):
@@ -190,9 +193,9 @@ class TweetTagger(object):
                         tagged_tweet = self._tag(tweet)
                         print tagged_tweet
                         # CHECK TAGS, ADD TO DB ETC HERE
-                    except IncompleteTaggingError as e:
+                    except IncompleteTaggingError, e:
                         # Allow tagging again at a later stage
-                        print tweet_id + ":", e
+                        print tagged_tweet.get('tweet_db_id') , ":", e
                         print tweet
                         print
 
