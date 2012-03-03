@@ -4,6 +4,7 @@
 import re
 import sys
 
+import argument_parser
 from _mysql_exceptions import ProgrammingError
 from nltk.tokenize import regexp_tokenize
 from nltk.util import flatten
@@ -68,7 +69,7 @@ def tag_tweets(ngrams, tweet_id):
                             new_software.add(software, tweet)
                             possible_tags.append(tweet_id)
                             #sql.insertSoftware(software) # This task now done at end
-                    except ServerError as e:
+                    except ServerError, e:
                         print e
                         raise IncompleteTaggingError()
                 tweet.add('price', 'free')
@@ -84,7 +85,7 @@ def tag_tweets(ngrams, tweet_id):
                             # Add newly-found software names to list, add to dictionary at end
                             new_software.add(software, tweet)
                             possible_tags.append(tweet_id)
-                    except ServerError as e:
+                    except ServerError, e:
                         print e
                         raise IncompleteTaggingError()
 
@@ -115,15 +116,20 @@ def tag_tweets(ngrams, tweet_id):
     return tweet
 
 def main():
+    args = argument_parser.main()
     global sql
-    sql = SQLConnector()
+    sql = SQLConnector(host=args.host,
+                       port=args.port,
+                       user=args.user,
+                       passwd=args.password,
+                       db=args.d)
     global bing
     bing = BingSearch()
     global new_software
     new_software = NewSoftware()
     global possible_tags
     possible_tags = []
-    mongo = MongoConnector()
+    mongo = MongoConnector(db=args.D)
     for page in range(1):
         res = sql.load_data(page)
         rows = res.num_rows()
@@ -169,7 +175,7 @@ def main():
                         else:
                             print tweet, "No software"
                         #sql.setTagged(tagged_tweet.get('tweet_db_id'))
-                except IncompleteTaggingError as e:
+                except IncompleteTaggingError, e:
                     # This will allow the tweet to be tagged again at a later stage
                     print tweet_id + ":", e
                     print tweet

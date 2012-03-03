@@ -10,8 +10,8 @@ import MySQLdb as sql
 import pymongo
 
 class SQLConnector(object):
-
     def __init__(self, host, port, user, passwd, db):
+        super(SQLConnector, self).__init__()
         self.db = sql.connect(host=host,
                               port=port,
                               user=user,
@@ -28,7 +28,8 @@ class SQLConnector(object):
         return self.db.store_result()
 
     def get_tweet(self, tweet_id):
-        self.db.query("SELECT id, text FROM tweet WHERE id='" + tweet_id + "'")
+        self.db.query("SELECT id, text FROM tweet "
+                      + "WHERE id='" + tweet_id + "'")
         tweet_tuple = self.db.store_result().fetch_row()
         if not len(tweet_tuple):
             return None
@@ -36,15 +37,20 @@ class SQLConnector(object):
             return tweet_tuple[0]
 
     def isSoftware(self, word):
-        return self.__isEntry("SELECT d.id, d.software_name FROM dictionary d, dict_type t "
-                              +"WHERE d.type = t.id AND d.software_name = '" + word + "'")
+        return self.__isEntry("SELECT d.id, d.software_name "
+                              + "FROM dictionary d, "
+                              + "dict_type t "
+                              + "WHERE d.type = t.id "
+                              + "AND d.software_name = "
+                              + "'" + word + "'")
 
     def getSoftware(self):
         return self.__getEntry()
 
     def insertSoftware(self, name):
         c = self.db.cursor()
-        c.execute("INSERT INTO dictionary(software_name) VALUES('"+name+"')")
+        c.execute("INSERT INTO dictionary(software_name) "
+                  + "VALUES('"+name+"')")
         id_ = self.db.insert_id()
         c.close()
         self.db.commit()
@@ -63,54 +69,64 @@ class SQLConnector(object):
             return True
 
     def isProgLang(self, word):
-        return self.__isEntry("SELECT id, language FROM prog_lang WHERE language = '" + word + "'")
+        return self.__isEntry("SELECT id, language "
+                              + "FROM prog_lang "
+                              + "WHERE language = "
+                              + "'" + word + "'")
 
     def getProgLang(self):
         return self.__getEntry()
 
     def isOS(self, name):
-        return self.__isEntry("SELECT id, os FROM os WHERE os = '" + name + "'")
+        return self.__isEntry("SELECT id, os FROM os "
+                              + "WHERE os = '" + name + "'")
 
     def getOS(self):
         return self.__getEntry()
 
     def isCompany(self, word):
-        return self.__isEntry("SELECT id, name FROM company WHERE name = '" + word + "'")
+        return self.__isEntry("SELECT id, name FROM company "
+                              + "WHERE name = '" + word + "'")
 
     def getCompany(self):
         return self.__getEntry()
 
     def deleteUsersNoTweets(self):
-        self.db.query("DELETE FROM user WHERE NOT EXISTS (SELECT NULL FROM tweet "
+        self.db.query("DELETE FROM user WHERE NOT EXISTS "
+                      + "(SELECT NULL FROM tweet "
                       + "WHERE user.id=tweet.user_id)")
         self.db.commit()
         print "Deleted users with no associated tweets"
 
     def setTagged(self, id_):
         c = self.db.cursor()
-        c.execute("UPDATE tweet SET tagged=TRUE WHERE id='" + id_ + "'")
+        c.execute("UPDATE tweet SET tagged=TRUE "
+                  + "WHERE id='" + id_ + "'")
         c.close()
         self.db.commit()
 
     def setUntagged(self, id_):
         c = self.db.cursor()
-        c.execute("UPDATE tweet SET tagged=FALSE WHERE id='" + id_ + "'")
+        c.execute("UPDATE tweet SET tagged=FALSE "
+                  + "WHERE id='" + id_ + "'")
         c.close()
         self.db.commit()
 
     def setAllUntagged(self):
         c = self.db.cursor()
-        c.execute("UPDATE tweet SET tagged=FALSE WHERE tagged=true")
+        c.execute("UPDATE tweet SET tagged=FALSE "
+                  + "WHERE tagged=true")
         c.close()
         self.db.commit()
 
     def close(self):
         self.db.close()
 
-class MongoConnector:
-    def __init__(self):
+class MongoConnector(object):
+    def __init__(self, db):
+        super(MongoConnector, self).__init__()
         self.conn = pymongo.Connection()
-        db = self.conn['TwitterMining']
+        db = self.conn[db]
         self.tags = db.tagged_tweets
 
     def insert(self, tagged_tweet):
