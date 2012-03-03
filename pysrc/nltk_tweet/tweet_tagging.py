@@ -129,7 +129,7 @@ def main():
     new_software = NewSoftware()
     global possible_tags
     possible_tags = []
-    mongo = MongoConnector(db=args.D)
+    mongo = MongoConnector(host=args.H, db=args.D)
     for page in range(1):
         res = sql.load_data(page)
         rows = res.num_rows()

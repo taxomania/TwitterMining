@@ -37,15 +37,15 @@ class SQLConnector(object):
             return tweet_tuple[0]
 
     def isSoftware(self, word):
-        return self.__isEntry("SELECT d.id, d.software_name "
-                              + "FROM dictionary d, "
-                              + "dict_type t "
-                              + "WHERE d.type = t.id "
-                              + "AND d.software_name = "
-                              + "'" + word + "'")
+        return self._isEntry("SELECT d.id, d.software_name "
+                             + "FROM dictionary d, "
+                             + "dict_type t "
+                             + "WHERE d.type = t.id "
+                             + "AND d.software_name = "
+                             + "'" + word + "'")
 
     def getSoftware(self):
-        return self.__getEntry()
+        return self._getEntry()
 
     def insertSoftware(self, name):
         c = self.db.cursor()
@@ -56,10 +56,10 @@ class SQLConnector(object):
         self.db.commit()
         return id_
 
-    def __getEntry(self):
+    def _getEntry(self):
         return self.result[0]
 
-    def __isEntry(self, query):
+    def _isEntry(self, query):
         self.db.query(query)
         self.result = self.db.store_result().fetch_row()
         size = len(self.result)
@@ -69,27 +69,27 @@ class SQLConnector(object):
             return True
 
     def isProgLang(self, word):
-        return self.__isEntry("SELECT id, language "
-                              + "FROM prog_lang "
-                              + "WHERE language = "
-                              + "'" + word + "'")
+        return self._isEntry("SELECT id, language "
+                             + "FROM prog_lang "
+                             + "WHERE language = "
+                             + "'" + word + "'")
 
     def getProgLang(self):
-        return self.__getEntry()
+        return self._getEntry()
 
     def isOS(self, name):
-        return self.__isEntry("SELECT id, os FROM os "
-                              + "WHERE os = '" + name + "'")
+        return self._isEntry("SELECT id, os FROM os "
+                             + "WHERE os = '" + name + "'")
 
     def getOS(self):
-        return self.__getEntry()
+        return self._getEntry()
 
     def isCompany(self, word):
-        return self.__isEntry("SELECT id, name FROM company "
-                              + "WHERE name = '" + word + "'")
+        return self._isEntry("SELECT id, name FROM company "
+                             + "WHERE name = '" + word + "'")
 
     def getCompany(self):
-        return self.__getEntry()
+        return self._getEntry()
 
     def deleteUsersNoTweets(self):
         self.db.query("DELETE FROM user WHERE NOT EXISTS "
@@ -123,10 +123,10 @@ class SQLConnector(object):
         self.db.close()
 
 class MongoConnector(object):
-    def __init__(self, db):
+    def __init__(self, host, db):
         super(MongoConnector, self).__init__()
-        self.conn = pymongo.Connection()
-        db = self.conn[db]
+        self._conn = pymongo.Connection(host=host)
+        db = self._conn[db]
         self.tags = db.tagged_tweets
 
     def insert(self, tagged_tweet):
@@ -146,7 +146,7 @@ class MongoConnector(object):
         SQLConnector().setAllUntagged()
 
     def close(self):
-        self.conn.close()
+        self._conn.close()
 
 if __name__ == '__main__':
     #SQLConnector().deleteUsersNoTweets()
