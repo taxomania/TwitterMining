@@ -21,7 +21,11 @@ from utils import Dictionary, IncompleteTaggingError
 class TweetTagger(object):
     def __init__(self, args):
         super(TweetTagger, self).__init__()
-        self._sql = SQLConnector(args.host, args.port, args.user, args.password, args.d)
+        self._sql = SQLConnector(host=args.host,
+                                 port=args.port,
+                                 user=args.user,
+                                 passwd=args.password,
+                                 db=args.d)
         #self._mongo = MongoConnector()
         self._bing = BingSearch()
 

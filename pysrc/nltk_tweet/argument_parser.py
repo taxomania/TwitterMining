@@ -13,7 +13,7 @@ def sql_arg_parser():
     sql = arg_parser.add_argument_group('MySQL')
     sql.add_argument('-u','--user', action='store')
     sql.add_argument('-P', '--password', action='store', default=None, nargs='?')
-    sql.add_argument('-h', '--host', action='store', default='localhost', help='MySQL host')
+    sql.add_argument('-h', '--host', action='store', default='127.0.0.1', help='MySQL host')
     sql.add_argument('-p', '--port', action='store', default=3306, type=int)
     sql.add_argument('-d', action='store', help='MySQL database name')
 

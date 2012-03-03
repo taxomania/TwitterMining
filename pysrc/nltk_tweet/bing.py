@@ -3,7 +3,10 @@ Created on Dec 28, 2011
 
 @author: Tariq
 '''
-import json
+try:
+    import json
+except ImportError:
+    import simplejson as json
 from urllib import urlencode
 
 from httplib2 import Http

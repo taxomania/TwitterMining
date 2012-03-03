@@ -19,9 +19,12 @@ class SQLConnector(object):
                               db=db)
 
     def load_data(self, page=0, max_results=100):
-        self.db.query("SELECT id, text, sentiment FROM tweet WHERE keyword='latest' "
-                      + "AND tagged=FALSE ORDER BY id DESC LIMIT "
-                      + str(page * max_results) + ', ' + str(max_results))
+        self.db.query("SELECT id, text, sentiment FROM tweet "
+                      + "WHERE keyword='latest' "
+                      + "AND tagged=FALSE ORDER BY id DESC "
+                      + "LIMIT "
+                      + str(page * max_results) + ', '
+                      + str(max_results))
         return self.db.store_result()
 
     def get_tweet(self, tweet_id):
