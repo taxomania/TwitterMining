@@ -3,7 +3,6 @@ Created on Mar 5, 2012
 @author: Tariq Patel
 '''
 from argparse import ArgumentParser
-import os
 import subprocess
 import sys
 
@@ -27,8 +26,8 @@ def check_tunnel(port):
 def create_ssh_sql_tunnel(user, host):
     if check_tunnel('3307') <= 1:
         print 'Creating MySQL SSH tunnel to', user + '@' + host
-        os.system('ssh -f -N -L 3307:localhost:3306 '
-                 + user + '@' + host)
+        subprocess.call('ssh -f -N -L 3307:localhost:3306 '
+                        + user + '@' + host, shell=True)
     else: # ssh tunnel already exists
         print 'MySQL SSH tunnel created'
 
@@ -40,8 +39,8 @@ def create_ssh_mongo_tunnel(user, host):
     if check_tunnel('27017') <= 1: 
         print 'Creating MongoDB SSH tunnel to', 
         print user + '@' + host
-        os.system('ssh -f -N -L 27017:localhost:28817 '
-                 + user + '@' + host)
+        subprocess.call('ssh -f -N -L 27017:localhost:28817 '
+                        + user + '@' + host, shell=True)
     else: # ssh tunnel already exists
         print 'MongoDB SSH tunnel created'
 
