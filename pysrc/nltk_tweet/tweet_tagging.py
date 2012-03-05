@@ -122,14 +122,14 @@ def main():
                        port=args.port,
                        user=args.user,
                        passwd=args.password,
-                       db=args.d)
+                       db=args.db)
     global bing
     bing = BingSearch()
     global new_software
     new_software = NewSoftware()
     global possible_tags
     possible_tags = []
-    mongo = MongoConnector(host=args.H, db=args.D)
+    mongo = MongoConnector(host=args.H, db=args.db)
     for page in range(1):
         res = sql.load_data(page)
         rows = res.num_rows()

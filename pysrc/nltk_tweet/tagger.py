@@ -25,8 +25,8 @@ class TweetTagger(object):
                                  port=args.port,
                                  user=args.user,
                                  passwd=args.password,
-                                 db=args.d)
-        #self._mongo = MongoConnector(host=args.H, db=args.D)
+                                 db=args.db)
+        #self._mongo = MongoConnector(host=args.H, db=args.db)
         self._bing = BingSearch()
 
     def _tag(self, tweet):

@@ -10,7 +10,7 @@ import MySQLdb as sql
 import pymongo
 
 class SQLConnector(object):
-    def __init__(self, host, port, user, passwd, db):
+    def __init__(self, host, user, passwd, db, port=3306):
         super(SQLConnector, self).__init__()
         self.db = sql.connect(host=host,
                               port=port,
