@@ -123,9 +123,9 @@ class SQLConnector(object):
         self.db.close()
 
 class MongoConnector(object):
-    def __init__(self, host, db):
+    def __init__(self, host, db, port=27017):
         super(MongoConnector, self).__init__()
-        self._conn = pymongo.Connection(host=host)
+        self._conn = pymongo.Connection(host=host, port=port)
         db = self._conn[db]
         self.tags = db.tagged_tweets
 

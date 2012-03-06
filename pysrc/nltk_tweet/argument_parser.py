@@ -21,9 +21,12 @@ def argument_parser():
                         action='store', default=None, nargs='?')
     server.add_argument('-h', '--host',
                         action='store', help='Server host')
-    server.add_argument('-p', '--port',
+    server.add_argument('-p', '--port', default=3307,
                         action='store', type=int,
                         help='MySQL port')
+    server.add_argument('-m', '--mongoport',
+                        type=int, default=28817,
+                        action='store', help='MongoDB port')
     server.add_argument('-d', '--db', action='store',
                         help='Database name')
 
@@ -37,11 +40,15 @@ def main():
         sys.exit(arg_parser.print_help())
 
     if not args.local:
-        if not (args.host and args.port):
+        if not (args.host and args.port and args.mongoport):
             sys.exit(arg_parser.print_help())
-        create_ssh_tunnels(host=args.host, user=args.user)
+        create_ssh_tunnels(host=args.host, 
+                           user=args.user,
+                           sqlport=args.port,
+                           mongoport=args.mongoport)
     else:
         args.port = 3306
+        args.mongoport = 27017
 
     if not args.password:
         print 'Connecting to MySQL'
