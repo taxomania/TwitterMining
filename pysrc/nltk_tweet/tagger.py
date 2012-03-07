@@ -195,22 +195,23 @@ class TweetTagger(object):
                 for tweet in res.fetch_row():
                     try:
                         tagged_tweet = self._tag(tweet)
-                        print tagged_tweet
+                        yield (str(tagged_tweet) + '\n')
                         # CHECK TAGS, ADD TO DB ETC HERE
                     except IncompleteTaggingError, e:
                         # Allow tagging again at a later stage
-                        print tagged_tweet.get('tweet_db_id') , ":", e
-                        print tweet
-                        print
+                        yield tagged_tweet.get('tweet_db_id') , ":", e + '\n'
+                        yield tweet + '\n'
+                        yield '\n'
 
-    def close(self):
+        self._close()
+
+    def _close(self):
         self._sql.close()
         #self._mongo.close()
 
 def main(args):
     tagger = TweetTagger(args)
     tagger.tag(2)
-    tagger.close()
     return 0
 
 if __name__ == "__main__":
