@@ -41,7 +41,8 @@ class WebRoot(object):
 
         self._args.host = '127.0.0.1'
         self._args.H = 'localhost'
-        raise cherrypy.HTTPRedirect('../tag')
+        return ('Connecting...<br />'
+                + '<script type="text/javascript"> window.location="../tag";</script>')
 
     @cherrypy.expose
     def tag(self):

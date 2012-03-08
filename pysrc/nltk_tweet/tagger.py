@@ -195,13 +195,13 @@ class TweetTagger(object):
                 for tweet in res.fetch_row():
                     try:
                         tagged_tweet = self._tag(tweet)
-                        yield (str(tagged_tweet) + '\n')
+                        yield str(tagged_tweet) + '<br \>'
                         # CHECK TAGS, ADD TO DB ETC HERE
                     except IncompleteTaggingError, e:
                         # Allow tagging again at a later stage
-                        yield tagged_tweet.get('tweet_db_id') , ":", e + '\n'
-                        yield tweet + '\n'
-                        yield '\n'
+                        yield str(tagged_tweet.get('tweet_db_id')) , ":", str(e) + '<br />'
+                        yield str(tweet) + '<br \>'
+                        yield '<br \>'
 
         self._close()
 

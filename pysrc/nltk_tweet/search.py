@@ -45,7 +45,7 @@ def get_cursor(word):
 def main():
     args = sys.argv[1:]
     global mongo
-    mongo = MongoConnector()
+    mongo = MongoConnector(host="localhost", db="TwitterMining", port=27017)
     if len(args) == 0:
         # OR SHOW ALL TWEETS
         cursor = mongo.find_all()
