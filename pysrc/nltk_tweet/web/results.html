@@ -21,10 +21,10 @@
     <body>
         <form action="${action}" method="POST">
            <input class="input_control" name="local" type="checkbox" value="True"/> Dev Mode<br />
-            Server Username: <input class="controlled" type="text" name="user" /><br />
-            Server Host: <input class="controlled" type="text" name="host" /><br />
-            MongoDB port: <input class="controlled" type="text" value="${port}" name="port" /><br />
-            Database: <input type="text" name="db" /><br />
+            Server Username: <input class="controlled" type="text" name="user" required/><br />
+            Server Host: <input class="controlled" type="text" name="host" required/><br />
+            MongoDB port: <input class="controlled" type="number" value="${port}" name="port" /><br />
+            Database: <input type="text" name="db" required/><br />
             <input type="submit" value="Submit" />
         </form>
 
