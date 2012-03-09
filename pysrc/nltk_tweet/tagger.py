@@ -45,7 +45,7 @@ class TweetTagger(object):
         prices = find_price(words)
 
         pos_ = pos(words)
-        #print pos_
+        print pos_
 
         #ngrams_ = self._ngrams(pos_, 2)
         n = 5
@@ -73,6 +73,7 @@ class TweetTagger(object):
         return tags
 
     def _tagger(self, gram, tags):
+        print gram
         words = []
         tags_ = []
         phrase = ""
@@ -90,55 +91,56 @@ class TweetTagger(object):
             phrase += word + " "
             #print word, tag
             if tagIsNoun(tag):
-                if self._sql.isSoftware(word):
-                    entry = self._sql.getSoftware()
-                    try:
-                        prev_tag = tags_.pop()
-                        tags_.append(prev_tag)
-                        if not tagIsDeterminantOrPreposition(prev_tag):
-                            raise # Add to tags
-                    except:
-                        tags.add('software_name', str(entry[1]))
-                        tags.add('software_id', str(entry[0]))
-                elif self._sql.isCompany(word):
-                    entry = self._sql.getCompany()
-                    try:
-                        prev_tag = tags_.pop()
-                        tags_.append(prev_tag)
-                        if not tagIsDeterminantOrPreposition(prev_tag):
-                            raise # Add to tags
-                    except:
-                        tags.add('company_name', str(entry[1]))
-                        tags.add('company_id', str(entry[0]))
-                elif self._sql.isOS(word):
-                    entry = self._sql.getOS()
-                    try:
-                        prev_tag = tags_.pop()
-                        tags_.append(prev_tag)
-                        prev = words.pop()
-                        words.append(prev)
-                        if not tagIsDeterminantOrPreposition(prev_tag) or re.match(check_on, prev):
-                            raise # Add to tags
-                    except:
-                        tags.add('os_name', str(entry[1]))
-                        tags.add('os_id', str(entry[0]))
-                elif self._sql.isProgLang(word):
-                    entry = self._sql.getProgLang()
-                    try:
-                        prev_tag = tags_.pop()
-                        tags_.append(prev_tag)
-                        if not tagIsDeterminantOrPreposition(prev_tag):
-                            raise # Add to tags
-                    except:
-                        tags.add('programming_language_name', str(entry[1]))
-                        tags.add('programming_language__id', str(entry[0]))
-
-
+                try:
+                    if self._sql.isSoftware(word):
+                        entry = self._sql.getSoftware()
+                        try:
+                            prev_tag = tags_.pop()
+                            tags_.append(prev_tag)
+                            if not tagIsDeterminantOrPreposition(prev_tag):
+                                tags.add('software_name', str(entry[1]))
+                                tags.add('software_id', str(entry[0]))
+                        except:
+                            possible_software = True
+                    elif self._sql.isCompany(word):
+                        entry = self._sql.getCompany()
+                        try:
+                            prev_tag = tags_.pop()
+                            tags_.append(prev_tag)
+                            if not tagIsDeterminantOrPreposition(prev_tag):
+                                raise # Add to tags
+                        except:
+                            tags.add('company_name', str(entry[1]))
+                            tags.add('company_id', str(entry[0]))
+                    elif self._sql.isOS(word):
+                        entry = self._sql.getOS()
+                        try:
+                            prev_tag = tags_.pop()
+                            tags_.append(prev_tag)
+                            prev = words.pop()
+                            words.append(prev)
+                            if not tagIsDeterminantOrPreposition(prev_tag) or re.match(check_on, prev):
+                                raise # Add to tags
+                        except:
+                            tags.add('os_name', str(entry[1]))
+                            tags.add('os_id', str(entry[0]))
+                    elif self._sql.isProgLang(word):
+                        entry = self._sql.getProgLang()
+                        try:
+                            prev_tag = tags_.pop()
+                            tags_.append(prev_tag)
+                            if not tagIsDeterminantOrPreposition(prev_tag):
+                                raise # Add to tags
+                        except:
+                            tags.add('programming_language_name', str(entry[1]))
+                            tags.add('programming_language__id', str(entry[0]))
+                except ProgrammingError:
+                    pass
 
             if possible_software:
                 if tagIsNoun(tag):
                     pos_soft += word + " "
-                    if word == gram[len(gram)-1][0]:
+                    if word == gram[len(gram)-1][0]: # If 'word' is last word in n-gram
                         pos_soft = ""
                 else:
                     prev = words.pop()
@@ -185,25 +187,28 @@ class TweetTagger(object):
         # CHECK DB HERE? OR ABOVE
 
     def tag(self, pages):
+        total_tags = []
         for page in xrange(pages):
             res = self._sql.load_data(page)
             rows = res.num_rows()
             if not rows:
                 print "No tweets left to analyse"
                 break
-            for _i_ in range(6):#rows):
+            for _i_ in range(rows):
                 for tweet in res.fetch_row():
                     try:
                         tagged_tweet = self._tag(tweet)
-                        yield str(tagged_tweet) + '<br \>'
+                        print tagged_tweet
+                        total_tags.append(tagged_tweet)
                         # CHECK TAGS, ADD TO DB ETC HERE
                     except IncompleteTaggingError, e:
                         # Allow tagging again at a later stage
-                        yield str(tagged_tweet.get('tweet_db_id')) , ":", str(e) + '<br />'
-                        yield str(tweet) + '<br \>'
-                        yield '<br \>'
+                        print tagged_tweet.get('tweet_db_id') , ":", e
+                        print tweet
+                        print
 
         self._close()
+        return total_tags
 
     def _close(self):
         self._sql.close()

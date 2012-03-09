@@ -19,13 +19,11 @@
     </head>
 
     <body>
-        <form name="input" action="${action}" method="GET">
-            Server Username: <input type="text" name="user" /><br />
-            MySQL password: <input type="password" name="passwd" /><br />
-            <input class="input_control" name="local" type="checkbox" value="True"/> Debug Mode<br />
+        <form action="${action}" method="POST">
+           <input class="input_control" name="local" type="checkbox" value="True"/> Dev Mode<br />
+            Server Username: <input class="controlled" type="text" name="user" /><br />
             Server Host: <input class="controlled" type="text" name="host" /><br />
-            MySQL port: <input class="controlled" type="text" value="${sport}" name="sport" /><br />
-            MongoDB port: <input class="controlled" type="text" value="${mport}" name="mport" /><br />
+            MongoDB port: <input class="controlled" type="text" value="${port}" name="port" /><br />
             Database: <input type="text" name="db" /><br />
             <input type="submit" value="Submit" />
         </form>

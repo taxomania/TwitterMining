@@ -15,7 +15,7 @@ def _check_tunnel(port):
     ps.wait()
     return len(output.split('\n')) 
 
-def _create_ssh_sql_tunnel(user, host, port=3307):
+def create_ssh_sql_tunnel(user, host, port=3307):
     port=str(port)
     if _check_tunnel(port) <= 1:
         print 'Creating MySQL SSH tunnel to', user + '@' + host
@@ -26,10 +26,10 @@ def _create_ssh_sql_tunnel(user, host, port=3307):
         print 'MySQL SSH tunnel created'
 
 def create_ssh_tunnels(user, host, sqlport, mongoport):
-    _create_ssh_sql_tunnel(user,host, sqlport)
-    _create_ssh_mongo_tunnel(user,host, mongoport)
+    create_ssh_sql_tunnel(user,host, sqlport)
+    create_ssh_mongo_tunnel(user,host, mongoport)
 
-def _create_ssh_mongo_tunnel(user, host, port=28817):
+def create_ssh_mongo_tunnel(user, host, port=28817):
     port = str(port)
     if _check_tunnel(port) <= 1: 
         print 'Creating MongoDB SSH tunnel to', 

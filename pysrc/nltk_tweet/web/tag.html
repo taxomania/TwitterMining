@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Twitter Text Mining</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $('.input_control').attr('checked',true);
+                $('.controlled').attr('disabled', true);
+                $('.input_control').click(function(){
+                    if ($('.controlled').attr('disabled') == true){
+                        $('.controlled').attr('disabled', false);
+                    } else {
+                        $('.controlled').attr('disabled', true);
+                    }
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <form action="${action}" method="POST">
+            Server Username: <input type="text" name="user" required/><br />
+            MySQL password: <input type=password name="passwd" required/><br />
+            <input class="input_control" name="local" type="checkbox" value="True"/> Dev Mode<br />
+            Server Host: <input class="controlled" type="text" name="host" required/><br />
+            MySQL port: <input class="controlled" type="number" value="${sport}" name="sport" /><br />
+            MongoDB port: <input class="controlled" type="number" value="${mport}" name="mport" /><br />
+            Database: <input type="text" name="db" required/><br />
+            <input type="submit" value="Submit" />
+        </form>
+
+    </body>
+</html>
+
