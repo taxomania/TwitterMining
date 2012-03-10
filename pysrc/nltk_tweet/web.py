@@ -27,18 +27,28 @@ class Web(object):
     def __init__(self, dirs, module_dir='/tmp/mako_modules'):
         self.lookup = TemplateLookup(directories=dirs)#, module_directory=module_dir)
         self.nav = {'auth':'../auth', 'results':'../results', 'tag':'../tag'}
+        self._args = None
 
     @cherrypy.expose
     def index(self):
-        return self.lookup.get_template('index.html').render(**self.nav)
+        body = "You have "
+        if not self._args:
+            body += "not "
+        body += "been authenticated"
+        return self.lookup.get_template('index.html').render(body=body, **self.nav)
 
     @cherrypy.expose
     def auth(self):
+        if self._args:
+            return JavaScript.redirect('../')
         return self.lookup.get_template('auth.html').render(action='../ssh', mport=28817, sport=3307, **self.nav)
 
     @cherrypy.expose
     def tag(self):
-        return self.lookup.get_template('tag.html').render(sport=3307, mport=28817, action='../ssh/', **self.nav)
+        if self._args:
+            return self.lookup.get_template('empty.html').render(body="Extracting features" + JavaScript.redirect('../tagger'), **self.nav)
+        else:
+            raise cherrypy.HTTPRedirect('../tagger')
 
     @cherrypy.expose
     def results(self):
@@ -100,16 +110,13 @@ class Web(object):
 
         self._args.host = '127.0.0.1'
         self._args.H = 'localhost'
-        return 'Connecting...<br />' + JavaScript.redirect('../tagger/')
+        return self.lookup.get_template('empty.html').render(body='Extracting Features...', **self.nav) + JavaScript.redirect('../tagger/')
 
     @cherrypy.expose
     def tagger(self):
-        args = None
-        try:
-            args = self._args
-        except AttributeError:
-            raise cherrypy.HTTPRedirect('..')
-        tagger = TweetTagger(args)
+        if not self._args:
+            return JavaScript.redirect('../auth')
+        tagger = TweetTagger(self._args)
 
         return self.lookup.get_template('tag_results.html').render(tweets=tagger.tag(2), **self.nav)
 

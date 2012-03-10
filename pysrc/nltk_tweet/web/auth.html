@@ -2,14 +2,47 @@
 <%block name="script">
     ${self.js('/js/auth.js')}
 </%block>
+<%block name="style">
+    <style type="text/css">
+        #num { text-align:right; }
+    </style>
+</%block>
 <form action="${action}" method="POST">
-    Server Username: <input type="text" name="user" required/><br />
-    MySQL password: <input type="password" name="passwd" required/><br />
-    <input class="input_control" name="local" type="checkbox" value="True"/> Dev Mode<br />
-    Server Host: <input class="controlled" type="text" name="host" required/><br />
-    MySQL port: <input class="controlled" type="number" value="${sport}" name="sport" /><br />
-    MongoDB port: <input class="controlled" type="number" value="${mport}" name="mport" /><br />
-    Database: <input type="text" name="db" required/><br />
-    <input type="submit" value="Submit" />
+    <table>
+        <tr>
+            <td>MySQL Username:</td>
+            <td><input type="text" name="user" required/></td>
+        </tr>
+        <tr>
+            <td>MySQL password:</td>
+            <td><input type="password" name="passwd" required/></td>
+        </tr>
+        <tr>
+            <td id="num">
+                <input class="input_control" name="local" type="checkbox" value="True"/>
+            </td>
+            <td>Dev Mode</td>
+        </tr>
+        <tr>
+            <td>Server Host:</td>
+            <td><input class="controlled" type="text" name="host" required/></td>
+        </tr>
+        <tr>
+            <td>MySQL port:</td>
+            <td><input id="num" class="controlled" type="number" value="${sport}" name="sport" /></td>
+        </tr>
+        <tr>
+            <td>MongoDB port:</td>
+            <td><input id="num" class="controlled" type="number" value="${mport}" name="mport" /></td>
+        </tr>
+        <tr>
+            <td>Database:</td>
+            <td><input type="text" name="db" required/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Submit" /></td>
+        </tr>
+    </table>
 </form>
 
