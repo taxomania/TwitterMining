@@ -1,23 +1,13 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Twitter Text Mining</title>
-        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
-        <link rel="stylesheet" type="text/css" href="/css/bootstrap-responsive.min.css" />
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script type="text/javascript" src="/js/auth.js"></script>
-    </head>
+<%inherit file="base.html"/>
+<%block name="script">
+   ${self.js('/js/auth.js')}
+</%block>
+<form action="${action}" method="POST">
+    <input class="input_control" name="local" type="checkbox" value="True"/> Dev Mode<br />
+    Server Username: <input class="controlled" type="text" name="user" required/><br />
+    Server Host: <input class="controlled" type="text" name="host" required/><br />
+    MongoDB port: <input class="controlled" type="number" value="${port}" name="port" /><br />
+    Database: <input type="text" name="db" required/><br />
+    <input type="submit" value="Submit" />
+</form>
 
-    <body>
-        <%include file="nav.html"/>
-        <form action="${action}" method="POST">
-           <input class="input_control" name="local" type="checkbox" value="True"/> Dev Mode<br />
-            Server Username: <input class="controlled" type="text" name="user" required/><br />
-            Server Host: <input class="controlled" type="text" name="host" required/><br />
-            MongoDB port: <input class="controlled" type="number" value="${port}" name="port" /><br />
-            Database: <input type="text" name="db" required/><br />
-            <input type="submit" value="Submit" />
-        </form>
-
-    </body>
-</html>

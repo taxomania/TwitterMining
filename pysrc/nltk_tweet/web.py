@@ -26,7 +26,7 @@ class JavaScript(object):
 class Web(object):
     def __init__(self, dirs, module_dir='/tmp/mako_modules'):
         self.lookup = TemplateLookup(directories=dirs)#, module_directory=module_dir)
-        self.nav = {'results':'../results',  'tag':'../tag'}
+        self.nav = {'auth':'../auth', 'results':'../results', 'tag':'../tag'}
 
     @cherrypy.expose
     def index(self):
@@ -34,7 +34,7 @@ class Web(object):
 
     @cherrypy.expose
     def auth(self):
-        return self.lookup.get_template('auth.html').render(**self.nav)
+        return self.lookup.get_template('auth.html').render(action='../ssh', mport=28817, sport=3307, **self.nav)
 
     @cherrypy.expose
     def tag(self):
