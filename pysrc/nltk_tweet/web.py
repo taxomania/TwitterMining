@@ -7,6 +7,7 @@ import json
 
 import cherrypy
 from mako.template import Template
+from mako.lookup import TemplateLookup
 
 from argument_parser import argument_parser
 import ssh
@@ -23,17 +24,25 @@ class JavaScript(object):
         return '<script type="text/javascript">window.location="' + location + '";</script>'
 
 class Web(object):
+    def __init__(self, dirs, module_dir='/tmp/mako_modules'):
+        self.lookup = TemplateLookup(directories=dirs, module_directory=module_dir)
+        self.nav = {'results':'../results',  'tag':'../tag'}
+
     @cherrypy.expose
     def index(self):
-        return Template(filename='web/index.html').render(results='results/', tag='tag/')
+        return self.lookup.get_template('index.html').render(**self.nav)
+
+    @cherrypy.expose
+    def auth(self):
+        return self.lookup.get_template('auth.html').render(**self.nav)
 
     @cherrypy.expose
     def tag(self):
-        return Template(filename='web/tag.html').render(sport=3307, mport=28817, action='ssh/')
+        return self.lookup.get_template('tag.html').render(sport=3307, mport=28817, action='../ssh/', **self.nav)
 
     @cherrypy.expose
     def results(self):
-        return Template(filename='web/results.html').render(action='../searcher/', port=28817)
+        return self.lookup.get_template('results.html').render(action='../searcher/', port=28817, **self.nav)
 
     @cherrypy.expose
     def searcher(self, db, user=None, host=None, port=27017, local=False):
@@ -101,12 +110,21 @@ class Web(object):
         except AttributeError:
             raise cherrypy.HTTPRedirect('..')
         tagger = TweetTagger(args)
-        json_ = tagger.tag(2)
-        output = ''
-        for item in json_:
-            if item.contains('software_name'):
-                output+= json.dumps(item, sort_keys=True)+'<br />'
-        return output
 
-cherrypy.quickstart(Web())
+        return self.lookup.get_template('tag_results.html').render(tweets=tagger.tag(2), **self.nav)
+
+if __name__ == '__main__':
+    config = {
+              '/':{
+                   'tools.staticdir.root': "/Users/Tariq/Documents/Eclipse/workspace/TwitterMining/pysrc/nltk_tweet/web"
+                  },
+              '/css':{
+                      'tools.staticdir.on': True,
+                      'tools.staticdir.dir': 'css',
+                      'tools.staticdir.debug': True
+                     }
+             }
+    cherrypy.tree.mount(Web(dirs=['web']),'/', config=config)
+    cherrypy.engine.start()
+    cherrypy.engine.block()
 

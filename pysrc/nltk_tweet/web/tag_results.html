@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Twitter Text Mining</title>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+        <style type="text/css">
+            div#tweet {text-align:justify;width:50%;}
+            div.left {float:left}
+            div.right {float:right}
+            div.centre {text-align:center}
+        </style>
+    </head>
+
+    <body>
+        <%include file="nav.html"/>
+        <section id="tweets">
+        %   for tweet in tweets:
+            <%
+                software = tweet.get('software_name')
+                os = tweet.get('os_name')
+                company = tweet.get('company_name')
+                prog = tweet.get('programming_language_name')
+                version = tweet.get('version')
+                price = tweet.get('price')
+                url = tweet.get('url')
+                sentiment = tweet.get('sentiment')
+                tweet = tweet.get('tweet')
+             %>
+
+                <div id="tweet" width=50%>
+                    <h3 id="title">${tweet}</h3>
+                    <div class="left">Software:&#09;${software} v ${version}</div>
+                    <div class="right">OS:&#09;${os}</div><br />
+                    <div class="left">Company:&#09;${company}</div>
+                    <div class="right">ProgrammingLanguage:&#09;${prog}</div><br />
+                    <div class="left">Price:&#09;${price}</div>
+                    <div class="right">Sentiment:&#09;${sentiment}</div><br />
+                    % if url:
+                        <div class="centre"><a href="${url}" target="_blank">${url}</a></div><br />
+                    % endif
+                </div>
+                <br />
+        %   endfor 
+        </section>
+    </body>
+</html>
+

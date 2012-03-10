@@ -2,6 +2,7 @@
 <html>
     <head>
         <title>Twitter Text Mining</title>
+        <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function(){
@@ -19,6 +20,7 @@
     </head>
 
     <body>
+        <%include file="nav.html"/>
         <form action="${action}" method="POST">
             Server Username: <input type="text" name="user" required/><br />
             MySQL password: <input type="password" name="passwd" required/><br />

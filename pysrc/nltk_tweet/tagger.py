@@ -133,7 +133,7 @@ class TweetTagger(object):
                                 raise # Add to tags
                         except:
                             tags.add('programming_language_name', str(entry[1]))
-                            tags.add('programming_language__id', str(entry[0]))
+                            tags.add('programming_language_id', str(entry[0]))
                 except ProgrammingError:
                     pass
 
@@ -194,7 +194,7 @@ class TweetTagger(object):
             if not rows:
                 print "No tweets left to analyse"
                 break
-            for _i_ in range(rows):
+            for _i_ in range(5):#rows):
                 for tweet in res.fetch_row():
                     try:
                         tagged_tweet = self._tag(tweet)
