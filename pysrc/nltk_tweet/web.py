@@ -28,9 +28,11 @@ class Web(object):
         self.lookup = TemplateLookup(directories=dirs)#, module_directory=module_dir)
         self.nav = {'auth':'../auth', 'results':'../results', 'tag':'../tag'}
         self._args = None
+        self._page = None
 
     @cherrypy.expose
     def index(self):
+        self._page = '../'
         body = "You have "
         if not self._args:
             body += "not "
@@ -45,6 +47,7 @@ class Web(object):
 
     @cherrypy.expose
     def tag(self):
+        self._page='../tag'
         if self._args:
             return self.lookup.get_template('empty.html').render(body="Extracting features" + JavaScript.redirect('../tagger'), **self.nav)
         else:
@@ -110,7 +113,7 @@ class Web(object):
 
         self._args.host = '127.0.0.1'
         self._args.H = 'localhost'
-        return self.lookup.get_template('empty.html').render(body='Extracting Features...', **self.nav) + JavaScript.redirect('../tagger/')
+        return self.lookup.get_template('empty.html').render(body='Extracting Features...', **self.nav) + JavaScript.redirect(self._page)
 
     @cherrypy.expose
     def tagger(self):
@@ -121,10 +124,9 @@ class Web(object):
         return self.lookup.get_template('tag_results.html').render(tweets=tagger.tag(2), **self.nav)
 
 if __name__ == '__main__':
+    import os.path
     config = {
-              '/':{
-                   'tools.staticdir.root': "/Users/Tariq/Documents/Eclipse/workspace/TwitterMining/pysrc/nltk_tweet/web"
-                  },
+              '/':{'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)) + "/web"},
               '/css':{
                       'tools.staticdir.on': True,
                       'tools.staticdir.dir': 'css'
