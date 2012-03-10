@@ -25,7 +25,7 @@ class JavaScript(object):
 
 class Web(object):
     def __init__(self, dirs, module_dir='/tmp/mako_modules'):
-        self.lookup = TemplateLookup(directories=dirs, module_directory=module_dir)
+        self.lookup = TemplateLookup(directories=dirs)#, module_directory=module_dir)
         self.nav = {'results':'../results',  'tag':'../tag'}
 
     @cherrypy.expose
@@ -120,9 +120,12 @@ if __name__ == '__main__':
                   },
               '/css':{
                       'tools.staticdir.on': True,
-                      'tools.staticdir.dir': 'css',
-                      'tools.staticdir.debug': True
-                     }
+                      'tools.staticdir.dir': 'css'
+                     },
+              '/js':{
+                          'tools.staticdir.on': True,
+                          'tools.staticdir.dir': 'scripts'
+                         }
              }
     cherrypy.tree.mount(Web(dirs=['web']),'/', config=config)
     cherrypy.engine.start()
