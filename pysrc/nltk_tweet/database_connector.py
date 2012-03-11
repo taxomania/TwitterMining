@@ -6,6 +6,8 @@ Created on Dec 18, 2011
 
 from string import split
 
+from nltk import flatten
+
 import MySQLdb as sql
 import pymongo
 
@@ -140,6 +142,13 @@ class MongoConnector(object):
 
     def find_all(self):
         return self.tags.find()
+
+    def find_all_software_os(self):
+        cursor = self.find_all()
+        software = cursor.distinct('software_name')
+        os = cursor.distinct('os_name')
+        cursor.close()
+        return flatten(software,os)
 
     def _drop(self):
         self.tags.drop()

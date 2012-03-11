@@ -22,17 +22,13 @@ class ImgCreator(object):
             self._show_all()
         else:
             for word in args:
-                self.analyse_tool(self.get_cursor(word), word)
+                self.analyse(self.get_cursor(word), word)
 
     def _show_all(self):
-        cursor = self._mongo.find_all()
-        software = cursor.distinct("software_name")
-        os = cursor.distinct("os_name")
-        tools = flatten(software,os)
+        tools = self._mongo.find_all_software_os()
         print tools
-        cursor.close()
         for word in tools:
-            self.analyse_tool(self.get_cursor(word), word)
+            self.analyse(self.get_cursor(word), word)
 
     def close(self):
         self._mongo.close()
@@ -63,8 +59,8 @@ def main():
     args.H = 'localhost'
 
     imgc = ImgCreator(args)
-    print imgc.web_query('android')
-    #imgc.query(*sys.argv[1:])
+    #print imgc.web_query('android')
+    imgc.query(*sys.argv[1:])
     imgc.close()
     return 0
 
