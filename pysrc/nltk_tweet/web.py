@@ -61,31 +61,33 @@ class Web(object):
     def results(self):
         self._page='../results'
         if self._auth:
-            return self._template(body='Retrieving data'+ JavaScript.redirect('../search'))
+            return self._template(body='Retrieving data'+ JavaScript.redirect('../searcher'))
         raise cherrypy.HTTPRedirect('../auth')
 
     @cherrypy.expose
     def result(self, name):
         if not self._imgc:
             raise cherrypy.HTTPRedirect('../../auth')
-        data = self._imgc.web_query(name)
+        data, col = self._imgc.web_query(name)
         if not len(data):
             return self._template(body='That software has not been found')
-        return self._get_template(file='google-charts.html', title="Android", data=data)
+        return self._get_template(file='google-charts.html', title=name, data=data, colours=col)
 
     @cherrypy.expose
     def searcher(self):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
+        elements = self._mongo.find_all_software_os()
+        if not len(elements):
+            return self._template(body='No software has been found yet')
+        return self._get_template(file='show_results.html', action='../search', elements=elements)
 
     @cherrypy.expose
-    def search(self):
+    def search(self, software):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
 
-        name = 'Android' # stub
-
-        raise cherrypy.HTTPRedirect('result/%s' % name)
+        raise cherrypy.HTTPRedirect('result/%s' % software)
 
     def _get_template(self, file, **kwargs):
         kwargs.update(self._nav)

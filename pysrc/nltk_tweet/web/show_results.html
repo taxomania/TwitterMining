@@ -1,0 +1,9 @@
+<%inherit file="base.html"/>
+<form action="${action}" method="GET">
+    <select name="software" id="software">
+        % for element in elements:
+            <option value="${element}">${element}</option>
+        % endfor
+    </select><br />
+    <input type="submit" value="Go"/>
+</form>

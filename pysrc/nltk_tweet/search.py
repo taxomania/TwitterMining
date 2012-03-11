@@ -39,6 +39,7 @@ class ImgCreator(object):
     def analyse(self, cursor, tool):
         sentiments = cursor.distinct('sentiment')
         data = []
+        colours = []
         print cursor.count(),sentiments
         for sentiment in sentiments:
             count = 0
@@ -47,8 +48,14 @@ class ImgCreator(object):
                     count += 1
             data.append([str(sentiment),count])
             cursor.rewind()
+            if sentiment == 'neutral':
+                colours.append('blue')
+            elif sentiment == 'positive':
+                colours.append('green')
+            elif sentiment == 'negative':
+                colours.append('red')
         cursor.close()
-        return data
+        return data, colours
 
     def get_cursor(self, word):
         cursor = self._mongo.find(word)

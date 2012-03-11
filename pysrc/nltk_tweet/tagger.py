@@ -37,7 +37,8 @@ class TweetTagger(object):
 
     def _tag(self, tweet):
         tweet_id = str(tweet[0])
-        text = tweet[1].lower()
+        original = tweet[1]
+        text = original.lower().replace('#','')
         #text = "download 60 hundred pounds 72 million $800 billion pounds holiday havoc v2 in itunes for free 99"
 
         urls = find_url(text)
@@ -64,7 +65,7 @@ class TweetTagger(object):
 
         tagged_tweet = self._ngram_tagger(five_gram, tweet_id)
         tagged_tweet.add('sentiment', tweet[2])
-        tagged_tweet.add('tweet', text)
+        tagged_tweet.add('tweet', original)
         tagged_tweet.add('url', urls)
         tagged_tweet.add('version', versions)
         tagged_tweet.add('price', prices)

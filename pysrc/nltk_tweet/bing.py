@@ -25,7 +25,10 @@ class BingSearch:
         })
 
         _response_, contents = Http().request('http://api.bing.net/json.aspx?' + urlencode(kwargs))
-        return _BingResponse(json.loads(contents)['SearchResponse']['Web'])
+        try:
+            return _BingResponse(json.loads(contents)['SearchResponse']['Web'])
+        except ValueError:
+            raise ServerError('Could not connect to Bing')
 
 class _BingResponse(dict):
     def __init__(self, resp):
