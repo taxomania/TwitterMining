@@ -3,8 +3,6 @@ Created on Mar 6, 2012
 @author: Tariq Patel
 '''
 
-import json
-
 import cherrypy
 from mako.template import Template
 from mako.lookup import TemplateLookup
@@ -25,8 +23,8 @@ class JavaScript(object):
 
 class Web(object):
     def __init__(self, dirs, module_dir='/tmp/mako_modules'):
-        self._lookup = TemplateLookup(directories=dirs)#, module_directory=module_dir)
-        self._nav = {'auth':'../auth', 'results':'../results', 'tag':'../tag'}
+        self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
+        self._nav = {'results':'../results', 'tag':'../tag'}
         self._args = None
         self._page = '../'
 
@@ -42,7 +40,7 @@ class Web(object):
     @cherrypy.expose
     def auth(self):
         if self._args:
-            return JavaScript.redirect('../')
+            raise cherrypy.HTTPRedirect('../')
         return self._get_template('auth.html', action='../ssh', mport=28817, sport=3307)
 
     @cherrypy.expose
@@ -50,27 +48,27 @@ class Web(object):
         self._page='../tag'
         if self._args:
             return self._template(body="Extracting features" + JavaScript.redirect('../tagger'))
-        raise cherrypy.HTTPRedirect('../tagger')
+        raise cherrypy.HTTPRedirect('../auth')
 
     @cherrypy.expose
     def results(self):
         self._page='../results'
         if self._args:
             return self._template(body='Retrieving data'+ JavaScript.redirect('../search'))
-        raise cherrypy.HTTPRedirect('../search')
+        raise cherrypy.HTTPRedirect('../auth')
 
     @cherrypy.expose
     def search(self):
         if not self._args:
-            return JavaScript.redirect('../auth')
+            raise cherrypy.HTTPRedirect('../auth')
         return self._template(body='yo')
 
     def _get_template(self, file, **kwargs):
         kwargs.update(self._nav)
-        return self._lookup.get_template(file).render(**kwargs)
+        return self._tmpl.get_template(file).render(**kwargs)
 
     def _template(self, body):
-        return Template('<%inherit file="base.html"/>'+body,lookup=self.lookup).render(**self.nav)
+        return Template('<%inherit file="base.html"/>'+body,lookup=self._tmpl).render(**self._nav)
 
     @cherrypy.expose
     def ssh(self, user, passwd, db, host=None,
@@ -98,14 +96,12 @@ class Web(object):
         self._args.host = '127.0.0.1'
         self._args.H = 'localhost'
 
-        if self._page == '../tagger':
-            return self._template(body='Extracting Features...') + JavaScript.redirect(self._page)
-        return JavaScript.redirect(self._page)
+        raise cherrypy.HTTPRedirect(self._page)
 
     @cherrypy.expose
     def tagger(self):
         if not self._args:
-            return JavaScript.redirect('../auth')
+            raise cherrypy.HTTPRedirect('../auth')
         tagger = TweetTagger(self._args)
 
         return self._get_template('tag_results.html', tweets=tagger.tag(2))
