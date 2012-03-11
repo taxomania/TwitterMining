@@ -8,11 +8,13 @@ import os.path
 import cherrypy
 from mako.template import Template
 from mako.lookup import TemplateLookup
+import routes
 
 from argument_parser import argument_parser
 from search import ImgCreator
 import ssh
 from tagger import TweetTagger
+import url
 
 class JavaScript(object):
     @classmethod
@@ -30,6 +32,7 @@ class Web(object):
         self._nav = {'results':'../results', 'tag':'../tag'}
         self._args = None
         self._page = '../'
+        self._imgc = None
 
     @cherrypy.expose
     def index(self):
@@ -61,20 +64,22 @@ class Web(object):
         raise cherrypy.HTTPRedirect('../auth')
 
     @cherrypy.expose
-    def search(self):
-        if not self._args:
-            raise cherrypy.HTTPRedirect('../auth')
-
-        imgc = ImgCreator(self._args)
-        data=imgc.web_query('Android')
+    def result(self, name):
+        if not self._imgc:
+            raise cherrypy.HTTPRedirect('../../auth')
+        data = self._imgc.web_query(name)
         if not len(data):
             return self._template(body='That software has not been found')
         return self._get_template(file='google-charts.html', title="Android", data=data)
 
-        imgc.query()
-        imgc.close()
-        path = os.path.dirname(os.path.abspath(__file__)) + '/web/img'
-        return self._get_template(file='images.html', dirList=os.listdir(path))
+    @cherrypy.expose
+    def search(self):
+        if not self._args:
+            raise cherrypy.HTTPRedirect('../auth')
+
+        name = 'Android' # stub
+
+        raise cherrypy.HTTPRedirect('result/%s' % name)
 
     def _get_template(self, file, **kwargs):
         kwargs.update(self._nav)
@@ -109,6 +114,8 @@ class Web(object):
         self._args.host = '127.0.0.1'
         self._args.H = 'localhost'
 
+        self._imgc = ImgCreator(self._args)
+
         raise cherrypy.HTTPRedirect(self._page)
 
     @cherrypy.expose
@@ -119,9 +126,22 @@ class Web(object):
 
         return self._get_template('tag_results.html', tweets=tagger.tag(2))
 
+def setup_routes():
+    w = Web(dirs=['web'])
+    d = cherrypy.dispatch.RoutesDispatcher()
+    d.connect('main', '/:action', controller=w)
+    d.connect('main-1', '/:action/', controller=w)
+    d.connect('res', '/result/:name', controller=w, action='result')
+    d.connect('res-1', '/result/:name/', controller=w, action='result')
+    d.connect('index', '/', controller=w, action='index')
+    return d
+
 if __name__ == '__main__':
     config = {
-              '/':{'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)) + "/web"},
+              '/':{
+                   'request.dispatch': setup_routes(),
+                   'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)) + "/web"
+                  },
               '/css':{
                       'tools.staticdir.on': True,
                       'tools.staticdir.dir': 'css'
@@ -135,7 +155,7 @@ if __name__ == '__main__':
                       'tools.staticdir.dir': 'img'
                      }
              }
-    cherrypy.tree.mount(Web(dirs=['web']),'/', config=config)
+    cherrypy.tree.mount(None, config=config)
     cherrypy.engine.start()
     cherrypy.engine.block()
 
