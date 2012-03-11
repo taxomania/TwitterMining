@@ -26,7 +26,7 @@ class TweetTagger(object):
                                  user=args.user,
                                  passwd=args.password,
                                  db=args.db)
-        #self._mongo = MongoConnector(host=args.H, port=args.mongoport, db=args.db)
+        self._mongo = MongoConnector(host=args.H, port=args.mongoport, db=args.db)
         self._bing = BingSearch()
 
     def _tag(self, tweet):
@@ -200,7 +200,11 @@ class TweetTagger(object):
                         tagged_tweet = self._tag(tweet)
                         print tagged_tweet
                         total_tags.append(tagged_tweet)
+                        if (tagged_tweet.contains('software_id') or
+                            tagged_tweet.contains('os_id')):
+                            self._mongo.insert(**tagged_tweet)
                         # CHECK TAGS, ADD TO DB ETC HERE
+                        self._sql.setTagged(tagged_tweet.get('tweet_db_id'))
                     except IncompleteTaggingError, e:
                         # Allow tagging again at a later stage
                         print tagged_tweet.get('tweet_db_id') , ":", e
@@ -212,7 +216,7 @@ class TweetTagger(object):
 
     def _close(self):
         self._sql.close()
-        #self._mongo.close()
+        self._mongo.close()
 
 def main(args):
     tagger = TweetTagger(args)

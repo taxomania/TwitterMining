@@ -37,13 +37,14 @@ class ImgCreator(object):
         self._mongo.close()
 
     def piechart(self, title_, labels_, fracs):
-        figure(1, figsize=(6,6))
+        fig = figure(1, figsize=(6,6))
         ax = axes([0.1,0.1,0.8,0.8])
 
         pie(fracs, explode=None, labels=labels_, autopct='%1.1f%%', shadow=False)
         title(title_, bbox={'facecolor':'0.8', 'pad':5})
 
-        show()
+        #show()
+        fig.savefig(title_ + '.png')
 
     def analyse_tool(self, cursor, tool):
         sentiments = cursor.distinct("sentiment")
