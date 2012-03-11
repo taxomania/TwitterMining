@@ -66,7 +66,12 @@ class Web(object):
             raise cherrypy.HTTPRedirect('../auth')
 
         imgc = ImgCreator(self._args)
-        query=imgc.query()
+        data=imgc.web_query('Android')
+        if not len(data):
+            return self._template(body='That software has not been found')
+        return self._get_template(file='google-charts.html', title="Android", data=data)
+
+        imgc.query()
         imgc.close()
         path = os.path.dirname(os.path.abspath(__file__)) + '/web/img'
         return self._get_template(file='images.html', dirList=os.listdir(path))

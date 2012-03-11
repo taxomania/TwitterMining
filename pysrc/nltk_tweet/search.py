@@ -16,6 +16,10 @@ class ImgCreator(object):
     def __init__(self, args):
         self._mongo = MongoConnector(host=args.H, port=args.mongoport, db=args.db)
 
+    def web_query(self, word):
+        word = word.lower()
+        return self.analyse(self.get_cursor(word), word)
+
     def query(self, *args):
         if len(args) == 0:
             self._show_all()
@@ -46,6 +50,20 @@ class ImgCreator(object):
         #show()
         fig.savefig('web/img/' + title_ + '.png')
 
+    def analyse(self, cursor, tool):
+        sentiments = cursor.distinct('sentiment')
+        data = []
+        print cursor.count(),sentiments
+        for sentiment in sentiments:
+            count = 0
+            for tag in cursor:
+                if sentiment == tag['sentiment']:
+                    count += 1
+            data.append([str(sentiment),count])
+            cursor.rewind()
+        cursor.close()
+        return data
+
     def analyse_tool(self, cursor, tool):
         sentiments = cursor.distinct("sentiment")
         print sentiments
@@ -73,7 +91,8 @@ def main():
     args.H = 'localhost'
 
     imgc = ImgCreator(args)
-    imgc.query(*sys.argv[1:])
+    print imgc.web_query('android')
+    #imgc.query(*sys.argv[1:])
     imgc.close()
     return 0
 

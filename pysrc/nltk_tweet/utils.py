@@ -26,7 +26,7 @@ class Dictionary(dict):
             else:
                 if len(value) == 1:
                     value = value[0]
-                if not self[key] == value:
+                if not value in self[key]:
                     self[key] = flatten(self[key], value)
 
     def remove(self, key):

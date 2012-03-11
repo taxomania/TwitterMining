@@ -98,7 +98,7 @@ class TweetTagger(object):
                             prev_tag = tags_.pop()
                             tags_.append(prev_tag)
                             if not tagIsDeterminantOrPreposition(prev_tag):
-                                tags.add('software_name', str(entry[1]))
+                                tags.add('software_name', word)
                                 tags.add('software_id', str(entry[0]))
                         except:
                             possible_software = True
@@ -110,7 +110,7 @@ class TweetTagger(object):
                             if not tagIsDeterminantOrPreposition(prev_tag):
                                 raise # Add to tags
                         except:
-                            tags.add('company_name', str(entry[1]))
+                            tags.add('company_name', word)
                             tags.add('company_id', str(entry[0]))
                     elif self._sql.isOS(word):
                         entry = self._sql.getOS()
@@ -122,7 +122,7 @@ class TweetTagger(object):
                             if not tagIsDeterminantOrPreposition(prev_tag) or re.match(check_on, prev):
                                 raise # Add to tags
                         except:
-                            tags.add('os_name', str(entry[1]))
+                            tags.add('os_name', word)
                             tags.add('os_id', str(entry[0]))
                     elif self._sql.isProgLang(word):
                         entry = self._sql.getProgLang()
@@ -132,7 +132,7 @@ class TweetTagger(object):
                             if not tagIsDeterminantOrPreposition(prev_tag):
                                 raise # Add to tags
                         except:
-                            tags.add('programming_language_name', str(entry[1]))
+                            tags.add('programming_language_name', word)
                             tags.add('programming_language_id', str(entry[0]))
                 except ProgrammingError:
                     pass
