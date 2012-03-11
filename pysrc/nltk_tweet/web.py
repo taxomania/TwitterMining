@@ -3,6 +3,8 @@ Created on Mar 6, 2012
 @author: Tariq Patel
 '''
 
+import os.path
+
 import cherrypy
 from mako.template import Template
 from mako.lookup import TemplateLookup
@@ -66,7 +68,8 @@ class Web(object):
         imgc = ImgCreator(self._args)
         query=imgc.query()
         imgc.close()
-        return self._template(body='yo')
+        path = os.path.dirname(os.path.abspath(__file__)) + '/web/img'
+        return self._get_template(file='images.html', dirList=os.listdir(path))
 
     def _get_template(self, file, **kwargs):
         kwargs.update(self._nav)
@@ -112,7 +115,6 @@ class Web(object):
         return self._get_template('tag_results.html', tweets=tagger.tag(2))
 
 if __name__ == '__main__':
-    import os.path
     config = {
               '/':{'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)) + "/web"},
               '/css':{

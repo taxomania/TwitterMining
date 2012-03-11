@@ -44,7 +44,7 @@ class ImgCreator(object):
         title(title_, bbox={'facecolor':'0.8', 'pad':5})
 
         #show()
-        fig.savefig(title_ + '.png')
+        fig.savefig('web/img/' + title_ + '.png')
 
     def analyse_tool(self, cursor, tool):
         sentiments = cursor.distinct("sentiment")
