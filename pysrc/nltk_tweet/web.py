@@ -25,10 +25,10 @@ class JavaScript(object):
 
 class Web(object):
     def __init__(self, dirs, module_dir='/tmp/mako_modules'):
-        self.lookup = TemplateLookup(directories=dirs)#, module_directory=module_dir)
-        self.nav = {'auth':'../auth', 'results':'../results', 'tag':'../tag'}
+        self._lookup = TemplateLookup(directories=dirs)#, module_directory=module_dir)
+        self._nav = {'auth':'../auth', 'results':'../results', 'tag':'../tag'}
         self._args = None
-        self._page = None
+        self._page = '../'
 
     @cherrypy.expose
     def index(self):
@@ -37,56 +37,40 @@ class Web(object):
         if not self._args:
             body += "not "
         body += "been authenticated"
-        return self.lookup.get_template('index.html').render(body=body, **self.nav)
+        return self._get_template('index.html', body=body)
 
     @cherrypy.expose
     def auth(self):
         if self._args:
             return JavaScript.redirect('../')
-        return self.lookup.get_template('auth.html').render(action='../ssh', mport=28817, sport=3307, **self.nav)
+        return self._get_template('auth.html', action='../ssh', mport=28817, sport=3307)
 
     @cherrypy.expose
     def tag(self):
         self._page='../tag'
         if self._args:
-            return self.lookup.get_template('empty.html').render(body="Extracting features" + JavaScript.redirect('../tagger'), **self.nav)
-        else:
-            raise cherrypy.HTTPRedirect('../tagger')
+            return self._template(body="Extracting features" + JavaScript.redirect('../tagger'))
+        raise cherrypy.HTTPRedirect('../tagger')
 
     @cherrypy.expose
     def results(self):
-        return self.lookup.get_template('results.html').render(action='../searcher/', port=28817, **self.nav)
+        self._page='../results'
+        if self._args:
+            return self._template(body='Retrieving data'+ JavaScript.redirect('../search'))
+        raise cherrypy.HTTPRedirect('../search')
 
     @cherrypy.expose
-    def searcher(self, db, user=None, host=None, port=27017, local=False):
-        if not db:
-            return ('Please provide database name'
-                    + JavaScript.timed_redirect(location='../search/', time=1500))
-        if not local:
-            if not (user and host):
-                return ('Please fill in all details'
-                        + JavaScript.timed_redirect(location='../search/', time=1500))
-            else:
-                ssh.create_ssh_mongo_tunnel(user=user, host=host, port=port)
-                args = ('-u ' + user + ' -m ' + str(port) + ' -d ' + db)
-        else:
-            args = '-d ' + db
+    def search(self):
+        if not self._args:
+            return JavaScript.redirect('../auth')
+        return self._template(body='yo')
 
-        p = argument_parser()
-        self._search_args = p.parse_args(args.split())
+    def _get_template(self, file, **kwargs):
+        kwargs.update(self._nav)
+        return self._lookup.get_template(file).render(**kwargs)
 
-        self._search_args.host = '127.0.0.1'
-        return 'Connecting...<br />' + JavaScript.redirect('../searchres')
-
-    @cherrypy.expose
-    def searchres(self):
-        args = None
-        try:
-            args = self._search_args
-        except AttributeError:
-            raise cherrypy.HTTPRedirect('../search')
-
-        return 'yo'
+    def _template(self, body):
+        return Template('<%inherit file="base.html"/>'+body,lookup=self.lookup).render(**self.nav)
 
     @cherrypy.expose
     def ssh(self, user, passwd, db, host=None,
@@ -113,7 +97,10 @@ class Web(object):
 
         self._args.host = '127.0.0.1'
         self._args.H = 'localhost'
-        return self.lookup.get_template('empty.html').render(body='Extracting Features...', **self.nav) + JavaScript.redirect(self._page)
+
+        if self._page == '../tagger':
+            return self._template(body='Extracting Features...') + JavaScript.redirect(self._page)
+        return JavaScript.redirect(self._page)
 
     @cherrypy.expose
     def tagger(self):
@@ -121,7 +108,7 @@ class Web(object):
             return JavaScript.redirect('../auth')
         tagger = TweetTagger(self._args)
 
-        return self.lookup.get_template('tag_results.html').render(tweets=tagger.tag(2), **self.nav)
+        return self._get_template('tag_results.html', tweets=tagger.tag(2))
 
 if __name__ == '__main__':
     import os.path
