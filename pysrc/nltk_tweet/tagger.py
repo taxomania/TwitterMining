@@ -19,14 +19,20 @@ from text_utils import *
 from utils import Dictionary, IncompleteTaggingError
 
 class TweetTagger(object):
-    def __init__(self, args):
+    def __init__(self, sql=None, mongo=None, **kwargs):
         super(TweetTagger, self).__init__()
-        self._sql = SQLConnector(host=args.host,
-                                 port=args.port,
-                                 user=args.user,
-                                 passwd=args.password,
-                                 db=args.db)
-        self._mongo = MongoConnector(host=args.H, port=args.mongoport, db=args.db)
+        if not sql:
+            self._sql = SQLConnector(host=kwargs['host'],
+                                     port=kwargs['port'],
+                                     user=kwargs['user'],
+                                     passwd=kwargs['password'],
+                                     db=kwargs['db'])
+        else:
+            self._sql = sql
+        if not mongo:
+            self._mongo = MongoConnector(host=kwargs['H'], port=kwargs['mongoport'], db=kwargs['db'])
+        else:
+            self._mongo = mongo
         self._bing = BingSearch()
 
     def _tag(self, tweet):
@@ -211,16 +217,17 @@ class TweetTagger(object):
                         print tweet
                         print
 
-        self._close()
         return total_tags
 
-    def _close(self):
+    def close(self):
         self._sql.close()
         self._mongo.close()
 
 def main(args):
-    tagger = TweetTagger(args)
+    args = var(args)
+    tagger = TweetTagger(**args)
     tagger.tag(2)
+    tagger.close()
     return 0
 
 if __name__ == "__main__":

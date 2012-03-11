@@ -10,11 +10,10 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 import routes
 
-from argument_parser import argument_parser
+from database_connector import MongoConnector, SQLConnector
 from search import ImgCreator
 import ssh
 from tagger import TweetTagger
-import url
 
 class JavaScript(object):
     @classmethod
@@ -30,36 +29,38 @@ class Web(object):
     def __init__(self, dirs, module_dir='/tmp/mako_modules'):
         self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
         self._nav = {'results':'../results', 'tag':'../tag'}
-        self._args = None
         self._page = '../'
         self._imgc = None
+        self._sql = None
+        self._mongo = None
+        self._auth = False
 
     @cherrypy.expose
     def index(self):
         self._page = '../'
         body = "You have "
-        if not self._args:
+        if not self._auth:
             body += "not "
         body += "been authenticated"
         return self._get_template('index.html', body=body)
 
     @cherrypy.expose
     def auth(self):
-        if self._args:
+        if self._auth:
             raise cherrypy.HTTPRedirect('../')
         return self._get_template('auth.html', action='../ssh', mport=28817, sport=3307)
 
     @cherrypy.expose
     def tag(self):
         self._page='../tag'
-        if self._args:
+        if self._auth:
             return self._template(body="Extracting features" + JavaScript.redirect('../tagger'))
         raise cherrypy.HTTPRedirect('../auth')
 
     @cherrypy.expose
     def results(self):
         self._page='../results'
-        if self._args:
+        if self._auth:
             return self._template(body='Retrieving data'+ JavaScript.redirect('../search'))
         raise cherrypy.HTTPRedirect('../auth')
 
@@ -73,8 +74,13 @@ class Web(object):
         return self._get_template(file='google-charts.html', title="Android", data=data)
 
     @cherrypy.expose
+    def searcher(self):
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../auth')
+
+    @cherrypy.expose
     def search(self):
-        if not self._args:
+        if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
 
         name = 'Android' # stub
@@ -105,24 +111,26 @@ class Web(object):
                                        sqlport=sport,
                                        mongoport=mport)
 
-        p = argument_parser()
-        args = ('-u ' + user + ' -P ' + passwd
-                + ' -p ' + str(sport) + ' -m ' + str(mport)
-                + ' -d ' + db)
-        self._args = p.parse_args(args.split())
+        self._sql = SQLConnector(host='127.0.0.1',
+                                 user=user,
+                                 passwd=passwd,
+                                 db=db,
+                                 port=sport)
+        self._mongo = MongoConnector(host='localhost',
+                                     db=db,
+                                     port=mport)
 
-        self._args.host = '127.0.0.1'
-        self._args.H = 'localhost'
+        self._auth = True
 
-        self._imgc = ImgCreator(self._args)
+        self._imgc = ImgCreator(mongo=self._mongo)
 
         raise cherrypy.HTTPRedirect(self._page)
 
     @cherrypy.expose
     def tagger(self):
-        if not self._args:
+        if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
-        tagger = TweetTagger(self._args)
+        tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
 
         return self._get_template('tag_results.html', tweets=tagger.tag(2))
 

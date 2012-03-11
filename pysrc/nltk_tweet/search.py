@@ -10,8 +10,11 @@ from nltk import flatten
 from database_connector import MongoConnector
 
 class ImgCreator(object):
-    def __init__(self, args):
-        self._mongo = MongoConnector(host=args.H, port=args.mongoport, db=args.db)
+    def __init__(self, mongo=None, **kwargs):
+        if not mongo:
+            self._mongo = MongoConnector(host=kwargs['H'], port=kwargs['mongoport'], db=kwargs['db'])
+        else:
+            self._mongo = mongo
 
     def web_query(self, word):
         word = word.lower()
@@ -58,7 +61,8 @@ def main():
     args = argument_parser().parse_args('-d TwitterMining -m 27017'.split())
     args.H = 'localhost'
 
-    imgc = ImgCreator(args)
+    args = vars(args)
+    imgc = ImgCreator(**args)
     #print imgc.web_query('android')
     imgc.query(*sys.argv[1:])
     imgc.close()
