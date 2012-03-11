@@ -8,6 +8,7 @@ from mako.template import Template
 from mako.lookup import TemplateLookup
 
 from argument_parser import argument_parser
+from search import ImgCreator
 import ssh
 from tagger import TweetTagger
 
@@ -61,6 +62,10 @@ class Web(object):
     def search(self):
         if not self._args:
             raise cherrypy.HTTPRedirect('../auth')
+
+        imgc = ImgCreator(self._args)
+        query=imgc.query()
+        imgc.close()
         return self._template(body='yo')
 
     def _get_template(self, file, **kwargs):
@@ -120,7 +125,7 @@ if __name__ == '__main__':
                     },
               '/img':{
                       'tools.staticdir.on': True,
-                      'tools.staticdir.on': 'img'
+                      'tools.staticdir.dir': 'img'
                      }
              }
     cherrypy.tree.mount(Web(dirs=['web']),'/', config=config)

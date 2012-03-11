@@ -14,7 +14,7 @@ from database_connector import MongoConnector
 
 class ImgCreator(object):
     def __init__(self, args):
-        self._mongo = MongoConnector(host=args.host, port=args.mongoport, db=args.db)
+        self._mongo = MongoConnector(host=args.H, port=args.mongoport, db=args.db)
 
     def query(self, *args):
         if len(args) == 0:
@@ -68,7 +68,8 @@ class ImgCreator(object):
 
 def main():
     from argument_parser import argument_parser
-    args = argument_parser().parse_args('-h localhost -d TwitterMining -m 27017'.split())
+    args = argument_parser().parse_args('-d TwitterMining -m 27017'.split())
+    args.H = 'localhost'
 
     imgc = ImgCreator(args)
     imgc.query(*sys.argv[1:])
