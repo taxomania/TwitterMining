@@ -71,10 +71,11 @@ class Web(object):
         data, col = self._imgc.web_query(name)
         if not len(data):
             return self._template(body='That software has not been found')
-        return self._get_template(file='google-charts.html', title=name, data=data, colours=col)
+        return self._get_template(file='google-charts.html', button=self._page, title=name, data=data, colours=col)
 
     @cherrypy.expose
     def searcher(self):
+        self._page = '../searcher'
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
         elements = self._mongo.find_all_software_os()

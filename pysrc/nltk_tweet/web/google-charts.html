@@ -23,8 +23,6 @@
 
       // Set chart options
       var options = {'title':'Sentiment analysis on ${title}',
-                     'width':500,
-                     'height':400,
                      'colors':${colours}};
 
       // Instantiate and draw our chart, passing in some options.
@@ -33,5 +31,13 @@
     }
     </script>
 </%block>
+<%block name="style">
+    <style type="text/css">
+        #chart_div { width:500px; height:400px; }
+        form { text-align:right; width:50%;}
+    </style>
+</%block>
+<form>
+    <button formmethod="GET" formaction="${button}" type="submit">Back</button>
+</form>
 <div id="chart_div"/>
-
