@@ -69,7 +69,7 @@ class Web(object):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
         if tweet_id.isdigit():
-            raise cherrypy.HTTPRedirect('tweet/%s' % tweet_id)
+            return self._template(body="Loading..." + JavaScript.redirect('tweet/%s' % tweet_id))
         raise cherrypy.HTTPRedirect(self._page)
 
     @cherrypy.expose
@@ -113,7 +113,6 @@ class Web(object):
     def analysis(self, software):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
-
         raise cherrypy.HTTPRedirect('analysis/%s' % software)
 
     def _get_template(self, file, **kwargs):
