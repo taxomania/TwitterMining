@@ -78,8 +78,11 @@ class Web(object):
             raise cherrypy.HTTPRedirect('../../auth')
         if not tweet_id.isdigit():
             raise cherrypy.HTTPRedirect(self._page)
-        #STUB
-        return self._template(body=tweet_id)
+        tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
+        out = tagger.tag_by_tweet_id(tweet_id)
+        if not out:
+            return self._template(body='Tweet not found')
+        return self._get_template('tag_results.html', tweets=[out])
 
     @cherrypy.expose
     def results(self):
@@ -142,11 +145,12 @@ class Web(object):
                                      user=user,
                                      passwd=passwd,
                                      db=db,
-                                     port=sport)
+                                     port=int(sport))
             self._mongo = MongoConnector(host='localhost',
                                          db=db,
-                                         port=mport)
-        except:
+                                         port=int(mport))
+        except Exception, e:
+            print e
             raise cherrypy.HTTPRedirect('../auth')
 
         self._auth = True

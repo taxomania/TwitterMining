@@ -38,7 +38,7 @@ class TweetTagger(object):
     def _tag(self, tweet):
         tweet_id = str(tweet[0])
         original = tweet[1]
-        text = original.lower().replace('#','')
+        text = original.lower().replace('#','').strip()
         #text = "download 60 hundred pounds 72 million $800 billion pounds holiday havoc v2 in itunes for free 99"
 
         urls = find_url(text)
@@ -48,20 +48,9 @@ class TweetTagger(object):
         versions = find_version(text)
 
         words = regexp_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
-        #print words
         prices = find_price(words)
 
-        pos_ = pos(words)
-        print pos_
-
-        #ngrams_ = self._ngrams(pos_, 2)
-        n = 5
-        five_gram = None
-        while not five_gram:
-            # robustness for when tweet length is less than n
-            five_gram = ngrams(pos_, n)
-            n -= 1
-        #print five_gram
+        five_gram = self._create_ngram(tokenized=words, gram_length=5)
 
         tagged_tweet = self._ngram_tagger(five_gram, tweet_id)
         tagged_tweet.add('sentiment', tweet[2])
@@ -70,6 +59,14 @@ class TweetTagger(object):
         tagged_tweet.add('version', versions)
         tagged_tweet.add('price', prices)
         return tagged_tweet
+
+    def _create_ngram(self, tokenized, gram_length):
+        pos_ = pos(tokenized)
+        gram = None
+        while not gram: # In case tweet length less than gram_length
+            gram = ngrams(pos_, gram_length)
+            gram_length -= 1
+        return gram
 
     def _ngram_tagger(self, ngram, tweet_id):
         tags = Dictionary()
@@ -80,7 +77,6 @@ class TweetTagger(object):
         return tags
 
     def _tagger(self, gram, tags):
-        print gram
         words = []
         tags_ = []
         phrase = ""
@@ -173,7 +169,6 @@ class TweetTagger(object):
             elif re.match(check_get, word):
                 possible_software = True
 
-
             # Back in main part of loop
             words.append(word)
             tags_.append(tag)
@@ -193,7 +188,25 @@ class TweetTagger(object):
                     raise IncompleteTaggingError()
         # CHECK DB HERE? OR ABOVE
 
-    def tag(self, pages):
+    def tag_by_tweet_id(self, tweet_id):
+        return self._tag_tweet(tweet=self._sql.get_tweet(tweet_id), store=False)
+
+    def _tag_tweet(self, tweet, store=True):
+        try:
+            tagged_tweet = self._tag(tweet)
+            if store:
+                if (tagged_tweet.contains('software_id') or tagged_tweet.contains('os_id')):
+                    self._mongo.insert(**tagged_tweet)
+                    # CHECK TAGS, ADD TO DB ETC HERE
+                    self._sql.setTagged(tagged_tweet.get('tweet_db_id'))
+            return tagged_tweet
+        except IncompleteTaggingError, e:
+            # Allow tagging again at a later stage
+            print tweet, e
+            print
+            return None
+
+    def tag(self, pages, store=True):
         total_tags = []
         for page in xrange(pages):
             res = self._sql.load_data(page)
@@ -204,20 +217,9 @@ class TweetTagger(object):
             for _i_ in range(5):#rows):
                 for tweet in res.fetch_row():
                     try:
-                        tagged_tweet = self._tag(tweet)
-                        print tagged_tweet
-                        total_tags.append(tagged_tweet)
-                        if (tagged_tweet.contains('software_id') or
-                            tagged_tweet.contains('os_id')):
-                            self._mongo.insert(**tagged_tweet)
-                        # CHECK TAGS, ADD TO DB ETC HERE
-                        self._sql.setTagged(tagged_tweet.get('tweet_db_id'))
-                    except IncompleteTaggingError, e:
-                        # Allow tagging again at a later stage
-                        print tagged_tweet.get('tweet_db_id') , ":", e
-                        print tweet
-                        print
-
+                        total_tags.append(self._tag_tweet(tweet=tweet, store=store))
+                    except:
+                        pass
         return total_tags
 
     def close(self):

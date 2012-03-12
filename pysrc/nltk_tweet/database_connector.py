@@ -30,7 +30,7 @@ class SQLConnector(object):
         return self.db.store_result()
 
     def get_tweet(self, tweet_id):
-        self.db.query("SELECT id, text FROM tweet "
+        self.db.query("SELECT id, text, sentiment FROM tweet "
                       + "WHERE id='" + tweet_id + "'")
         tweet_tuple = self.db.store_result().fetch_row()
         if not len(tweet_tuple):
