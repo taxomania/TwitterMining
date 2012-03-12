@@ -61,11 +61,11 @@ class Web(object):
     def results(self):
         self._page='../results'
         if self._auth:
-            return self._template(body='Retrieving data'+ JavaScript.redirect('../searcher'))
+            return self._template(body='Retrieving data'+ JavaScript.redirect('../analyse'))
         raise cherrypy.HTTPRedirect('../auth')
 
     @cherrypy.expose
-    def result(self, name):
+    def aggregate(self, name):
         if not self._imgc:
             raise cherrypy.HTTPRedirect('../../auth')
         data, col = self._imgc.web_query(name)
@@ -74,21 +74,20 @@ class Web(object):
         return self._get_template(file='google-charts.html', button=self._page, title=name, data=data, colours=col)
 
     @cherrypy.expose
-    def searcher(self):
-        self._page = '../searcher'
+    def analyse(self):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
         elements = self._mongo.find_all_software_os()
         if not len(elements):
             return self._template(body='No software has been found yet')
-        return self._get_template(file='show_results.html', action='../search', elements=elements)
+        return self._get_template(file='show_results.html', action='../analysis', elements=elements)
 
     @cherrypy.expose
-    def search(self, software):
+    def analysis(self, software):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
 
-        raise cherrypy.HTTPRedirect('result/%s' % software)
+        raise cherrypy.HTTPRedirect('analysis/%s' % software)
 
     def _get_template(self, file, **kwargs):
         kwargs.update(self._nav)
@@ -142,8 +141,8 @@ def setup_routes():
     d = cherrypy.dispatch.RoutesDispatcher()
     d.connect('main', '/:action', controller=w)
     d.connect('main-1', '/:action/', controller=w)
-    d.connect('res', '/result/:name', controller=w, action='result')
-    d.connect('res-1', '/result/:name/', controller=w, action='result')
+    d.connect('res', '/analysis/:name', controller=w, action='aggregate')
+    d.connect('res-1', '/analysis/:name/', controller=w, action='aggregate')
     d.connect('index', '/', controller=w, action='index')
     return d
 
