@@ -28,7 +28,7 @@ class JavaScript(object):
 class Web(object):
     def __init__(self, dirs, module_dir='/tmp/mako_modules'):
         self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
-        self._nav = {'results':'../results', 'tag':'../tag'}
+        self._nav = {'results':'../results', 'tag':'../tag', 'examples':'../example'}
         self._page = '../'
         self._imgc = None
         self._sql = None
@@ -56,6 +56,30 @@ class Web(object):
         if self._auth:
             return self._template(body="Extracting features" + JavaScript.redirect('../tagger'))
         raise cherrypy.HTTPRedirect('../auth')
+
+    @cherrypy.expose
+    def example(self):
+        self._page='../example'
+        if self._auth:
+            return self._get_template('search_example.html', action='../tweet')
+        raise cherrypy.HTTPRedirect('../auth')
+
+    @cherrypy.expose
+    def tweet(self, tweet_id=None):
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../auth')
+        if tweet_id.isdigit():
+            raise cherrypy.HTTPRedirect('tweet/%s' % tweet_id)
+        raise cherrypy.HTTPRedirect(self._page)
+
+    @cherrypy.expose
+    def examples(self, tweet_id=None):
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../../auth')
+        if not tweet_id.isdigit():
+            raise cherrypy.HTTPRedirect(self._page)
+        #STUB
+        return self._template(body=tweet_id)
 
     @cherrypy.expose
     def results(self):
@@ -113,14 +137,17 @@ class Web(object):
                                        sqlport=sport,
                                        mongoport=mport)
 
-        self._sql = SQLConnector(host='127.0.0.1',
-                                 user=user,
-                                 passwd=passwd,
-                                 db=db,
-                                 port=sport)
-        self._mongo = MongoConnector(host='localhost',
+        try:
+            self._sql = SQLConnector(host='127.0.0.1',
+                                     user=user,
+                                     passwd=passwd,
                                      db=db,
-                                     port=mport)
+                                     port=sport)
+            self._mongo = MongoConnector(host='localhost',
+                                         db=db,
+                                         port=mport)
+        except:
+            raise cherrypy.HTTPRedirect('../auth')
 
         self._auth = True
 
@@ -143,6 +170,8 @@ def setup_routes():
     d.connect('main-1', '/:action/', controller=w)
     d.connect('res', '/analysis/:name', controller=w, action='aggregate')
     d.connect('res-1', '/analysis/:name/', controller=w, action='aggregate')
+    d.connect('example', '/tweet/:tweet_id', controller=w, action='examples')
+    d.connect('example-1', '/tweet/:tweet_id/', controller=w, action='examples')
     d.connect('index', '/', controller=w, action='index')
     return d
 
