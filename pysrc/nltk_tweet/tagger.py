@@ -214,7 +214,7 @@ class TweetTagger(object):
             if not rows:
                 print "No tweets left to analyse"
                 break
-            for _i_ in range(5):#rows):
+            for _i_ in range(rows):
                 for tweet in res.fetch_row():
                     try:
                         total_tags.append(self._tag_tweet(tweet=tweet, store=store))

@@ -143,7 +143,6 @@ class Web(object):
             tweet_ = tweet.split('\t')
             if len(tweet_) > 1:
                 tweets.append(tweet_)
-        print tweets
         return tweets
     ''' END TWITTER SEARCH API '''
 

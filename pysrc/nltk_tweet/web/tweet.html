@@ -1,7 +1,7 @@
 <%inherit file="base.html"/>
 <%block name="style">
     <style type="text/css">
-        div#tweet {text-align:justify;width:50%}
+        div#tweet {border-bottom:1px solid #000000;padding-left:1%;padding-right:1%;text-align:justify;width:65%;padding-top:1%;padding-bottom:1%}
         div.centre {text-align:center}
     </style>
 </%block>
@@ -44,8 +44,9 @@
             <div>Sentiment:&#09;${sentiment}</div>
         % endif
         % if url:
-            <div class="centre"><a href="${url}" target="_blank">${url}</a></div><br />
+            <div class="centre"><a href="${url}" target="_blank">${url}</a></div>
         % endif
+        <br />
     </div>
     <br />
     %   endfor 

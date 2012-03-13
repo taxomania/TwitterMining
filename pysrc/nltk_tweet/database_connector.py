@@ -20,7 +20,7 @@ class SQLConnector(object):
                               passwd=passwd,
                               db=db)
 
-    def load_data(self, page=0, max_results=100):
+    def load_data(self, page=0, max_results=15):
         self.db.query("SELECT id, text, sentiment FROM tweet "
                       + "WHERE keyword='latest' "
                       + "AND tagged=FALSE ORDER BY id DESC "
