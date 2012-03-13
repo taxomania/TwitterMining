@@ -29,19 +29,25 @@ class SQLConnector(object):
                       + str(max_results))
         return self.db.store_result()
 
-    def get_tweet_by_id(self, id):
-        return self._get_tweet(condition='tweet_id', id=id)
+    def get_tweets_by_keyword(self, word):
+        return self._get_tweets(condition='keyword', expected=word)
 
-    def _get_tweet(self, condition, id):
-        self.db.query("SELECT id, text, sentiment FROM tweet "
-                      + "WHERE " + condition + "='" + id +"'")
-        tweet_tuple = self.db.store_result().fetch_row()
-        if not len(tweet_tuple):
+    def get_tweet_by_id(self, id):
+        return self._get_tweet(condition='tweet_id', expected=id)
+
+    def _get_tweet(self, condition, expected):
+        tweet = self._get_tweets(condtion, expected).fetch_row()
+        if not len(tweet):
             return None
-        return tweet_tuple[0]
+        return tweet[0]
+
+    def _get_tweets(self, condition, expected):
+        self.db.query("SELECT id, text, sentiment FROM tweet "
+                      + "WHERE " + condition + "='" + expected +"'")
+        return self.db.store_result()
 
     def get_tweet(self, tweet_id):
-        return self._get_tweet(condition='id',id=tweet_id)
+        return self._get_tweet(condition='id',expected=tweet_id)
 
     def isSoftware(self, word):
         return self._isEntry("SELECT d.id, d.software_name "

@@ -115,7 +115,7 @@ public class SearchAPI {
         for (final JsonElement je : ja) {
             final Tweet t = parseJson(je.getAsJsonObject());
             if (t != null) {
-                // dbThread.addTask(new InsertKeywordTask(t, query));
+                dbThread.addTask(new InsertKeywordTask(t, query));
                 list.add(t);
             } // if
         } // for

@@ -37,7 +37,7 @@ class TweetTagger(object):
 
     def _tag(self, tweet):
         tweet_id = str(tweet[0])
-        original = tweet[1]
+        original = tweet[1].decode('utf-8', 'ignore')
         text = original.lower().replace('#','').strip()
         #text = "download 60 hundred pounds 72 million $800 billion pounds holiday havoc v2 in itunes for free 99"
 
@@ -206,10 +206,13 @@ class TweetTagger(object):
             print
             return None
 
-    def tag(self, pages, store=True):
+    def tag(self, pages=6, store=True, keyword=None):
         total_tags = []
         for page in xrange(pages):
-            res = self._sql.load_data(page)
+            if keyword:
+                res = self._sql.get_tweets_by_keyword(keyword)
+            else:
+                res = self._sql.load_data(page)
             rows = res.num_rows()
             if not rows:
                 print "No tweets left to analyse"

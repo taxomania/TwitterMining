@@ -133,7 +133,7 @@ class Web(object):
             raise cherrypy.HTTPRedirect('../../auth')
         tweets = self._search_twitter(query)
         if len(tweets):
-            return self._get_template('search_tweet.html', tweets=tweets)
+            return self._get_template('search_tweet.html', action='../extracting', tweets=tweets)
         return self._template(body='No tweets were found')
 
     def _search_twitter(self, query):
@@ -144,6 +144,19 @@ class Web(object):
             if len(tweet_) > 1:
                 tweets.append(tweet_)
         return tweets
+
+    @cherrypy.expose
+    def extracting(self, query):
+        if self._auth:
+            return self._template(body="Extracting features" + JavaScript.redirect('../extract/%s' % query))
+        raise cherrypy.HTTPRedirect('../auth')
+
+    @cherrypy.expose
+    def extract(self, query):
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../../auth')
+        tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
+        return self._get_template('tweet.html', tweets=tagger.tag(keyword=query))
     ''' END TWITTER SEARCH API '''
 
     ''' FEATURE EXTRACTION '''
@@ -232,6 +245,8 @@ def setup_routes(cp=None):
     d.connect('main-1', '/:action/', controller=w)
     d.connect('res', '/analysis/:name', controller=w, action='aggregate')
     d.connect('res-1', '/analysis/:name/', controller=w, action='aggregate')
+    d.connect('ext', '/extract/:query', controller=w, action='extract')
+    d.connect('ext-1', '/extract/:query/', controller=w, action='extract')
     d.connect('example', '/tweet/:tweet_id', controller=w, action='examples')
     d.connect('example-1', '/tweet/:tweet_id/', controller=w, action='examples')
     d.connect('search', '/twitter/:query', controller=w, action='tweets')
