@@ -28,7 +28,12 @@ class JavaScript(object):
 class Web(object):
     def __init__(self, dirs, module_dir='/tmp/mako_modules'):
         self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
-        self._nav = {'results':'../results', 'tag':'../tag', 'examples':'../example'}
+        self._nav = {
+                     'auth':'../auth',
+                     'results':'../results',
+                     'tag':'../tag',
+                     'examples':'../example'
+                    }
         self._page = '../'
         self._imgc = None
         self._sql = None
@@ -45,9 +50,19 @@ class Web(object):
         return self._get_template('index.html', body=body)
 
     @cherrypy.expose
+    def logout(self):
+        self._imgc = None
+        self._sql.close()
+        self._sql = None
+        self._mongo.close()
+        self._mongo = None
+        self._auth = None
+        raise cherrypy.HTTPRedirect('../auth')
+
+    @cherrypy.expose
     def auth(self):
         if self._auth:
-            raise cherrypy.HTTPRedirect('../')
+            return self._get_template('logout.html', action='../logout')
         return self._get_template('auth.html', action='../ssh', mport=28817, sport=3307)
 
     @cherrypy.expose
@@ -82,7 +97,7 @@ class Web(object):
         out = tagger.tag_by_tweet_id(tweet_id)
         if not out:
             return self._template(body='Tweet not found')
-        return self._get_template('tag_results.html', tweets=[out])
+        return self._get_template('tweet.html', tweets=[out])
 
     @cherrypy.expose
     def results(self):
@@ -164,7 +179,7 @@ class Web(object):
             raise cherrypy.HTTPRedirect('../auth')
         tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
 
-        return self._get_template('tag_results.html', tweets=tagger.tag(2))
+        return self._get_template('tweet.html', tweets=tagger.tag(2))
 
 def setup_routes():
     w = Web(dirs=['web'])
