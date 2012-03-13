@@ -1,0 +1,15 @@
+<%inherit file="base.html"/>
+<%block name="style">
+    <style type="text/css">
+        table { text-align:justify;width:65%;}
+        td {border-bottom:1px solid #000000;padding-bottom:1%;padding-top:1%;}
+        td div {padding-left:2%;padding-right:2%;}
+    </style>
+</%block>
+<table>
+    % for tweet in tweets:
+        <tr>
+            <td><div>${tweet[1]}</div></td>
+        </tr>
+    % endfor
+</table>

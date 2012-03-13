@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -15,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import uk.ac.manchester.cs.patelt9.twitter.data.DatabaseThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.SQLThread;
 import uk.ac.manchester.cs.patelt9.twitter.data.Tweet;
+import uk.ac.manchester.cs.patelt9.twitter.data.TweetVerbose;
 import uk.ac.manchester.cs.patelt9.twitter.data.User;
 import uk.ac.manchester.cs.patelt9.twitter.data.db.task.InsertKeywordTask;
 
@@ -25,13 +28,16 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
 public class SearchAPI {
-    private static final String BASE_URL =
-            "http://search.twitter.com/search.json?rpp=100&include_entities=false&q=";
+    private static final String BASE_URL = "http://search.twitter.com/search.json?rpp=100&include_entities=false&q=";
     private final String url;
     private final String query;
 
     public static void main(String[] args) throws SQLException {
-        // new SearchAPI("software").doAll(); // TEST
+        if (args.length < 1) {
+            System.out.println("Please provide a search term");
+        } else {
+            new SearchAPI(args[0]).doAll(); // TEST
+        }
     } // main(String[])
 
     private DatabaseThread dbThread = null;
@@ -39,7 +45,7 @@ public class SearchAPI {
     public SearchAPI(final String q) throws SQLException {
         query = q;
         url = BASE_URL + query;
-        dbThread = new SQLThread();
+        dbThread = new SQLThread(false);
         dbThread.start();
     } // SearchAPI(String)
 
@@ -59,7 +65,10 @@ public class SearchAPI {
     } // performSearch()
 
     public void doAll() {
-        parseResponse(performSearch());
+        final List<Tweet> tweets = parseResponse(performSearch());
+        for (final Tweet t : tweets){
+            System.out.println(t.toString());
+        }
         close();
     } // doAll()
 
@@ -70,7 +79,7 @@ public class SearchAPI {
         } // if
     } // close()
 
-    private void parseResponse(final HttpResponse response) {
+    private List<Tweet> parseResponse(final HttpResponse response) {
         if (response != null) {
             JsonReader jr = null;
             try {
@@ -78,7 +87,7 @@ public class SearchAPI {
                         .getContent())));
                 final JsonParser jp = new JsonParser();
                 final JsonObject jo = jp.parse(jr).getAsJsonObject();
-                parseJsonResponse(jo);
+                return parseJsonResponse(jo);
             } catch (final IllegalStateException e) {
                 e.printStackTrace();
             } catch (final IOException e) {
@@ -93,16 +102,21 @@ public class SearchAPI {
                 } // if
             } // finally
         } // if
+        return null;
     } // parseResponse(HttpResponse)
 
-    private void parseJsonResponse(final JsonObject jo) {
-        parseJson(jo.getAsJsonArray("results"));
+    private List<Tweet> parseJsonResponse(final JsonObject jo) {
+        return parseJson(jo.getAsJsonArray("results"));
     } // parseJsonResponse(JsonObject)
 
-    private void parseJson(final JsonArray ja) {
+    private List<Tweet> parseJson(final JsonArray ja) {
+        final List<Tweet> list = new ArrayList<Tweet>();
         for (final JsonElement je : ja) {
-            dbThread.addTask(new InsertKeywordTask(parseJson(je.getAsJsonObject()), query));
+            final Tweet t = parseJson(je.getAsJsonObject());
+            //dbThread.addTask(new InsertKeywordTask(t, query));
+            list.add(t);
         } // for
+        return list;
     } // parseJson(JsonArray)
 
     private Tweet parseJson(final JsonObject jo) {
@@ -116,9 +130,7 @@ public class SearchAPI {
         final String tweet = jo.getAsJsonPrimitive("text").getAsString();
         final long tweetId = jo.getAsJsonPrimitive("id_str").getAsLong();
 
-        // System.out.println(user.getUsername() + " tweeted \"" + tweet + "\" at " + createdAt);
-
-        return new Tweet(tweetId, tweet, createdAt, user);
+        return new TweetVerbose(tweetId, tweet, createdAt, user);
     } // parseJson(JsonObject)
 
     protected static String parseCreatedAtForSql(final String date) {

@@ -18,8 +18,8 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationExceptio
  */
 public abstract class SQLConnector implements DatabaseConnector {
     private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DB_URL = "jdbc:mysql://gnode1.mib.man.ac.uk:3306/prj_mbax9tp2";
-    //private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining"; // TESTING
+    //private static final String DB_URL = "jdbc:mysql://gnode1.mib.man.ac.uk:3306/prj_mbax9tp2";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/TwitterMining"; // TESTING
     public static final int DB_ERROR = -1;
 
     private static String dbUser = null, dbPass = null;
@@ -28,7 +28,7 @@ public abstract class SQLConnector implements DatabaseConnector {
 
     static {
         // sqluserpass.txt for localhost
-        final String[] details = StaticFunctions.getDetails("sqlgnode.txt").split(":");
+        final String[] details = StaticFunctions.getDetails("sqluserpass.txt").split(":");
         try {
             dbUser = details[0];
             dbPass = details[1];

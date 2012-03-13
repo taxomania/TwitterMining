@@ -3,6 +3,8 @@ Created on Mar 6, 2012
 @author: Tariq Patel
 '''
 
+import subprocess
+
 import cherrypy
 from mako.template import Template
 from mako.lookup import TemplateLookup
@@ -24,13 +26,15 @@ class JavaScript(object):
         return '<script type="text/javascript">window.location="' + location + '";</script>'
 
 class Web(object):
-    def __init__(self, dirs, module_dir='/tmp/mako_modules'):
+    def __init__(self, dirs, java_classpath, module_dir='/tmp/mako_modules'):
         self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
+        self._java_search = 'java -cp ' + java_classpath + ' uk.ac.manchester.cs.patelt9.twitter.SearchAPI '
         self._nav = {
                      'auth':'../auth',
                      'results':'../results',
                      'tag':'../tag',
-                     'examples':'../example'
+                     'examples':'../example',
+                     'search':'../twitter'
                     }
         self._page = '../'
         self._init()
@@ -40,6 +44,39 @@ class Web(object):
         self._mongo = None
         self._imgc = None
         self._auth = False
+
+    @cherrypy.expose
+    def twitter(self):
+        self._page='../twitter'
+        if self._auth:
+            return self._get_template('search.html', action='../twittersearch')
+        raise cherrypy.HTTPRedirect('../auth')
+
+    @cherrypy.expose
+    def twittersearch(self, query):
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../auth')
+        return self._template(body="Searching Twitter..." + JavaScript.redirect('twitter/%s' % query))
+
+    @cherrypy.expose
+    def tweets(self, query):
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../../auth')
+        tweets = self._search_twitter(query)
+        if len(tweets):
+            return self._get_template('search_tweet.html', tweets=tweets)
+        else:
+            return self._template(body='No tweets were found')
+
+    def _search_twitter(self, query):
+        tweets_ = subprocess.check_output(self._java_search + query, shell=True).strip().decode('utf-8', 'ignore').split('\n')
+        tweets = []
+        for tweet in tweets_:
+            tweet_ = tweet.split('\t')
+            if len(tweet_) > 1:
+                tweets.append(tweet_)
+        print tweets
+        return tweets
 
     @cherrypy.expose
     def index(self):
@@ -179,8 +216,8 @@ class Web(object):
 
         return self._get_template('tweet.html', tweets=tagger.tag(2))
 
-def setup_routes():
-    w = Web(dirs=['web'])
+def setup_routes(cp=None):
+    w = Web(dirs=['web'], java_classpath=cp)
     d = cherrypy.dispatch.RoutesDispatcher()
     d.connect('main', '/:action', controller=w)
     d.connect('main-1', '/:action/', controller=w)
@@ -188,14 +225,18 @@ def setup_routes():
     d.connect('res-1', '/analysis/:name/', controller=w, action='aggregate')
     d.connect('example', '/tweet/:tweet_id', controller=w, action='examples')
     d.connect('example-1', '/tweet/:tweet_id/', controller=w, action='examples')
+    d.connect('search', '/twitter/:query', controller=w, action='tweets')
+    d.connect('search-1', '/twitter/:query/', controller=w, action='tweets')
     d.connect('index', '/', controller=w, action='index')
     return d
 
 if __name__ == '__main__':
     import os.path
+    with open('classpath.txt', 'r') as f:
+        cp = f.readline().strip()
     config = {
               '/':{
-                   'request.dispatch': setup_routes(),
+                   'request.dispatch': setup_routes(cp),
                    'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)) + "/web"
                   },
               '/css':{

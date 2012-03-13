@@ -16,8 +16,12 @@ public final class SQLThread extends DatabaseThread {
      * @throws SQLException
      */
     public SQLThread() throws SQLException {
-        this("SQL");
+        this(true);
     } // SQLThread()
+
+    public SQLThread(final boolean print) throws SQLException {
+        this("SQL", print);
+    }
 
     /**
      * Class constructor taking the Thread's name as a parameter.
@@ -31,6 +35,15 @@ public final class SQLThread extends DatabaseThread {
      * @see TweetSQLConnector
      */
     public SQLThread(final String s) throws SQLException {
-        super(s, TweetSQLConnector.getInstance());
+        this(s, true);
+    } // SQLThread(String)
+
+    public SQLThread(final String s, final boolean print) throws SQLException {
+        this(s, TweetSQLConnector.getInstance(), print);
+    } // SQLThread(String, boolean)
+
+    public SQLThread(final String s, final TweetSQLConnector t, final boolean print)
+            throws SQLException {
+        super(s, t, print);
     } // SQLThread(String)
 } // SQLThread

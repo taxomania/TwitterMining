@@ -18,6 +18,7 @@ public abstract class DatabaseThread extends Thread {
     private final List<DatabaseTask> taskList = new ArrayList<DatabaseTask>();
     private int affectedRows = 0;
     private TweetDatabaseConnector db;
+    private final boolean print;
 
     /**
      * Constructor taking thread name and a DatabaseConnector object
@@ -28,9 +29,14 @@ public abstract class DatabaseThread extends Thread {
      *            TweetDatabaseConnector object
      */
     public DatabaseThread(final String s, final TweetDatabaseConnector connector) {
+        this(s, connector, true);
+    } // DatabaseThread(String, TweetDatabaseConnector)
+
+    public DatabaseThread(final String s, final TweetDatabaseConnector connector, final boolean b){
         super(s);
         db = connector;
-    } // DatabaseThread(String, TweetDatabaseConnector)
+        print = b;
+    } // DatabaseThread(String, TweetDatabaseConnector, boolean)
 
     /**
      * Call doTask() method for each DatabaseTask in the queue.
@@ -59,7 +65,9 @@ public abstract class DatabaseThread extends Thread {
             } // while
         } // synchronized
         db.close();
-        System.out.println(affectedRows + " rows affected");
+        if (print){
+            System.out.println(affectedRows + " rows affected");
+        } // if
         super.interrupt();
     } // interrupt()
 
