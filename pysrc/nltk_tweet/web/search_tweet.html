@@ -2,14 +2,15 @@
 <%block name="style">
     <style type="text/css">
         table { text-align:justify;width:65%;}
-        td {border-bottom:1px solid #000000;padding-bottom:1%;padding-top:1%;}
-        td div {padding-left:2%;padding-right:2%;}
+        td {border-bottom:1px solid #000000;padding-bottom:3%;padding-top:3%;}
+        td div#tweet {padding-left:2%;padding-right:2%;}
+        div#tweet {font-size:1.3em}
     </style>
 </%block>
 <table>
     % for tweet in tweets:
         <tr>
-            <td><div>${tweet[1]}</div></td>
+            <td><div id="tweet">${tweet[1]}</div></td>
         </tr>
     % endfor
 </table>

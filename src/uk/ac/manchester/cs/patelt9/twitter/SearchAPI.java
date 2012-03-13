@@ -29,6 +29,7 @@ import com.google.gson.stream.JsonReader;
 
 public class SearchAPI {
     private static final String BASE_URL = "http://search.twitter.com/search.json?rpp=100&include_entities=false&q=";
+    private static final String DESIRED_LANGUAGE = "en";
     private final String url;
     private final String query;
 
@@ -66,7 +67,7 @@ public class SearchAPI {
 
     public void doAll() {
         final List<Tweet> tweets = parseResponse(performSearch());
-        for (final Tweet t : tweets){
+        for (final Tweet t : tweets) {
             System.out.println(t.toString());
         }
         close();
@@ -113,13 +114,18 @@ public class SearchAPI {
         final List<Tweet> list = new ArrayList<Tweet>();
         for (final JsonElement je : ja) {
             final Tweet t = parseJson(je.getAsJsonObject());
-            //dbThread.addTask(new InsertKeywordTask(t, query));
-            list.add(t);
+            if (t != null) {
+                // dbThread.addTask(new InsertKeywordTask(t, query));
+                list.add(t);
+            } // if
         } // for
         return list;
     } // parseJson(JsonArray)
 
     private Tweet parseJson(final JsonObject jo) {
+        final String lang = jo.getAsJsonPrimitive("iso_language_code").getAsString();
+        if (!DESIRED_LANGUAGE.equals(lang)) { return null; }
+
         final String createdAt = parseCreatedAtForSql(jo.getAsJsonPrimitive("created_at")
                 .getAsString());
 
