@@ -133,7 +133,7 @@ class Web(object):
             raise cherrypy.HTTPRedirect('../../auth')
         tweets = self._search_twitter(query)
         if len(tweets):
-            return self._get_template('search_tweet.html', action='../extracting', tweets=tweets)
+            return self._get_template('search_tweet.html', action='../extracting', query=query, tweets=tweets)
         return self._template(body='No tweets were found')
 
     def _search_twitter(self, query):
