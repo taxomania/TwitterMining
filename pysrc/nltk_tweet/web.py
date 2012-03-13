@@ -3,8 +3,6 @@ Created on Mar 6, 2012
 @author: Tariq Patel
 '''
 
-import os.path
-
 import cherrypy
 from mako.template import Template
 from mako.lookup import TemplateLookup
@@ -35,9 +33,12 @@ class Web(object):
                      'examples':'../example'
                     }
         self._page = '../'
-        self._imgc = None
+        self._init()
+
+    def _init(self):
         self._sql = None
         self._mongo = None
+        self._imgc = None
         self._auth = False
 
     @cherrypy.expose
@@ -51,12 +52,9 @@ class Web(object):
 
     @cherrypy.expose
     def logout(self):
-        self._imgc = None
         self._sql.close()
-        self._sql = None
         self._mongo.close()
-        self._mongo = None
-        self._auth = None
+        self._init()
         raise cherrypy.HTTPRedirect('../auth')
 
     @cherrypy.expose
@@ -194,6 +192,7 @@ def setup_routes():
     return d
 
 if __name__ == '__main__':
+    import os.path
     config = {
               '/':{
                    'request.dispatch': setup_routes(),
