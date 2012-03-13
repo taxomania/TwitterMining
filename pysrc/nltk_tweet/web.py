@@ -206,11 +206,7 @@ if __name__ == '__main__':
               '/js':{
                      'tools.staticdir.on': True,
                      'tools.staticdir.dir': 'js'
-                    },
-              '/img':{
-                      'tools.staticdir.on': True,
-                      'tools.staticdir.dir': 'img'
-                     }
+                    }
              }
     cherrypy.tree.mount(None, config=config)
     cherrypy.engine.start()
