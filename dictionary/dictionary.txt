@@ -387,3 +387,4 @@ Radeon
 Daemon tools
 iTunes Match	service
 emacs
+Firefox

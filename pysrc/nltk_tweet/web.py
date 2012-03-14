@@ -14,6 +14,7 @@ from database_connector import MongoConnector, SQLConnector
 from search import ImgCreator
 import ssh
 from tagger import TweetTagger
+from twittersentiment import bulk_analysis
 
 class JavaScript(object):
     @classmethod
@@ -188,6 +189,7 @@ class Web(object):
     def extract(self, query):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../../auth')
+        #bulk_analysis(sql=self._sql, keyword=query)
         tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
         return self._get_template('tweet.html', tweets=tagger.tag(keyword=query))
     ''' END TWITTER SEARCH API '''
@@ -197,7 +199,7 @@ class Web(object):
     def tag(self):
         self._page='../tag'
         if self._auth:
-            return self._template(body="Extracting features" + JavaScript.redirect('../tagger'))
+            return self._template(body="Extracting features.." + JavaScript.redirect('../tagger'))
         raise cherrypy.HTTPRedirect('../auth')
 
     @cherrypy.expose

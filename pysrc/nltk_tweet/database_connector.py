@@ -29,6 +29,11 @@ class SQLConnector(object):
                       + str(max_results))
         return self.db.store_result()
 
+    def get_tweets_keyword_nosentiment(self, word):
+        self.db.query("SELECT id, text FROM tweet "
+                      + "WHERE sentiment IS NULL AND keyword='" + word +"' LIMIT 100")
+        return self.db.store_result()
+
     def get_tweets_by_keyword(self, word):
         return self._get_tweets(condition='keyword', expected=word)
 
@@ -48,6 +53,14 @@ class SQLConnector(object):
 
     def get_tweet(self, tweet_id):
         return self._get_tweet(condition='id',expected=tweet_id)
+
+    def update_sentiment(self, id, sentiment, score):
+        c = self.db.cursor()
+        c.execute("UPDATE tweet SET sentiment='" + sentiment
+                  + "', sentiment_score='" + score
+                  + "' WHERE id='" + id + "'")
+        c.close()
+        self.db.commit()
 
     def isSoftware(self, word):
         return self._isEntry("SELECT d.id, d.software_name "
@@ -163,7 +176,7 @@ class MongoConnector(object):
         os = cursor.distinct('os_name')
         company = cursor.distinct('company_name')
         cursor.close()
-        return flatten(software,os,company)
+        return flatten(flatten(software,os),company)
 
     def drop(self):
         self.tags.drop()

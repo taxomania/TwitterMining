@@ -19,7 +19,7 @@ from text_utils import *
 from utils import Dictionary, IncompleteTaggingError
 
 class TweetTagger(object):
-    def __init__(self, sql=None, mongo=None, **kwargs):
+    def __init__(self, sql=None, mongo=None, keyword=None, **kwargs):
         super(TweetTagger, self).__init__()
         if not sql:
             self._sql = SQLConnector(host=kwargs['host'],
@@ -33,6 +33,8 @@ class TweetTagger(object):
             self._mongo = MongoConnector(host=kwargs['H'], port=kwargs['mongoport'], db=kwargs['db'])
         else:
             self._mongo = mongo
+        if keyword:
+            self._keyword = keyword
         self._bing = BingSearch()
 
     def _tag(self, tweet):
@@ -71,6 +73,20 @@ class TweetTagger(object):
     def _ngram_tagger(self, ngram, tweet_id):
         tags = Dictionary()
         tags.add('tweet_db_id', tweet_id)
+        if self._keyword:
+            keyword = self._keyword
+            if self._sql.isSoftware(keyword):
+                entry = self._sql.getSoftware()
+                tags.add('software_name', keyword)
+                tags.add('software_id', str(entry[0]))
+            elif self._sql.isCompany(keyword):
+                entry = self._sql.getCompany()
+                tags.add('company_name', keyword)
+                tags.add('company_id', str(entry[0]))
+            elif self._sql.isOS(keyword):
+                entry = self._sql.getOS()
+                tags.add('os_name', keyword)
+                tags.add('os_id', str(entry[0]))
 
         for tagged_words in ngram:
             self._tagger(tagged_words, tags)
@@ -101,7 +117,7 @@ class TweetTagger(object):
                             prev_tag = tags_.pop()
                             tags_.append(prev_tag)
                             if not tagIsDeterminantOrPreposition(prev_tag):
-                                tags.add('software_name', word)
+                                tags.add('software_name',word)
                                 tags.add('software_id', str(entry[0]))
                         except:
                             possible_software = True
@@ -113,7 +129,7 @@ class TweetTagger(object):
                             if not tagIsDeterminantOrPreposition(prev_tag):
                                 raise # Add to tags
                         except:
-                            tags.add('company_name', word)
+                            tags.add('company_name',word)
                             tags.add('company_id', str(entry[0]))
                     elif self._sql.isOS(word):
                         entry = self._sql.getOS()
@@ -210,8 +226,10 @@ class TweetTagger(object):
         total_tags = []
         for page in xrange(pages):
             if keyword:
+                self._keyword=keyword
                 res = self._sql.get_tweets_by_keyword(keyword)
             else:
+                self._keyword = None
                 res = self._sql.load_data(page)
             rows = res.num_rows()
             if not rows:
