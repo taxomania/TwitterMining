@@ -28,13 +28,15 @@ class JavaScript(object):
 class Web(object):
     def __init__(self, dirs, java_classpath, module_dir='/tmp/mako_modules'):
         self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
-        self._java_search = 'java -cp ' + java_classpath + ' uk.ac.manchester.cs.patelt9.twitter.SearchAPI '
+        self._java = 'java -cp ' + java_classpath + ' uk.ac.manchester.cs.patelt9.twitter.'
         self._nav = {
                      'auth':'../auth',
                      'results':'../results',
                      'tag':'../tag',
                      'examples':'../example',
-                     'search':'../twitter'
+                     'search':'../twitter',
+                     'sentiment':'../sentimentanalyse',
+                     'reset':'../reset'
                     }
         self._page = '../'
         self._init()
@@ -113,6 +115,37 @@ class Web(object):
         raise cherrypy.HTTPRedirect(self._page)
     ''' END AUTH '''
 
+    ''' CLEAR DB '''
+    @cherrypy.expose
+    def reset(self):
+        self._page = '../reset'
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../auth')
+        self._mongo.drop()
+        self._sql.setAllUntagged()
+        return self._template(body='Database reset')
+    ''' END CLEAR DB '''
+
+    ''' SENTIMENT ANALYSIS '''
+    @cherrypy.expose
+    def sentimentanalyse(self):
+        self._page = '../sentimentanalyse'
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../auth')
+        return self._template(body='Analysing tweet sentiment...' + JavaScript.redirect('../sentiment'))
+
+    @cherrypy.expose
+    def sentiment(self):
+        if not self._auth:
+            raise cherrypy.HTTPRedirect('../auth')
+        try:
+            subprocess.check_call(self._java+'BulkSentimentAnalysis', shell=True)
+            body='Tweets analysed for sentiment'
+        except subprocess.CalledProcessError:
+            body='Sentiment analysis failed'
+        return self._template(body=body)
+    ''' END SENTIMENT ANALYSIS '''
+
     ''' TWITTER SEARCH API '''
     @cherrypy.expose
     def twitter(self):
@@ -137,7 +170,7 @@ class Web(object):
         return self._template(body='No tweets were found')
 
     def _search_twitter(self, query):
-        tweets_ = subprocess.check_output(self._java_search + query, shell=True).strip().decode('utf-8', 'ignore').split('\n')
+        tweets_ = subprocess.check_output(self._java+'SearchAPI '+ query, shell=True).strip().decode('utf-8', 'ignore').split('\n')
         tweets = []
         for tweet in tweets_:
             tweet_ = tweet.split('\t')

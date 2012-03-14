@@ -148,6 +148,9 @@ class MongoConnector(object):
     def find_os(self, value):
         return self.tags.find({"os_name": value.lower()})
 
+    def find_company(self, value):
+        return self.tags.find({'company_name':value.lower()})
+
     def find(self, value):
         return self.tags.find({"software_name": value.lower()})
 
@@ -158,12 +161,12 @@ class MongoConnector(object):
         cursor = self.find_all()
         software = cursor.distinct('software_name')
         os = cursor.distinct('os_name')
+        company = cursor.distinct('company_name')
         cursor.close()
-        return flatten(software,os)
+        return flatten(software,os,company)
 
-    def _drop(self):
+    def drop(self):
         self.tags.drop()
-        SQLConnector().setAllUntagged()
 
     def close(self):
         self._conn.close()

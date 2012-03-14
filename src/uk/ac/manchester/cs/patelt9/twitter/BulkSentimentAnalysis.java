@@ -27,32 +27,33 @@ import com.google.gson.stream.JsonReader;
 public class BulkSentimentAnalysis {
     // @formatter:off
     private static final String URL =
-            "http://partners-v1.twittersentiment.appspot.com/api/bulkClassifyJson";
+            "http://twittersentiment.appspot.com/api/bulkClassifyJson";
     private static final String DEFAULT_QUERY = "SELECT tweet_id, text FROM tweet WHERE sentiment "
             + "IS NULL AND keyword "
-            // + "IS NOT NULL "
-            + "='latest'"
-            + "ORDER BY id DESC LIMIT 1000;"; // Max 10,000 at a time
+            + "IS NOT NULL "
+            //+ "='latest'"
+            + "ORDER BY id DESC LIMIT 20;"; // Max 10,000 at a time
     // @formatter:on
 
     private HttpURLConnection con = null;
     private DatabaseThread dbThread = null;
-    private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
-    private ScannerThread scanner = null;
+//    private/* volatile */boolean stillStream = true; // Only changes once so no need to waste time
+//    private ScannerThread scanner = null;
 
-    public static void main(final String[] args) throws IOException, SQLException {
+    public static void main(final String[] args) throws Exception {
         BulkSentimentAnalysis.getInstance().run();
     } // main(String[])
 
     public void run() throws IOException, SQLException {
         dbThread.start();
-        while (loadDataSet() && stillStream) {
+   //     while (loadDataSet() && stillStream) {
+        if (loadDataSet()) {
             connect(createJsonObject());
             response();
         } // while
-        if (scanner.isAlive()) {
-            scanner.interrupt();
-        } // if
+//        if (scanner.isAlive()) {
+//            scanner.interrupt();
+ //       } // if
         dbThread.interrupt();
     } // run()
 
@@ -100,13 +101,13 @@ public class BulkSentimentAnalysis {
 
     private BulkSentimentAnalysis() throws SQLException {
         dbThread = new SQLThread();
-        scanner = new ScannerThread() {
-            @Override
-            protected void performTask() {
-                stillStream = false;
-            } // performTask()
-        };
-        scanner.start();
+//        scanner = new ScannerThread() {
+//            @Override
+//            protected void performTask() {
+//                stillStream = false;
+  //          } // performTask()
+  //      };
+ //       scanner.start();
     } // BulkSentiment()
 
     private void response() {
@@ -119,6 +120,7 @@ public class BulkSentimentAnalysis {
             e.printStackTrace();
             return;
         } // catch
+
         print("Parsing server response");
         final JsonArray ja = new JsonParser().parse(j).getAsJsonObject().getAsJsonArray("data");
         try {
@@ -162,7 +164,6 @@ public class BulkSentimentAnalysis {
     } // parse(JsonArray)
 
     private void connect(final JsonObject data) throws IOException, MalformedURLException {
-        checkRes();
         final URL url = new URL(URL);
         print("Connecting to " + url.toString());
         con = (HttpURLConnection) url.openConnection();

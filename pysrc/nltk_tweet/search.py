@@ -28,7 +28,7 @@ class ImgCreator(object):
                 self.analyse(self.get_cursor(word), word)
 
     def _show_all(self):
-        tools = self._mongo.find_all_software_os()
+        tools = self._mongo.find_all_software_os_company()
         print tools
         for word in tools:
             self.analyse(self.get_cursor(word), word)
@@ -44,8 +44,9 @@ class ImgCreator(object):
         for sentiment in sentiments:
             count = 0
             for tag in cursor:
-                if sentiment == tag['sentiment']:
-                    count += 1
+                if 'sentiment' in tag:
+                    if sentiment == tag['sentiment']:
+                        count += 1
             data.append([str(sentiment),count])
             cursor.rewind()
             if sentiment == 'neutral':
@@ -59,8 +60,10 @@ class ImgCreator(object):
 
     def get_cursor(self, word):
         cursor = self._mongo.find(word)
-        if cursor.count() == 0:
+        if not cursor.count():
             cursor = self._mongo.find_os(word)
+        if not cursor.count():
+            cursor = self._mongo.find_company(word)
         return cursor
 
 def main():

@@ -195,7 +195,7 @@ class TweetTagger(object):
         try:
             tagged_tweet = self._tag(tweet)
             if store:
-                if (tagged_tweet.contains('software_id') or tagged_tweet.contains('os_id')):
+                if (tagged_tweet.contains('software_id') or tagged_tweet.contains('os_id') or tagged_tweet.contains('company_id')):
                     self._mongo.insert(**tagged_tweet)
                     # CHECK TAGS, ADD TO DB ETC HERE
                     self._sql.setTagged(tagged_tweet.get('tweet_db_id'))
