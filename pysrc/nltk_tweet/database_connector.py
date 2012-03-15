@@ -157,19 +157,27 @@ class MongoConnector(object):
         self.tags.insert(tagged_tweet)
 
     def find_os(self, value):
-        return self.tags.find({"os_name": value.lower()})
+        return self._find(**{"os_name": value.lower()})
 
     def find_company(self, value):
-        return self.tags.find({'company_name':value.lower()})
+        return self._find(**{'company_name':value.lower()})
+
+    def find_software(self, value):
+        return self._find(**{"software_name": value.lower()})
 
     def find(self, value):
-        return self.tags.find({"software_name": value.lower()})
+        cursor = self.find_software(word)
+        if not cursor.count():
+            cursor = self.find_os(word)
+        if not cursor.count():
+            cursor = self.find_company(word)
+        return cursor
+
+    def _find(self, **kwargs):
+        return self.tags.find(kwargs)
 
     def find_all(self):
-        return self.tags.find()
-
-    def find_all_software_os(self):
-        cursor = self.find_all()
+        cursor = self._find()
         software = cursor.distinct('software_name')
         os = cursor.distinct('os_name')
         company = cursor.distinct('company_name')
@@ -181,9 +189,4 @@ class MongoConnector(object):
 
     def close(self):
         self._conn.close()
-
-if __name__ == '__main__':
-    #SQLConnector().deleteUsersNoTweets()
-    #MongoConnector()._drop()
-    pass
 
