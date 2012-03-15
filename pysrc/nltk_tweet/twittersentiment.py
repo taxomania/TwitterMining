@@ -8,7 +8,7 @@ from json import loads
 
 def parse_list(sql, keyword):
     print "Retrieving tweets"
-    res = sql.get_tweets_keyword_nosentiment(word=keyword)
+    res = sql.get_tweets_nosentiment(word=keyword)
     rows = res.num_rows()
     if not rows:
         return None
@@ -18,21 +18,19 @@ def parse_list(sql, keyword):
             data.append(dict(id=str(tweet[0]), text=tweet[1]))
     return data
 
-def bulk_analysis(sql, keyword):
+def bulk_analysis(sql, keyword=None):
     h = Http()
     tweets = parse_list(sql, keyword)
     if not tweets:
-        print "No tweets to analyse"
-        return
+        return "No tweets to analyse"
     data = dict(data=tweets)
     print "Analysing sentiment"
-    resp_, content = h.request("http://twittersentiment.appspot.com/api/bulkClassifyJson", "POST", str(data))
-    print resp_, content
-    #resp = loads(resp_)
-    #if resp['content-length']:
+    resp, content = h.request("http://twittersentiment.appspot.com/api/bulkClassifyJson", "POST", str(data))
     if content:    
         content = loads(content.decode('utf-8', 'ignore'))
         _update_db(sql, content)
+        return "Tweets analysed for sentiment"
+    return "Sentiment analysis failed"
 
 def _update_db(sql, content):
     content = content['data']

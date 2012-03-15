@@ -139,12 +139,7 @@ class Web(object):
     def sentiment(self):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
-        try:
-            subprocess.check_call(self._java+'BulkSentimentAnalysis', shell=True)
-            body='Tweets analysed for sentiment'
-        except subprocess.CalledProcessError:
-            body='Sentiment analysis failed'
-        return self._template(body=body)
+        return self._template(body=bulk_analysis(self._sql))
     ''' END SENTIMENT ANALYSIS '''
 
     ''' TWITTER SEARCH API '''

@@ -28,10 +28,14 @@ class SQLConnector(object):
                       + str(max_results))
         return self.db.store_result()
 
-    def get_tweets_keyword_nosentiment(self, word):
-        self.db.query("SELECT id, text FROM tweet "
-                      + "WHERE sentiment IS NULL "
-                      + "AND keyword='" + word + "' LIMIT 100")
+    def get_tweets_nosentiment(self, word=None):
+        query = ("SELECT id, text FROM tweet "
+                 + "WHERE sentiment IS NULL ")
+        if word:
+            query += "AND keyword='" + word + "' "
+        query += "LIMIT 100"
+
+        self.db.query(query)
         return self.db.store_result()
 
     def get_tweet_by_id(self, id):
