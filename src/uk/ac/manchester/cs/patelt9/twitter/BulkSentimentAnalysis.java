@@ -29,10 +29,9 @@ public class BulkSentimentAnalysis {
     private static final String URL =
             "http://twittersentiment.appspot.com/api/bulkClassifyJson";
     private static final String DEFAULT_QUERY = "SELECT tweet_id, text FROM tweet WHERE sentiment "
-            + "IS NULL AND keyword "
-            + "IS NOT NULL "
-            //+ "='latest'"
-            + "ORDER BY id DESC LIMIT 20;"; // Max 10,000 at a time
+            + "IS NULL "
+            //+ "AND keyword='latest'"
+            + "ORDER BY id DESC LIMIT 100;"; // Max 10,000 at a time
     // @formatter:on
 
     private HttpURLConnection con = null;

@@ -20,12 +20,11 @@ class SQLConnector(object):
                               passwd=passwd,
                               db=db)
 
-    def load_data(self, keyword='latest', page=0, max_results=15):
+    def load_data(self, keyword='latest', max_results=15):
         self.db.query("SELECT id, text, sentiment FROM tweet "
                       + "WHERE keyword='" + keyword + "' "
                       + "AND tagged=FALSE ORDER BY id DESC "
                       + "LIMIT "
-                      + str(page * max_results) + ', '
                       + str(max_results))
         return self.db.store_result()
 
@@ -157,15 +156,15 @@ class MongoConnector(object):
         self.tags.insert(tagged_tweet)
 
     def find_os(self, value):
-        return self._find(**{"os_name": value.lower()})
+        return self.find(**{"os_name": value.lower()})
 
     def find_company(self, value):
-        return self._find(**{'company_name':value.lower()})
+        return self.find(**{'company_name':value.lower()})
 
     def find_software(self, value):
-        return self._find(**{"software_name": value.lower()})
+        return self.find(**{"software_name": value.lower()})
 
-    def find(self, value):
+    def cursor(self, value):
         cursor = self.find_software(word)
         if not cursor.count():
             cursor = self.find_os(word)
@@ -173,11 +172,11 @@ class MongoConnector(object):
             cursor = self.find_company(word)
         return cursor
 
-    def _find(self, **kwargs):
+    def find(self, **kwargs):
         return self.tags.find(kwargs)
 
     def find_all(self):
-        cursor = self._find()
+        cursor = self.find()
         software = cursor.distinct('software_name')
         os = cursor.distinct('os_name')
         company = cursor.distinct('company_name')

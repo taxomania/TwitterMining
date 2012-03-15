@@ -189,7 +189,7 @@ class Web(object):
     def extract(self, query):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../../auth')
-        #bulk_analysis(sql=self._sql, keyword=query)
+        bulk_analysis(sql=self._sql, keyword=query)
         tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
         return self._get_template('tweet.html', tweets=tagger.tag(keyword=query))
     ''' END TWITTER SEARCH API '''
@@ -251,7 +251,7 @@ class Web(object):
     def analyse(self):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
-        elements = self._mongo.find_all_software_os()
+        elements = self._mongo.find_all()
         if not len(elements):
             return self._template(body='No software has been found yet')
         return self._get_template(file='show_results.html', action='../analysis', elements=elements)

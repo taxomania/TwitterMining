@@ -17,7 +17,7 @@ class ImgCreator(object):
             self._mongo = mongo
 
     def get_cursor(self, word):
-        return self._mongo.find(word)
+        return self._mongo.cursor(word)
 
     def web_query(self, word):
         word = word.lower()

@@ -15,12 +15,16 @@ def parse_list(sql, keyword):
     data = []
     for i in range(rows):
         for tweet in res.fetch_row():
-            data.append(dict(id=tweet[0], text=tweet[1]))
+            data.append(dict(id=str(tweet[0]), text=tweet[1]))
     return data
 
 def bulk_analysis(sql, keyword):
     h = Http()
-    data = dict(data=parse_list(sql, keyword))
+    tweets = parse_list(sql, keyword)
+    if not tweets:
+        print "No tweets to analyse"
+        return
+    data = dict(data=tweets)
     print "Analysing sentiment"
     resp_, content = h.request("http://twittersentiment.appspot.com/api/bulkClassifyJson", "POST", str(data))
     print resp_, content
@@ -40,7 +44,7 @@ def _update_db(sql, content):
             sentiment = 'negative'
         else:
             sentiment = 'neutral'
-        sql.update_sentiment(id=str(tweet['id']),
+        sql.update_sentiment(id=tweet['id'],
                              sentiment=sentiment,
                              score=str(score))
 
