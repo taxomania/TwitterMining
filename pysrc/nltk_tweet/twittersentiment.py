@@ -28,9 +28,9 @@ def bulk_analysis(sql, keyword):
     #if resp['content-length']:
     if content:    
         content = loads(content.decode('utf-8', 'ignore'))
-        update_db(sql, content)
+        _update_db(sql, content)
 
-def update_db(sql, content):
+def _update_db(sql, content):
     content = content['data']
     for tweet in content:
         score= tweet['polarity']

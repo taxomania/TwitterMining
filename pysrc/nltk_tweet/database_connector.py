@@ -20,9 +20,9 @@ class SQLConnector(object):
                               passwd=passwd,
                               db=db)
 
-    def load_data(self, page=0, max_results=15):
+    def load_data(self, keyword='latest', page=0, max_results=15):
         self.db.query("SELECT id, text, sentiment FROM tweet "
-                      + "WHERE keyword='latest' "
+                      + "WHERE keyword='" + keyword + "' "
                       + "AND tagged=FALSE ORDER BY id DESC "
                       + "LIMIT "
                       + str(page * max_results) + ', '
@@ -31,11 +31,9 @@ class SQLConnector(object):
 
     def get_tweets_keyword_nosentiment(self, word):
         self.db.query("SELECT id, text FROM tweet "
-                      + "WHERE sentiment IS NULL AND keyword='" + word +"' LIMIT 100")
+                      + "WHERE sentiment IS NULL "
+                      + "AND keyword='" + word + "' LIMIT 100")
         return self.db.store_result()
-
-    def get_tweets_by_keyword(self, word):
-        return self._get_tweets(condition='keyword', expected=word)
 
     def get_tweet_by_id(self, id):
         return self._get_tweet(condition='tweet_id', expected=id)
