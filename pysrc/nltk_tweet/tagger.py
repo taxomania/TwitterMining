@@ -42,9 +42,9 @@ class TweetTagger(object):
         text = original.lower().replace('#','').strip()
         #text = "download 60 hundred pounds 72 million $800 billion pounds holiday havoc v2 in itunes for free 99"
 
-        urls = find_url(text)
+        urls = find_url(original)
         for url in urls:
-            text = text.replace(url, "").strip()
+            text = text.replace(url.lower(), "").strip()
 
         versions = find_version(text)
 

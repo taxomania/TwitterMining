@@ -169,11 +169,11 @@ class MongoConnector(object):
         return self.find(**{"software_name": value.lower()})
 
     def cursor(self, value):
-        cursor = self.find_software(word)
+        cursor = self.find_software(value)
         if not cursor.count():
-            cursor = self.find_os(word)
+            cursor = self.find_os(value)
         if not cursor.count():
-            cursor = self.find_company(word)
+            cursor = self.find_company(value)
         return cursor
 
     def find(self, **kwargs):
