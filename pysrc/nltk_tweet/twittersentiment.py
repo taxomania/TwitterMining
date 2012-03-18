@@ -18,19 +18,23 @@ def parse_list(sql, keyword):
             data.append(dict(id=str(tweet[0]), text=tweet[1]))
     return data
 
-def bulk_analysis(sql, keyword=None):
-    h = Http()
-    tweets = parse_list(sql, keyword)
-    if not tweets:
-        return "No tweets to analyse"
-    data = dict(data=tweets)
-    print "Analysing sentiment"
-    resp, content = h.request("http://twittersentiment.appspot.com/api/bulkClassifyJson", "POST", str(data))
-    if content:    
-        content = loads(content.decode('utf-8', 'ignore'))
-        _update_db(sql, content)
-        return "Tweets analysed for sentiment"
-    return "Sentiment analysis failed"
+def bulk_analysis(sql, keyword=None, iterations=10):
+    count = 0
+    for i in xrange(iterations):
+        h = Http()
+        tweets = parse_list(sql, keyword)
+        if not tweets:
+            return "No tweets to analyse"
+        data = dict(data=tweets)
+        print "Analysing sentiment"
+        resp, content = h.request("http://twittersentiment.appspot.com/api/bulkClassifyJson", "POST", str(data))
+        if content:
+            content = loads(content.decode('utf-8', 'ignore'))
+            _update_db(sql, content)
+            count += len(tweets)
+        else:
+            return "Sentiment analysis failed"
+    return "%d tweets analysed for sentiment" % count
 
 def _update_db(sql, content):
     content = content['data']
