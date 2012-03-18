@@ -46,6 +46,9 @@ class TweetTagger(object):
         for url in urls:
             text = text.replace(url.lower(), "").strip()
 
+        word_freqs = word_frequencies(text)
+        print word_freqs
+
         versions = find_version(text)
 
         words = regexp_tokenize(text, pattern=r'\w+([.,]\w+)*|\S+')
@@ -63,6 +66,7 @@ class TweetTagger(object):
 
     def _create_ngram(self, tokenized, gram_length):
         pos_ = pos(tokenized)
+        print pos_
         gram = None
         while not gram: # In case tweet length less than gram_length
             gram = ngrams(pos_, gram_length)
