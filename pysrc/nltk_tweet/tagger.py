@@ -47,7 +47,7 @@ class TweetTagger(object):
             text = text.replace(url.lower(), "").strip()
 
         word_freqs = word_frequencies(text)
-        print word_freqs
+        #print word_freqs
 
         versions = find_version(text)
 
@@ -62,11 +62,20 @@ class TweetTagger(object):
         tagged_tweet.add('url', urls)
         tagged_tweet.add('version', versions)
         tagged_tweet.add('price', prices)
+
+        if tagged_tweet.contains('software_name'):
+            query = {'software_name':tagged_tweet.get('software_name')}
+            words = {}
+            for w in word_freqs:
+                words['words.'+w] = word_freqs[w]
+            #print query, words
+            self._mongo.update_freqs(query,words)
+
         return tagged_tweet
 
     def _create_ngram(self, tokenized, gram_length):
         pos_ = pos(tokenized)
-        print pos_
+        #print pos_
         gram = None
         while not gram: # In case tweet length less than gram_length
             gram = ngrams(pos_, gram_length)
@@ -227,12 +236,12 @@ class TweetTagger(object):
 
     def tag(self, pages=6, store=True, keyword=None):
         total_tags = []
+        self._keyword=keyword if keyword else None
+        print self._keyword
         for page in xrange(pages):
             if keyword:
-                self._keyword=keyword
                 res = self._sql.load_data(max_results=30, keyword=keyword)
             else:
-                self._keyword = None
                 res = self._sql.load_data()
             rows = res.num_rows()
             if not rows:

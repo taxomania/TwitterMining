@@ -12,9 +12,9 @@ class Dictionary(dict):
         return key in self
 
     def get(self, key):
-        if self.contains(key):
+        try:
             return self[key]
-        else:
+        except:
             return None
 
     def add(self, key, value):

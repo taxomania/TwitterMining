@@ -12,7 +12,6 @@ from nltk.util import ngrams
 
 from bing import BingSearch, ServerError
 
-
 def word_frequencies(string):
     return dict([(w, string.count(w)) for w in re.split(r'\W+', string)])
 

@@ -155,9 +155,13 @@ class MongoConnector(object):
         self._conn = pymongo.Connection(host=host, port=port)
         db = self._conn[db]
         self.tags = db.tagged_tweets
+        self.words = db.word_frequency
 
     def insert(self, **tagged_tweet):
         self.tags.insert(tagged_tweet)
+
+    def update_freqs(self, query, words):
+        self.words.update(query, {'$inc':words}, upsert=True)
 
     def find_os(self, value):
         return self.find(**{"os_name": value.lower()})
@@ -189,6 +193,7 @@ class MongoConnector(object):
 
     def drop(self):
         self.tags.drop()
+        self.words.drop()
 
     def close(self):
         self._conn.close()
