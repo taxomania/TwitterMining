@@ -2,13 +2,14 @@
 <%block name="style">
     <style type="text/css">
         div#tools { padding-left:2% }
+        a.tool { color:black }
     </style>
 </%block>
 <section id="tools">
     <h3>Top Tweeted Tools</h3>
     <div id="tools">
         % for tool in tools:
-            ${tool['name']}<br/>
+            <a class="tool" href="/analysis/${tool['name']}">${tool['name']}</a><br/>
         % endfor
     </div>
 </section>

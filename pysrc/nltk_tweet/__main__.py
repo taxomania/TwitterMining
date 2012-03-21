@@ -58,6 +58,30 @@ class WebApp(object):
     def index(self):
         return self._get_template('index.html', tools=self._mongo.top_ten())
 
+    ''' ANALYSIS '''
+    @cherrypy.expose
+    def results(self): # This page loads data for analysis
+        return self._template(body='Retrieving data'+ JavaScript.redirect('../analyse'))
+
+    @cherrypy.expose
+    def analyse(self):
+        elements = self._mongo.find_all()
+        if not len(elements):
+            return self._template(body='No software has been found yet')
+        return self._get_template(file='show_results.html', action='../analysis', elements=elements)
+
+    @cherrypy.expose
+    def analysis(self, software):
+        raise cherrypy.HTTPRedirect('analysis/%s' % software)
+
+    @cherrypy.expose
+    def aggregate(self, name): # routed as /analysis/:name
+        data, col = self._imgc.web_query(name)
+        if not len(data):
+            return self._template(body='That software has not been found')
+        return self._get_template(file='google-charts.html', button='../analyse', title=name, data=data, colours=col)
+    ''' END ANALYSIS '''
+
 
 def setup_routes(args, classpath=None):
     w = WebApp(dirs=['web'], java_classpath=classpath, auth=args)
@@ -65,6 +89,8 @@ def setup_routes(args, classpath=None):
     d.connect('index', '/', controller=w, action='index')
     d.connect('main', '/:action', controller=w)
     d.connect('main-1', '/:action/', controller=w)
+    d.connect('res', '/analysis/:name', controller=w, action='aggregate')
+    d.connect('res-1', '/analysis/:name/', controller=w, action='aggregate')
     return d
 
 if __name__ == '__main__':
