@@ -65,7 +65,7 @@ class Web(object):
         if not self._auth:
             body += "not "
         body += "been authenticated"
-        return self._get_template('index.html', body=body)
+        return self._get_template('index2.html', body=body)
 
     ''' AUTH '''
     @cherrypy.expose

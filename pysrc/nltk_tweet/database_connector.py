@@ -191,42 +191,35 @@ class MongoConnector(object):
         d = self._group(key='software_name')
         d=flatten(d,self._group('os_name'))
 
+        proper = []
         extras = []
         s = set()
-        for map in d[:]:
-            if 'os_name' in map:
-                if isinstance(map['os_name'],list):
-                    extras.append(map)
-                    d.remove(map)
-                else: s.add(map['os_name'])
-            if 'software_name' in map:
-                if isinstance(map['software_name'],list):
-                    extras.append(map)
-                    d.remove(map)
-                else: s.add(map['software_name'])
+        for map in d:
+            proper.append(dict(name=map['os_name'] if 'os_name' in map else map['software_name'], count=map['count']))
+
+        for map in proper[:]:
+            if isinstance(map['name'],list):
+                extras.append(map)
+                proper.remove(map)
+            else: s.add(map['name'])
 
         for map in extras:
-            self._aggregate(key='os_name',
+            self._aggregate(key='name',
                             map=map,
                             set=s,
-                            list=d)
-            self._aggregate(key='software_name',
-                            map=map,
-                            set=s,
-                            list=d)
-        return sorted(d, key=itemgetter('count'), reverse=True)[:10]
+                            list=proper)
+        return sorted(proper, key=itemgetter('count'), reverse=True)[:10]
 
     def _aggregate(self, key, map, set, list):
-        if key in map:
-            for name in map[key]:
-                if name in set:
-                    for m in list:
-                        if key in m:
-                            if m[key]==name:
-                                m['count']+=map['count']
-                else:
-                    list.append(dict(key=name,count=map['count']))
-
+        for name in map[key]:
+            if name in set:
+                for m in list:
+                    if m[key]==name:
+                        m['count']=int(m['count'] + map['count'])
+            else:
+                list.append({key:name,
+                             'count':int(map['count'])
+                            })
 
     def find(self, **kwargs):
         return self.tags.find(kwargs)

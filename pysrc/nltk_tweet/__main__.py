@@ -42,7 +42,6 @@ class WebApp(object):
                                          port=int(mport))
         except Exception, e:
             exit(e)
-        print self._mongo.top_ten()
         self._imgc = ImgCreator(mongo=self._mongo)
     ''' END INITIALISATION '''
 
@@ -57,8 +56,7 @@ class WebApp(object):
 
     @cherrypy.expose
     def index(self):
-        return self._get_template('index.html', body='Hello there!')
-
+        return self._get_template('index.html', tools=self._mongo.top_ten())
 
 
 def setup_routes(args, classpath=None):

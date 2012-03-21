@@ -1,2 +1,15 @@
 <%inherit file="base.html"/>
-${body}
+<%block name="style">
+    <style type="text/css">
+        div#tools { padding-left:2% }
+    </style>
+</%block>
+<section id="tools">
+    <h3>Top Tweeted Tools</h3>
+    <div id="tools">
+        % for tool in tools:
+            ${tool['name']}<br/>
+        % endfor
+    </div>
+</section>
+
