@@ -18,6 +18,7 @@ from twittersentiment import bulk_analysis
 from web import JavaScript
 
 class WebApp(object):
+    ''' INITIALISATION '''
     def __init__(self, dirs, java_classpath, auth):
         self._tmpl = TemplateLookup(directories=dirs)
         self._java = 'java -cp ' + java_classpath + ' uk.ac.manchester.cs.patelt9.twitter.'
@@ -41,13 +42,13 @@ class WebApp(object):
                                          port=int(mport))
         except Exception, e:
             exit(e)
-            
+        print self._mongo.top_ten()
         self._imgc = ImgCreator(mongo=self._mongo)
+    ''' END INITIALISATION '''
 
     ''' TEMPLATE HELPER FUNCTIONS '''
     def _get_template(self, file, **kwargs):
         kwargs.update(self._nav)
-        print kwargs
         return self._tmpl.get_template(file).render(**kwargs)
 
     def _template(self, body):
