@@ -31,6 +31,7 @@ class Web(object):
         self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
         self._java = 'java -cp ' + java_classpath + ' uk.ac.manchester.cs.patelt9.twitter.'
         self._nav = {
+                     'nav':'navadmin.html',
                      'auth':'../auth',
                      'results':'../results',
                      'tag':'../tag',
