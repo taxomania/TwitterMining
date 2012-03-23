@@ -24,6 +24,7 @@ class WebApp(object):
         self._tmpl = TemplateLookup(directories=dirs)
         self._java = 'java -cp ' + java_classpath + ' uk.ac.manchester.cs.patelt9.twitter.'
         self._nav = {
+                     'title':'Text Mining Twitter For Software',
                      'nav':'nav.html',
                      'results':'../results',
                      'search':'../twitter',
@@ -75,9 +76,13 @@ class WebApp(object):
         tweets = java.search_twitter(query)
         if not len(tweets):
             return self._template(body='No tweets were found')
-        print tweets
+        return self._template(body='Extracting features...' + JavaScript.redirect('../extract/%s' % query))
 
-
+    @cherrypy.expose
+    def extract(self, query): # Routed as /extract/:query
+        bulk_analysis(sql=self._sql, keyword=query)
+        tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
+        return self._get_template('tweet.html', tweets=tagger.tag(keyword=query))
     ''' END TWITTER SEARCH API '''
 
     ''' ANALYSIS '''
@@ -115,6 +120,8 @@ def setup_routes(args, classpath=None):
     d.connect('res-1', '/analysis/:name/', controller=w, action='aggregate')
     d.connect('search', '/twitter/:query', controller=w, action='tweets')
     d.connect('search-1', '/twitter/:query/', controller=w, action='tweets')
+    d.connect('extract', '/extract/:query', controller=w, action='extract')
+    d.connect('extract-1', '/extract/:query/', controller=w, action='extract')
     return d
 
 if __name__ == '__main__':

@@ -32,6 +32,7 @@ class Web(object):
         self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
         self._java = 'java -cp ' + java_classpath + ' uk.ac.manchester.cs.patelt9.twitter.'
         self._nav = {
+                     'title':'Twitter Text Mining ADMIN',
                      'nav':'navadmin.html',
                      'auth':'../auth',
                      'results':'../results',
@@ -295,6 +296,7 @@ if __name__ == '__main__':
                      'tools.staticdir.dir': 'js'
                     }
              }
+    cherrypy.config.update({'server.socket_port': 8081})
     cherrypy.tree.mount(None, config=config)
     cherrypy.engine.start()
     cherrypy.engine.block()
