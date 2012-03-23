@@ -223,7 +223,7 @@ class TweetTagger(object):
         try:
             tagged_tweet = self._tag(tweet)
             if store:
-                if (tagged_tweet.contains('software_id') or tagged_tweet.contains('os_id') or tagged_tweet.contains('company_id')):
+                if (tagged_tweet.contains('software_name') or tagged_tweet.contains('os_name') or tagged_tweet.contains('company_name')):
                     self._mongo.insert(**tagged_tweet)
                     # CHECK TAGS, ADD TO DB ETC HERE
                 self._sql.setTagged(tagged_tweet.get('tweet_db_id'))
@@ -237,7 +237,6 @@ class TweetTagger(object):
     def tag(self, pages=6, store=True, keyword=None):
         total_tags = []
         self._keyword=keyword if keyword else None
-        print self._keyword
         for page in xrange(pages):
             if keyword:
                 res = self._sql.load_data(max_results=30, keyword=keyword)

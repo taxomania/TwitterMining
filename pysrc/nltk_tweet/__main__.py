@@ -44,6 +44,7 @@ class WebApp(object):
                                          port=int(mport))
         except Exception, e:
             exit(e)
+        self._tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
         self._imgc = ImgCreator(mongo=self._mongo)
     ''' END INITIALISATION '''
 
@@ -81,8 +82,10 @@ class WebApp(object):
     @cherrypy.expose
     def extract(self, query): # Routed as /extract/:query
         bulk_analysis(sql=self._sql, keyword=query)
-        tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
-        return self._get_template('tweet.html', tweets=tagger.tag(keyword=query))
+        tweets=self._tagger.tag(keyword=query)
+        if len(tweets):
+            return self._get_template('tweet.html', tweets=tweets)
+        return self._template('No tweets to analyse')
     ''' END TWITTER SEARCH API '''
 
     ''' ANALYSIS '''
@@ -106,7 +109,7 @@ class WebApp(object):
         data, col = self._imgc.web_query(name)
         if not len(data):
             return self._template(body='That software has not been found')
-        return self._get_template(file='google-charts.html', button='../analyse', title=name, data=data, colours=col)
+        return self._get_template(file='google-charts.html', button='../analyse', heading=name, data=data, colours=col)
     ''' END ANALYSIS '''
 
 

@@ -28,9 +28,8 @@ class JavaScript(object):
         return '<script type="text/javascript">window.location="' + location + '";</script>'
 
 class Web(object):
-    def __init__(self, dirs, java_classpath, module_dir='/tmp/mako_modules'):
+    def __init__(self, dirs, module_dir='/tmp/mako_modules'):
         self._tmpl = TemplateLookup(directories=dirs)#, module_directory=module_dir)
-        self._java = 'java -cp ' + java_classpath + ' uk.ac.manchester.cs.patelt9.twitter.'
         self._nav = {
                      'title':'Twitter Text Mining ADMIN',
                      'nav':'navadmin.html',
@@ -125,8 +124,7 @@ class Web(object):
         self._page = '../reset'
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
-        self._mongo.drop()
-        self._sql.setAllUntagged()
+        self._mongo.drop(sql=self._sql)
         return self._template(body='Database reset')
     ''' END CLEAR DB '''
 
@@ -258,12 +256,12 @@ class Web(object):
         data, col = self._imgc.web_query(name)
         if not len(data):
             return self._template(body='That software has not been found')
-        return self._get_template(file='google-charts.html', button=self._page, title=name, data=data, colours=col)
+        return self._get_template(file='google-charts.html', button=self._page, heading=name, data=data, colours=col)
     ''' END ANALYSIS '''
 
 
-def setup_routes(cp=None):
-    w = Web(dirs=['web'], java_classpath=cp)
+def setup_routes():
+    w = Web(dirs=['web'])
     d = cherrypy.dispatch.RoutesDispatcher()
     d.connect('main', '/:action', controller=w)
     d.connect('main-1', '/:action/', controller=w)
@@ -280,11 +278,9 @@ def setup_routes(cp=None):
 
 if __name__ == '__main__':
     import os.path
-    with open('classpath.txt', 'r') as f:
-        cp = f.readline().strip()
     config = {
               '/':{
-                   'request.dispatch': setup_routes(cp),
+                   'request.dispatch': setup_routes(),
                    'tools.staticdir.root': os.path.dirname(os.path.abspath(__file__)) + "/web"
                   },
               '/css':{

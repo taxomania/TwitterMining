@@ -20,12 +20,14 @@ class SQLConnector(object):
                               passwd=passwd,
                               db=db)
 
-    def load_data(self, keyword='latest', max_results=15):
-        self.db.query("SELECT id, text, sentiment FROM tweet "
-                      + "WHERE keyword='" + keyword + "' "
-                      + "AND tagged=FALSE ORDER BY id DESC "
-                      + "LIMIT "
-                      + str(max_results))
+    def load_data(self, keyword=None, max_results=15):
+        query = ("SELECT id, text, sentiment FROM tweet "
+                 + "WHERE tagged=FALSE ")
+        if keyword:
+            query += "AND keyword='%s' " % keyword
+        query += "ORDER BY id DESC LIMIT %d" % max_results
+
+        self.db.query(query)
         return self.db.store_result()
 
     def get_tweets_nosentiment(self, word=None):
@@ -232,9 +234,11 @@ class MongoConnector(object):
         cursor.close()
         return flatten(flatten(software,os),company)
 
-    def drop(self):
+    def drop(self, sql=None):
         self.tags.drop()
         self.words.drop()
+        if sql:
+            sql.setAllUntagged()
 
     def close(self):
         self._conn.close()
