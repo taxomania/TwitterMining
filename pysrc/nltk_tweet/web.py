@@ -11,6 +11,7 @@ from mako.lookup import TemplateLookup
 import routes
 
 from database_connector import MongoConnector, SQLConnector
+import java_utils as java
 from search import ImgCreator
 import ssh
 from tagger import TweetTagger
@@ -161,19 +162,10 @@ class Web(object):
     def tweets(self, query):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../../auth')
-        tweets = self._search_twitter(query)
+        tweets = java.search_twitter(query)
         if len(tweets):
             return self._get_template('search_tweet.html', action='../extracting', query=query, tweets=tweets)
         return self._template(body='No tweets were found')
-
-    def _search_twitter(self, query):
-        tweets_ = subprocess.check_output(self._java+'SearchAPI '+ query, shell=True).strip().decode('utf-8', 'ignore').split('\n')
-        tweets = []
-        for tweet in tweets_:
-            tweet_ = tweet.split('\t')
-            if len(tweet_) > 1:
-                tweets.append(tweet_)
-        return tweets
 
     @cherrypy.expose
     def extracting(self, query):

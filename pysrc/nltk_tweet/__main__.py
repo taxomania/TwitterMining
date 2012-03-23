@@ -11,6 +11,7 @@ import routes
 
 import argument_parser as argparse
 from database_connector import MongoConnector, SQLConnector
+import java_utils as java
 from search import ImgCreator
 import ssh
 from tagger import TweetTagger
@@ -54,9 +55,30 @@ class WebApp(object):
         return Template('<%inherit file="base.html"/>'+body,lookup=self._tmpl).render(**self._nav)
     ''' END TEMPLATE HELPER FUNCTIONS '''
 
+    ''' TOP TWEETED TOOLS '''
     @cherrypy.expose
     def index(self):
         return self._get_template('index.html', tools=self._mongo.top_ten())
+    ''' END TOP TWEETED TOOLS '''
+
+    ''' TWITTER SEARCH API '''
+    @cherrypy.expose
+    def twitter(self):
+        return self._get_template('search.html', action='../twittersearch')
+
+    @cherrypy.expose
+    def twittersearch(self, query):
+        return self._template(body='Searching Twitter...' + JavaScript.redirect('twitter/%s' % query))
+
+    @cherrypy.expose
+    def tweets(self, query):
+        tweets = java.search_twitter(query)
+        if not len(tweets):
+            return self._template(body='No tweets were found')
+        print tweets
+
+
+    ''' END TWITTER SEARCH API '''
 
     ''' ANALYSIS '''
     @cherrypy.expose
@@ -91,6 +113,8 @@ def setup_routes(args, classpath=None):
     d.connect('main-1', '/:action/', controller=w)
     d.connect('res', '/analysis/:name', controller=w, action='aggregate')
     d.connect('res-1', '/analysis/:name/', controller=w, action='aggregate')
+    d.connect('search', '/twitter/:query', controller=w, action='tweets')
+    d.connect('search-1', '/twitter/:query/', controller=w, action='tweets')
     return d
 
 if __name__ == '__main__':
