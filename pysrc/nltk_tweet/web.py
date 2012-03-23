@@ -194,7 +194,7 @@ class Web(object):
         if not self._auth:
             raise cherrypy.HTTPRedirect('../auth')
         tagger = TweetTagger(sql=self._sql, mongo=self._mongo)
-        return self._get_template('tweet.html', tweets=tagger.tag(2))
+        return self._get_template('tweet.html', tweets=tagger.tag(10))
     ''' END FEATURE EXTRACTION '''
 
     ''' EXAMPLE PAGE '''
