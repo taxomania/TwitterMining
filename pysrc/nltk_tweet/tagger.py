@@ -121,8 +121,8 @@ class TweetTagger(object):
             tag = tagged_word[1]
             phrase += word + " "
             #print word, tag
-            if tagIsNoun(tag):
-                try:
+            try:
+                if tagIsNoun(tag):
                     if self._sql.isSoftware(word):
                         entry = self._sql.getSoftware()
                         try:
@@ -143,18 +143,6 @@ class TweetTagger(object):
                         except:
                             tags.add('company_name',word)
                             tags.add('company_id', str(entry[0]))
-                    elif self._sql.isOS(word):
-                        entry = self._sql.getOS()
-                        try:
-                            prev_tag = tags_.pop()
-                            tags_.append(prev_tag)
-                            prev = words.pop()
-                            words.append(prev)
-                            if not tagIsDeterminantOrPreposition(prev_tag) or re.match(check_on, prev):
-                                raise # Add to tags
-                        except:
-                            tags.add('os_name', word)
-                            tags.add('os_id', str(entry[0]))
                     elif self._sql.isProgLang(word):
                         entry = self._sql.getProgLang()
                         try:
@@ -165,8 +153,21 @@ class TweetTagger(object):
                         except:
                             tags.add('programming_language_name', word)
                             tags.add('programming_language_id', str(entry[0]))
-                except ProgrammingError:
-                    pass
+
+                if self._sql.isOS(word):
+                    entry = self._sql.getOS()
+                    try:
+                        prev_tag = tags_.pop()
+                        tags_.append(prev_tag)
+                        prev = words.pop()
+                        words.append(prev)
+                        if not tagIsDeterminantOrPreposition(prev_tag) or re.match(check_on, prev):
+                            tags.add('os_name', word)
+                            tags.add('os_id', str(entry[0]))
+                    except:
+                        possible_software = True
+            except ProgrammingError:
+                pass
 
             if possible_software:
                 if tagIsNoun(tag):
