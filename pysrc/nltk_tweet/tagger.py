@@ -224,10 +224,16 @@ class TweetTagger(object):
         try:
             tagged_tweet = self._tag(tweet)
             if store:
-                if (tagged_tweet.contains('software_name') or tagged_tweet.contains('os_name') or tagged_tweet.contains('company_name')):
+                id_ = tagged_tweet.get('tweet_db_id')
+                if tagged_tweet.contains('company_name'):
                     self._mongo.insert(**tagged_tweet)
+                if (tagged_tweet.contains('software_name') or tagged_tweet.contains('os_name')):
+                    self._mongo.insert(**tagged_tweet)
+                    self._sql.setFound(id_)
+                else:
+                    self._sql.setNotFound(id_)
                     # CHECK TAGS, ADD TO DB ETC HERE
-                self._sql.setTagged(tagged_tweet.get('tweet_db_id'))
+                self._sql.setTagged(id_)
             return tagged_tweet
         except IncompleteTaggingError, e:
             # Allow tagging again at a later stage
@@ -260,7 +266,7 @@ class TweetTagger(object):
         self._mongo.close()
 
 def main(args):
-    args = var(args)
+    args = vars(args)
     tagger = TweetTagger(**args)
     tagger.tag(2)
     tagger.close()

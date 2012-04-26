@@ -141,6 +141,20 @@ class SQLConnector(object):
         c.close()
         self.db.commit()
 
+    def setFound(self, id_):
+        c = self.db.cursor()
+        c.execute("UPDATE tweet SET found=TRUE "
+                  + "WHERE id='" + id_ + "'")
+        c.close()
+        self.db.commit()
+
+    def setNotFound(self, id_):
+        c = self.db.cursor()
+        c.execute("UPDATE tweet SET found=FALSE "
+                  + "WHERE id='" + id_ + "'")
+        c.close()
+        self.db.commit()
+
     def setAllUntagged(self):
         c = self.db.cursor()
         c.execute("UPDATE tweet SET tagged=FALSE "
