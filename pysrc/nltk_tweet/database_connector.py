@@ -22,7 +22,8 @@ class SQLConnector(object):
 
     def found(self):
         self.db.query("SELECT id, text, found FROM tweet "
-                      + "WHERE found IS NOT NULL")
+                      + "WHERE tagged=TRUE AND found IS NOT NULL "
+                      + "ORDER BY rand() LIMIT 500")
         return self.db.store_result()
 
     def load_data(self, keyword=None, max_results=15):

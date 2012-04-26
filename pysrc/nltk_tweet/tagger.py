@@ -103,6 +103,8 @@ class TweetTagger(object):
 
         for tagged_words in ngram:
             self._tagger(tagged_words, tags)
+        print 'lol'
+        print '2',tags
         return tags
 
     def _tagger(self, gram, tags):
@@ -204,7 +206,6 @@ class TweetTagger(object):
             tags_.append(tag)
 
         # End of for loop
-
         phrase = phrase.strip()
         if len(pos_soft) > 0:
             pos_soft = pos_soft.strip()
@@ -222,7 +223,7 @@ class TweetTagger(object):
                     except ServerError, e:
                         print e
                         raise IncompleteTaggingError()
-
+        print '1',tags
         # CHECK DB HERE? OR ABOVE
 
     def tag_by_tweet_id(self, tweet_id):
@@ -242,6 +243,7 @@ class TweetTagger(object):
                     self._sql.setNotFound(id_)
                     # CHECK TAGS, ADD TO DB ETC HERE
                 self._sql.setTagged(id_)
+            print tagged_tweet
             return tagged_tweet
         except IncompleteTaggingError, e:
             # Allow tagging again at a later stage
@@ -252,6 +254,7 @@ class TweetTagger(object):
     def tag(self, pages=100, store=True, keyword=None):
         total_tags = []
         self._keyword=keyword if keyword else None
+        count = 0
         for page in xrange(pages):
             if keyword:
                 res = self._sql.load_data(max_results=30, keyword=keyword)
@@ -263,10 +266,12 @@ class TweetTagger(object):
                 break
             for _i_ in range(rows):
                 for tweet in res.fetch_row():
+                    count+=1
                     try:
                         total_tags.append(self._tag_tweet(tweet=tweet, store=store))
                     except:
                         continue
+        print count
         return total_tags
 
     def close(self):
@@ -276,7 +281,7 @@ class TweetTagger(object):
 def main(args):
     args = vars(args)
     tagger = TweetTagger(**args)
-    tagger.tag(2)
+    print tagger.tag(1)
     tagger.close()
     return 0
 

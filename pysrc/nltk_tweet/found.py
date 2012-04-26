@@ -30,23 +30,36 @@ class Found(object):
         if not rows:
             print "No tweets found"
             return
+        countf=0
+        countn=0
+        fo = []
+        nfo = []
         for _i_ in range(rows):
             for tweet in res.fetch_row():
                 id_ = str(tweet[0])
                 text = tweet[1]
                 found = True if tweet[2] else False
 
-
                 if found:
-                    a = self._mongo.find(**{'tweet_db_id':id_})
-                    for b in a:
-                        print b
+                    cursor = self._mongo.find(**{'tweet_db_id':id_})
+                    for doc in cursor:
+                        fo.append(doc)
+                    countf+=1
                 else:
-                    print text
-                    print found
-                
-                print
+                    nfo.append(text)
+                    countn+=1
 
+        print '------'
+        print 'Found', countf
+        for f in fo:
+            print f
+            print
+        print '------'
+        print 'Not found', countn
+        for n in nfo:
+            print n
+            print
+        print '------'
 
 def main(args):
     args = vars(args)
