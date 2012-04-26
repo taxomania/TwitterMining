@@ -221,7 +221,7 @@ class TweetTagger(object):
                             tags.add('software_name', pos_soft)
                     except ServerError, e:
                         print e
-                    raise IncompleteTaggingError()
+                        raise IncompleteTaggingError()
 
         # CHECK DB HERE? OR ABOVE
 

@@ -23,8 +23,7 @@ class BingSearch:
             'Sources': source_type or 'Web',
             'Web.Count': max_results or '15'
         })
-
-        _response_, contents = Http().request('http://api.bing.net/json.aspx?' + urlencode(kwargs))
+        _response_, contents = Http().request('http://api.bing.net/json.aspx?' + urlencode(kwargs).replace('+','%20'))
         try:
             return _BingResponse(json.loads(contents)['SearchResponse']['Web'])
         except ValueError:
