@@ -35,6 +35,7 @@ class TweetTagger(object):
             self._mongo = mongo
         self._keyword = None
         self._bing = BingSearch()
+        self._binged = Dictionary()
 
     def _tag(self, tweet):
         tweet_id = str(tweet[0])
@@ -209,9 +210,15 @@ class TweetTagger(object):
             pos_soft = pos_soft.strip()
             if not tags.get('software_name'):
                 try:
-                    if check_bing(pos_soft, self._bing):
-                        # Insert into dictionary db?
-                        tags.add('software_name', pos_soft)
+                    if self._binged.contains(pos_soft):
+                        if self._binged.get(pos_soft):
+                            tags.add('software_name', pos_soft)
+                    else:
+                        bool_ = check_bing(pos_soft, self._bing)              
+                        self._binged.add(pos_soft, bool_)
+                        if bool_:
+                            # Insert into dictionary db?
+                            tags.add('software_name', pos_soft)
                 except ServerError, e:
                     print e
                     raise IncompleteTaggingError()
@@ -248,7 +255,7 @@ class TweetTagger(object):
             if keyword:
                 res = self._sql.load_data(max_results=30, keyword=keyword)
             else:
-                res = self._sql.load_data()
+                res = self._sql.load_data(max_results=350)
             rows = res.num_rows()
             if not rows:
                 print "No tweets left to analyse"

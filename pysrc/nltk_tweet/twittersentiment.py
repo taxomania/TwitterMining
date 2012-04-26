@@ -27,7 +27,7 @@ def bulk_analysis(sql, keyword=None, iterations=10):
             return "No tweets to analyse"
         data = dict(data=tweets)
         print "Analysing sentiment"
-        resp, content = h.request("http://twittersentiment.appspot.com/api/bulkClassifyJson", "POST", str(data))
+        resp, content = h.request("http://www.sentiment140.com/api/bulkClassifyJson", "POST", str(data))
         if content:
             content = loads(content.decode('utf-8', 'ignore'))
             _update_db(sql, content)
@@ -49,4 +49,20 @@ def _update_db(sql, content):
         sql.update_sentiment(id=tweet['id'],
                              sentiment=sentiment,
                              score=str(score))
+def main(args):
+    from database_connector import SQLConnector
+    kwargs = vars(args)
+    sql = SQLConnector(host=kwargs['host'],
+                       port=kwargs['port'],
+                       user=kwargs['user'],
+                       passwd=kwargs['password'],
+                       db=kwargs['db'])
+    bulk_analysis(sql)
+    sql.close()
+    return 0
+
+if __name__ == "__main__":
+    import argument_parser
+    import sys
+    sys.exit(main(argument_parser.main()))
 

@@ -1,5 +1,4 @@
 {u'software_name': u'ios', u'os_name': u'ios', u'version': u'6', u'sentiment': u'neutral', u'url': [u'http://t.co/V2GPK82M', u'http://t.co/atp6R2G5'], u'tweet': u'Apple confirms WWDC for June 11 with iOS 6 launch and iPhone 5 hinted | http://t.co/V2GPK82M http://t.co/atp6R2G5 via @Metro_Tech', u'company_id': u'23', u'tweet_db_id': u'440466', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997574891dd90ca2000060')}
-{u'software_name': u'ios', u'os_name': u'ios', u'version': u'6', u'sentiment': u'neutral', u'url': [u'http://t.co/V2GPK82M', u'http://t.co/atp6R2G5'], u'tweet': u'Apple confirms WWDC for June 11 with iOS 6 launch and iPhone 5 hinted | http://t.co/V2GPK82M http://t.co/atp6R2G5 via @Metro_Tech', u'company_id': u'23', u'tweet_db_id': u'440466', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997574891dd90ca2000061')}
 
 {u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://...', u'http://t.co/ZQw7ho8q'], u'tweet': u'iOS Human Interface Guidelines: RECENT NEWS:"Learning OpenGL" FINALLY AVAILABLE! Check it out now: http://... http://t.co/ZQw7ho8q', u'tweet_db_id': u'440467', u'os_id': u'9', u'_id': ObjectId('4f997573891dd90ca200005f')}
 
@@ -8,8 +7,6 @@
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/jPAx6wGO', u'tweet': u'#LinkedIn commits to #mobile ::: http://t.co/jPAx6wGO', u'tweet_db_id': u'440470', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca200005d')}
 
 {u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/cB88wc6Z', u'tweet': u'Get your movie trivia & comic freak on with Freakdroid for iOS & Android http://t.co/cB88wc6Z', u'tweet_db_id': u'440471', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f997572891dd90ca200005c')}
-
-{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/FAKeIQxM', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad $AAPL by @stevekovach http://t.co/FAKeIQxM', u'tweet_db_id': u'440472', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca200005b'), u'price': u'free'}
 
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/ov21fLtK', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad $AAPL by @stevekovach http://t.co/ov21fLtK', u'tweet_db_id': u'440473', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca200005a'), u'price': u'free'}
 
@@ -49,21 +46,11 @@
 
 {u'software_name': u'tons', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u"@tflanzmix Yeah, but I'll get tons of people unofficially posting just the songs, and those hits don't come up on the iOS searches...", u'tweet_db_id': u'440491', u'os_id': u'9', u'_id': ObjectId('4f997563891dd90ca2000048')}
 
-{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/Hr1YnHTH', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/Hr1YnHTH', u'tweet_db_id': u'440492', u'os_id': u'9', u'_id': ObjectId('4f997561891dd90ca2000047'), u'price': u'free'}
-
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/ZtO4TQ39', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/ZtO4TQ39', u'tweet_db_id': u'440493', u'os_id': u'9', u'_id': ObjectId('4f997561891dd90ca2000046'), u'price': u'free'}
 
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/07pyMjIB', u'tweet': u'Silicon Alley - This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy site... http://t.co/07pyMjIB', u'tweet_db_id': u'440494', u'os_id': u'9', u'_id': ObjectId('4f997561891dd90ca2000045'), u'price': u'free'}
 
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/m8ZJa5Gc', u'tweet': u'RT @Vote_Online This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy site... http://t.co/m8ZJa5Gc', u'tweet_db_id': u'440495', u'os_id': u'9', u'_id': ObjectId('4f997561891dd90ca2000044'), u'price': u'free'}
-
-{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/Zp3amU7i', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/Zp3amU7i', u'tweet_db_id': u'440496', u'os_id': u'9', u'_id': ObjectId('4f997560891dd90ca2000043'), u'price': u'free'}
-
-{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/BqtTo0B2', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/BqtTo0B2', u'tweet_db_id': u'440497', u'os_id': u'9', u'_id': ObjectId('4f997560891dd90ca2000042'), u'price': u'free'}
-
-{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/sRnkJsVd', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/sRnkJsVd', u'tweet_db_id': u'440498', u'os_id': u'9', u'_id': ObjectId('4f997560891dd90ca2000041'), u'price': u'free'}
-
-{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/WsMv4BWj', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/WsMv4BWj', u'tweet_db_id': u'440499', u'os_id': u'9', u'_id': ObjectId('4f997560891dd90ca2000040'), u'price': u'free'}
 
 {u'software_name': u'android', u'os_name': [u'ios', u'android'], u'sentiment': u'positive', u'url': u'http://t.co/mkCzS3cy', u'tweet': u'Who knows ? RT @docseggi: LinkedIn gets new Android and iOS apps, with a spectacular iPad version http://t.co/mkCzS3cy via @zite', u'tweet_db_id': u'440500', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f997560891dd90ca200003f')}
 
@@ -105,11 +92,9 @@
 
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/ZEBg0x0I', u'tweet': u'Today 39s announcement has nothing to do with playing Flash games on your iOS http://t.co/ZEBg0x0I', u'tweet_db_id': u'440656', u'os_id': u'9', u'_id': ObjectId('4f997548891dd90ca200002b')}
 
-{u'software_name': u'ios device', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/hlv7yGTd', u'http://t.co/EpYupqRC'], u'tweet': u'http://t.co/hlv7yGTd streams live television to your iOS device totally free of charge http://t.co/EpYupqRC', u'tweet_db_id': u'440657', u'os_id': u'9', u'_id': ObjectId('4f9974cc891dd90bed00002c')}
 {u'software_name': u'ios device', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/hlv7yGTd', u'http://t.co/EpYupqRC'], u'tweet': u'http://t.co/hlv7yGTd streams live television to your iOS device totally free of charge http://t.co/EpYupqRC', u'tweet_db_id': u'440657', u'os_id': u'9', u'_id': ObjectId('4f997548891dd90ca200002a')}
 
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/AgrQuKKx', u'tweet': u'CC News: EA Mobile Kicks off Work Less, Play More Sale http://t.co/AgrQuKKx #videogames #gaming @eamobile #ios', u'company_id': u'6', u'tweet_db_id': u'440752', u'os_id': u'9', u'company_name': u'ea', u'_id': ObjectId('4f997545891dd90ca2000028')}
-{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/AgrQuKKx', u'tweet': u'CC News: EA Mobile Kicks off Work Less, Play More Sale http://t.co/AgrQuKKx #videogames #gaming @eamobile #ios', u'company_id': u'6', u'tweet_db_id': u'440752', u'os_id': u'9', u'company_name': u'ea', u'_id': ObjectId('4f997545891dd90ca2000029')}
 
 {u'os_name': u'ios', u'os_id': u'9', u'sentiment': u'neutral', u'url': u'http://t.co/uA1wc8ug', u'tweet_db_id': u'440800', u'tweet': u"... It's... ... ... ... Python Bytes (#video) http://t.co/uA1wc8ug #app #appstore #apple #appstore #ios #ipad", u'programming_language_name': u'python', u'programming_language_id': u'317', u'_id': ObjectId('4f997545891dd90ca2000027')}
 
@@ -124,7 +109,6 @@
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/bmDtIRAY', u'tweet': u'Solve real jigsaws! Get the new version of #JigsawMaster for #iOS http://t.co/bmDtIRAY #games #iPhone', u'tweet_db_id': u'440806', u'os_id': u'9', u'_id': ObjectId('4f997540891dd90ca2000022')}
 
 {u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/UVtFVVVP', u'tweet': u'Friendly Shapes - funny interactive adventure HD. - TabTale LTD http://t.co/UVtFVVVP #apple #apps #iOS #book', u'company_id': u'23', u'tweet_db_id': u'440807', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997540891dd90ca2000020')}
-{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/UVtFVVVP', u'tweet': u'Friendly Shapes - funny interactive adventure HD. - TabTale LTD http://t.co/UVtFVVVP #apple #apps #iOS #book', u'company_id': u'23', u'tweet_db_id': u'440807', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997540891dd90ca2000021')}
 
 {u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'negative', u'tweet': u'And @mogdotcom appears to be having issues on iOS again... No songs will load. At least the downloaded songs work. #ForWhatItsWorth', u'tweet_db_id': u'440808', u'os_id': u'9', u'_id': ObjectId('4f99753f891dd90ca200001f')}
 
@@ -142,7 +126,6 @@
 {u'software_name': u'ios', u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/Ozivv6aG', u'tweet': u'Is QA your "thing"? Beachhead Studios just so happens to be looking for a QA Lead. Console, iOS & Android ++ #gamejobs http://t.co/Ozivv6aG', u'tweet_db_id': u'440815', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f99753a891dd90ca2000018')}
 
 {u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/5XO4oVXL', u'tweet': u"RT @killerjack299 Apple's New Television http://t.co/5XO4oVXL #apple #TV #iOS #android", u'company_id': u'23', u'tweet_db_id': u'440831', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f99753a891dd90ca2000016')}
-{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/5XO4oVXL', u'tweet': u"RT @killerjack299 Apple's New Television http://t.co/5XO4oVXL #apple #TV #iOS #android", u'company_id': u'23', u'tweet_db_id': u'440831', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f99753a891dd90ca2000017')}
 
 {u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/O0za8qBF', u'tweet': u'@jerickson425 @kctrommer @dustinmeyer @creativemagma \n\nSleepBox Alarm Clock for iOS out on iTunes Please RT!\n\nhttp://t.co/O0za8qBF', u'tweet_db_id': u'440832', u'os_id': u'9', u'_id': ObjectId('4f99753a891dd90ca2000015')}
 

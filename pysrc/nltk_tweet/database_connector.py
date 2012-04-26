@@ -40,7 +40,7 @@ class SQLConnector(object):
                  + "WHERE sentiment IS NULL ")
         if word:
             query += "AND keyword='" + word + "' "
-        query += "LIMIT 100"
+        query += "LIMIT 1000"
 
         self.db.query(query)
         return self.db.store_result()
@@ -160,12 +160,19 @@ class SQLConnector(object):
         c.close()
         self.db.commit()
 
+    def setAllNotFound(self):
+        c = self.db.cursor()
+        c.execute("UPDATE tweet SET found=NULL")
+        c.close()
+        self.db.commit()
+
     def setAllUntagged(self):
         c = self.db.cursor()
         c.execute("UPDATE tweet SET tagged=FALSE "
                   + "WHERE tagged=true")
         c.close()
         self.db.commit()
+        self.setAllNotFound()
 
     def close(self):
         self.db.close()
