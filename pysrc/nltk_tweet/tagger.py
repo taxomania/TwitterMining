@@ -241,7 +241,7 @@ class TweetTagger(object):
             print
             return None
 
-    def tag(self, pages=6, store=True, keyword=None):
+    def tag(self, pages=100, store=True, keyword=None):
         total_tags = []
         self._keyword=keyword if keyword else None
         for page in xrange(pages):

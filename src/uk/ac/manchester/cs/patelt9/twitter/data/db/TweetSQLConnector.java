@@ -56,7 +56,7 @@ public final class TweetSQLConnector extends SQLConnector implements TweetDataba
                 "?, " + // User_Id
                 "default, default, " + // Sentiment, Sentiment_score,
                 "?, " + // Keyword
-                "default);"); // tagged
+                "default, default);"); // tagged, found
 
         insertTweet = con.prepareStatement(
                 "INSERT INTO tweet VALUES(default, " + // Id
@@ -64,7 +64,7 @@ public final class TweetSQLConnector extends SQLConnector implements TweetDataba
                 "?, " + // Text
                 "?, " + // Created_at
                 "?, " + // User_Id
-                "default, default, default, default);"); // Sentiment, Sentiment_score, Keyword, tagged
+                "default, default,default, default, default);"); // Sentiment, Sentiment_score, Keyword, tagged, found
 
         deleteTweetByTweetId = con.prepareStatement("DELETE FROM tweet WHERE tweet_id=?;");
 

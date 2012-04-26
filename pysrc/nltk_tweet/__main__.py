@@ -82,6 +82,7 @@ class WebApp(object):
     @cherrypy.expose
     def extract(self, query): # Routed as /extract/:query
         bulk_analysis(sql=self._sql, keyword=query)
+        print query
         tweets=self._tagger.tag(keyword=query)
         if len(tweets):
             return self._get_template('tweet.html', tweets=tweets)

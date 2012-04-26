@@ -1,0 +1,494 @@
+{u'software_name': u'ios', u'os_name': u'ios', u'version': u'6', u'sentiment': u'neutral', u'url': [u'http://t.co/V2GPK82M', u'http://t.co/atp6R2G5'], u'tweet': u'Apple confirms WWDC for June 11 with iOS 6 launch and iPhone 5 hinted | http://t.co/V2GPK82M http://t.co/atp6R2G5 via @Metro_Tech', u'company_id': u'23', u'tweet_db_id': u'440466', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997574891dd90ca2000060')}
+{u'software_name': u'ios', u'os_name': u'ios', u'version': u'6', u'sentiment': u'neutral', u'url': [u'http://t.co/V2GPK82M', u'http://t.co/atp6R2G5'], u'tweet': u'Apple confirms WWDC for June 11 with iOS 6 launch and iPhone 5 hinted | http://t.co/V2GPK82M http://t.co/atp6R2G5 via @Metro_Tech', u'company_id': u'23', u'tweet_db_id': u'440466', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997574891dd90ca2000061')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://...', u'http://t.co/ZQw7ho8q'], u'tweet': u'iOS Human Interface Guidelines: RECENT NEWS:"Learning OpenGL" FINALLY AVAILABLE! Check it out now: http://... http://t.co/ZQw7ho8q', u'tweet_db_id': u'440467', u'os_id': u'9', u'_id': ObjectId('4f997573891dd90ca200005f')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u"With Nintendo's losses doesn't it make sense to start looking at mobile apps. Mario on iOS...", u'tweet_db_id': u'440468', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca200005e')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/jPAx6wGO', u'tweet': u'#LinkedIn commits to #mobile ::: http://t.co/jPAx6wGO', u'tweet_db_id': u'440470', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca200005d')}
+
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/cB88wc6Z', u'tweet': u'Get your movie trivia & comic freak on with Freakdroid for iOS & Android http://t.co/cB88wc6Z', u'tweet_db_id': u'440471', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f997572891dd90ca200005c')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/FAKeIQxM', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad $AAPL by @stevekovach http://t.co/FAKeIQxM', u'tweet_db_id': u'440472', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca200005b'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/ov21fLtK', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad $AAPL by @stevekovach http://t.co/ov21fLtK', u'tweet_db_id': u'440473', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca200005a'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/yiYkf1r9', u'tweet': u'Four in a Row Vs Friends now avaliable on iOS devices http://t.co/yiYkf1r9', u'tweet_db_id': u'440474', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca2000059')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/FmF4XB2h', u'tweet': u'Streamified: Combine All Your Social Media Streams On Your iOS Device http://t.co/FmF4XB2h', u'tweet_db_id': u'440475', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca2000058')}
+
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/JEH9r3ag', u'tweet': u'Get your movie trivia & comic freak on with Freakdroid for iOS & Android http://t.co/JEH9r3ag', u'tweet_db_id': u'440476', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f997572891dd90ca2000057')}
+
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/66OiFqLE', u'tweet': u'Get your movie trivia & comic freak on with Freakdroid for iOS & Android http://t.co/66OiFqLE', u'tweet_db_id': u'440477', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f997572891dd90ca2000056')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'positive', u'tweet': u'@ux4dotCom I guess AAPL is waiting for the next iOS after Mountain Lion, when they can give the best both worlds or something completely new', u'tweet_db_id': u'440478', u'os_id': u'9', u'_id': ObjectId('4f997572891dd90ca2000055')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/bTLkxNqH', u'tweet': u'Four in a Row Vs Friends now avaliable on iOS devices http://t.co/bTLkxNqH', u'tweet_db_id': u'440479', u'os_id': u'9', u'_id': ObjectId('4f997571891dd90ca2000054')}
+
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/dL8j4wju', u'tweet': u'Get your movie trivia & comic freak on with Freakdroid for iOS & Android http://t.co/dL8j4wju', u'tweet_db_id': u'440480', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f997571891dd90ca2000053')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u'@iMast777 sure y not what ios', u'tweet_db_id': u'440481', u'os_id': u'9', u'_id': ObjectId('4f99756a891dd90ca2000052')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/cP6sig0U', u'tweet': u'Four in a Row Vs Friends now avaliable on iOS devices http://t.co/cP6sig0U', u'tweet_db_id': u'440482', u'os_id': u'9', u'_id': ObjectId('4f99756a891dd90ca2000051')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/Ql3dFUqj', u'tweet': u'Four in a Row Vs Friends now avaliable on iOS devices http://t.co/Ql3dFUqj', u'tweet_db_id': u'440483', u'os_id': u'9', u'_id': ObjectId('4f99756a891dd90ca2000050')}
+
+{u'software_name': u'ios developers', u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/oCoGgVra', u'tweet': u"RT @wwkuwl: Attention iOS developers: We don't need any more photo filter apps. That market is, well, overly saturated. http://t.co/oCoGgVra", u'tweet_db_id': u'440484', u'os_id': u'9', u'_id': ObjectId('4f99756a891dd90ca200004f')}
+
+{u'software_name': u'ios users', u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/aZDR1mHj', u'tweet': u"Dear iOS users, Feel free to enjoy this link until it's inevitably closed down.  http://t.co/aZDR1mHj", u'tweet_db_id': u'440485', u'os_id': u'9', u'_id': ObjectId('4f997568891dd90ca200004e')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/PAcj3t45', u'http://t.co/NvcrGfzT'], u'tweet': u'RT @iDownloadBlog: http://t.co/PAcj3t45 streams live television to your iOS device http://t.co/NvcrGfzT', u'tweet_db_id': u'440486', u'os_id': u'9', u'_id': ObjectId('4f997566891dd90ca200004d')}
+
+{u'software_name': u'ios device', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/wNO74FxF', u'http://t.co/RgluU8ue'], u'tweet': u'http://t.co/wNO74FxF streams live television to your iOS device totally free of charge - http://t.co/RgluU8ue', u'tweet_db_id': u'440487', u'os_id': u'9', u'_id': ObjectId('4f997566891dd90ca200004c')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/WxhUs7NH', u'tweet': u'Sketchy iPad web app that lets you stream live TV and porn http://t.co/WxhUs7NH', u'tweet_db_id': u'440488', u'os_id': u'9', u'_id': ObjectId('4f997565891dd90ca200004b')}
+
+{u'software_name': u'ios gets', u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/LDrezeWq', u'tweet': u'Minecraft Pocket Edition for iOS gets craftier: The Minecraft port for iOS has had plenty of mining in it since its... http://t.co/LDrezeWq', u'tweet_db_id': u'440489', u'os_id': u'9', u'_id': ObjectId('4f997565891dd90ca200004a')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'positive', u'url': u'http://t.co/RckiOx1z', u'tweet': u'This looks crazy awesome. Galileo: iOS-controlled robotic iPhone platform with infinite spherical rotation capability. http://t.co/RckiOx1z', u'tweet_db_id': u'440490', u'os_id': u'9', u'_id': ObjectId('4f997564891dd90ca2000049')}
+
+{u'software_name': u'tons', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u"@tflanzmix Yeah, but I'll get tons of people unofficially posting just the songs, and those hits don't come up on the iOS searches...", u'tweet_db_id': u'440491', u'os_id': u'9', u'_id': ObjectId('4f997563891dd90ca2000048')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/Hr1YnHTH', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/Hr1YnHTH', u'tweet_db_id': u'440492', u'os_id': u'9', u'_id': ObjectId('4f997561891dd90ca2000047'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/ZtO4TQ39', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/ZtO4TQ39', u'tweet_db_id': u'440493', u'os_id': u'9', u'_id': ObjectId('4f997561891dd90ca2000046'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/07pyMjIB', u'tweet': u'Silicon Alley - This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy site... http://t.co/07pyMjIB', u'tweet_db_id': u'440494', u'os_id': u'9', u'_id': ObjectId('4f997561891dd90ca2000045'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/m8ZJa5Gc', u'tweet': u'RT @Vote_Online This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy site... http://t.co/m8ZJa5Gc', u'tweet_db_id': u'440495', u'os_id': u'9', u'_id': ObjectId('4f997561891dd90ca2000044'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/Zp3amU7i', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/Zp3amU7i', u'tweet_db_id': u'440496', u'os_id': u'9', u'_id': ObjectId('4f997560891dd90ca2000043'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/BqtTo0B2', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/BqtTo0B2', u'tweet_db_id': u'440497', u'os_id': u'9', u'_id': ObjectId('4f997560891dd90ca2000042'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/sRnkJsVd', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/sRnkJsVd', u'tweet_db_id': u'440498', u'os_id': u'9', u'_id': ObjectId('4f997560891dd90ca2000041'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/WsMv4BWj', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad (AAPL): There are plenty of sketchy sites that let you s... http://t.co/WsMv4BWj', u'tweet_db_id': u'440499', u'os_id': u'9', u'_id': ObjectId('4f997560891dd90ca2000040'), u'price': u'free'}
+
+{u'software_name': u'android', u'os_name': [u'ios', u'android'], u'sentiment': u'positive', u'url': u'http://t.co/mkCzS3cy', u'tweet': u'Who knows ? RT @docseggi: LinkedIn gets new Android and iOS apps, with a spectacular iPad version http://t.co/mkCzS3cy via @zite', u'tweet_db_id': u'440500', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f997560891dd90ca200003f')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/9wC4taEy', u'tweet': u'Facebook says mobile is big risk  starting with Android and iOS | VentureBeat: http://t.co/9wC4taEy', u'tweet_db_id': u'440501', u'os_id': u'9', u'_id': ObjectId('4f99755f891dd90ca200003e')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u"@deedearie I'm surprised you don't have the iOS Human Interface Guidelines on that shelf.", u'tweet_db_id': u'440502', u'os_id': u'9', u'_id': ObjectId('4f99755f891dd90ca200003d')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u"@kinny hahaa...somehow i think it doesn't look very iOS", u'tweet_db_id': u'440503', u'os_id': u'9', u'_id': ObjectId('4f99755e891dd90ca200003c')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/xwahRuHP', u'tweet': u"This can't last long. RT @cultofmac: iOSLiveTV Brings Premium TV To Your iOS Device For Free http://t.co/xwahRuHP", u'tweet_db_id': u'440506', u'os_id': u'9', u'_id': ObjectId('4f997553891dd90ca200003b'), u'price': u'free'}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/mVwfcMz6', u'tweet': u'54% of iOS web traffic devoted to search, while Internet ave = 36%. This + more search-by-device stats: http://t.co/mVwfcMz6 via @chitika', u'tweet_db_id': u'440643', u'os_id': u'9', u'_id': ObjectId('4f997553891dd90ca200003a')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'version': u'5.0', u'sentiment': u'neutral', u'tweet': u'Should i upgrade to ios 5.0? Ganda ng hello kitty iphone theme', u'tweet_db_id': u'440644', u'os_id': u'9', u'_id': ObjectId('4f997552891dd90ca2000039')}
+
+{u'os_name': u'ios', u'sentiment': u'positive', u'url': u'http://t.co/hsgJGuS3', u'tweet': u'Download A Bedtime Story - the perfect night time companion to help ease your young one to bed. Using amazing... http://t.co/hsgJGuS3', u'tweet_db_id': u'440645', u'os_id': u'9', u'_id': ObjectId('4f997551891dd90ca2000038')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/1wGxS3iV', u'tweet': u'LabTech Adds Complete, Powerful, Integrated Mobile Device Management for Apple ... - MarketWatch (press release)... http://t.co/1wGxS3iV', u'tweet_db_id': u'440646', u'os_id': u'9', u'_id': ObjectId('4f997551891dd90ca2000037')}
+
+{u'software_name': u'ios device check', u'os_name': u'ios', u'sentiment': u'positive', u'url': u'http://t.co/sNLVaUon', u'tweet': u"If you have an iOS device, check out http://t.co/sNLVaUon  you're welcome.", u'tweet_db_id': u'440647', u'os_id': u'9', u'_id': ObjectId('4f997551891dd90ca2000036')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'version': u'5.1', u'sentiment': u'neutral', u'url': u'http://t.co/HbXxTNiw', u'tweet': u'RT @NewsJailbreak: Pod2G Asks For Your Vote To Release iOS 5.1 Untethered Jailbreak Or Hold http://t.co/HbXxTNiw #jailbreak #iPhone5', u'tweet_db_id': u'440648', u'os_id': u'9', u'_id': ObjectId('4f99754f891dd90ca2000035')}
+
+{u'software_name': u'ios', u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/jrS3KDah', u'tweet': u'Check out Card.io Scan Credit Cards for iOS and Android | Verious: http://t.co/jrS3KDah', u'tweet_db_id': u'440649', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f99754e891dd90ca2000034')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/Q6if0ZG0', u'tweet': u'Can you beat my Bike Baron level? Check it out! Level code: EDWO #bikebaron #ios #gamekk http://t.co/Q6if0ZG0', u'tweet_db_id': u'440650', u'os_id': u'9', u'_id': ObjectId('4f99754d891dd90ca2000033')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u'@TrevOreTrevOre Learning Suite will eventually support iOS/Android devices; mobile development is in progress.  Sorry for the frustration', u'tweet_db_id': u'440651', u'os_id': u'9', u'_id': ObjectId('4f99754d891dd90ca2000032')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/Bgi82i7R...', u'http://t.co/cvoirwzU'], u'tweet': u'Free iOS App Today - Indicator Everyday Mathematics Beat the Computer? Multiplication. http://t.co/Bgi82i7R... http://t.co/cvoirwzU', u'tweet_db_id': u'440652', u'os_id': u'9', u'_id': ObjectId('4f99754c891dd90ca2000031')}
+
+{u'software_name': u'ios alert', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u"@davewilkinson probably set an iOS alert so I don't forget next year.", u'tweet_db_id': u'440653', u'os_id': u'9', u'_id': ObjectId('4f99754b891dd90ca2000030')}
+
+{u'software_name': u'ios', u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/SIcVwxDu', u'tweet': u'LabTech Adds Complete, Powerful, Integrated Mobile Device Management for Apple iOS and Google Android http://t.co/SIcVwxDu #GooglePhone', u'company_id': u'23', u'tweet_db_id': u'440654', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f997549891dd90ca200002e')}
+{u'software_name': u'ios', u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/SIcVwxDu', u'tweet': u'LabTech Adds Complete, Powerful, Integrated Mobile Device Management for Apple iOS and Google Android http://t.co/SIcVwxDu #GooglePhone', u'company_id': u'23', u'tweet_db_id': u'440654', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f997549891dd90ca200002f')}
+
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/S6DDJWBi', u'tweet': u'Agency hired to protest #Apple store, most likely by #Samsung and caught on video: http://t.co/S6DDJWBi #ipad #iphone #ios #android #galaxy', u'company_id': u'23', u'tweet_db_id': u'440655', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f997548891dd90ca200002c')}
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/S6DDJWBi', u'tweet': u'Agency hired to protest #Apple store, most likely by #Samsung and caught on video: http://t.co/S6DDJWBi #ipad #iphone #ios #android #galaxy', u'company_id': u'23', u'tweet_db_id': u'440655', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f997548891dd90ca200002d')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/ZEBg0x0I', u'tweet': u'Today 39s announcement has nothing to do with playing Flash games on your iOS http://t.co/ZEBg0x0I', u'tweet_db_id': u'440656', u'os_id': u'9', u'_id': ObjectId('4f997548891dd90ca200002b')}
+
+{u'software_name': u'ios device', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/hlv7yGTd', u'http://t.co/EpYupqRC'], u'tweet': u'http://t.co/hlv7yGTd streams live television to your iOS device totally free of charge http://t.co/EpYupqRC', u'tweet_db_id': u'440657', u'os_id': u'9', u'_id': ObjectId('4f9974cc891dd90bed00002c')}
+{u'software_name': u'ios device', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/hlv7yGTd', u'http://t.co/EpYupqRC'], u'tweet': u'http://t.co/hlv7yGTd streams live television to your iOS device totally free of charge http://t.co/EpYupqRC', u'tweet_db_id': u'440657', u'os_id': u'9', u'_id': ObjectId('4f997548891dd90ca200002a')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/AgrQuKKx', u'tweet': u'CC News: EA Mobile Kicks off Work Less, Play More Sale http://t.co/AgrQuKKx #videogames #gaming @eamobile #ios', u'company_id': u'6', u'tweet_db_id': u'440752', u'os_id': u'9', u'company_name': u'ea', u'_id': ObjectId('4f997545891dd90ca2000028')}
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/AgrQuKKx', u'tweet': u'CC News: EA Mobile Kicks off Work Less, Play More Sale http://t.co/AgrQuKKx #videogames #gaming @eamobile #ios', u'company_id': u'6', u'tweet_db_id': u'440752', u'os_id': u'9', u'company_name': u'ea', u'_id': ObjectId('4f997545891dd90ca2000029')}
+
+{u'os_name': u'ios', u'os_id': u'9', u'sentiment': u'neutral', u'url': u'http://t.co/uA1wc8ug', u'tweet_db_id': u'440800', u'tweet': u"... It's... ... ... ... Python Bytes (#video) http://t.co/uA1wc8ug #app #appstore #apple #appstore #ios #ipad", u'programming_language_name': u'python', u'programming_language_id': u'317', u'_id': ObjectId('4f997545891dd90ca2000027')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/t0ofh3ww', u'tweet': u'Great job on the new iOS app #LinkedIn - Now iPad friendly too! http://t.co/t0ofh3ww', u'tweet_db_id': u'440801', u'os_id': u'9', u'_id': ObjectId('4f997545891dd90ca2000026')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/qJvWmtpK', u'tweet': u'Tutorial: How to design a chatroom iPhone UI http://t.co/qJvWmtpK #iOS #tuts', u'tweet_db_id': u'440802', u'os_id': u'9', u'_id': ObjectId('4f997544891dd90ca2000025')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u'@heathborders Also, on iOS, #a11y is the law: 21st Century Accessibility Act of 2010, which FCC will enforce soon.', u'tweet_db_id': u'440803', u'os_id': u'9', u'_id': ObjectId('4f997544891dd90ca2000024')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/anHsNBcv', u'tweet': u'iOS Dominates Enterprise, Highlights Need for More #Mobile Security http://t.co/anHsNBcv', u'tweet_db_id': u'440804', u'os_id': u'9', u'_id': ObjectId('4f997543891dd90ca2000023')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/bmDtIRAY', u'tweet': u'Solve real jigsaws! Get the new version of #JigsawMaster for #iOS http://t.co/bmDtIRAY #games #iPhone', u'tweet_db_id': u'440806', u'os_id': u'9', u'_id': ObjectId('4f997540891dd90ca2000022')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/UVtFVVVP', u'tweet': u'Friendly Shapes - funny interactive adventure HD. - TabTale LTD http://t.co/UVtFVVVP #apple #apps #iOS #book', u'company_id': u'23', u'tweet_db_id': u'440807', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997540891dd90ca2000020')}
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/UVtFVVVP', u'tweet': u'Friendly Shapes - funny interactive adventure HD. - TabTale LTD http://t.co/UVtFVVVP #apple #apps #iOS #book', u'company_id': u'23', u'tweet_db_id': u'440807', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997540891dd90ca2000021')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'negative', u'tweet': u'And @mogdotcom appears to be having issues on iOS again... No songs will load. At least the downloaded songs work. #ForWhatItsWorth', u'tweet_db_id': u'440808', u'os_id': u'9', u'_id': ObjectId('4f99753f891dd90ca200001f')}
+
+{u'os_name': [u'ios', u'linux', u'android'], u'sentiment': u'positive', u'url': u'http://t.co/wu2xe6ph', u'tweet': u'Check out this project, a little under 3 days left and more awesomeness to come PC, Mac, Linux, iOS, and android http://t.co/wu2xe6ph', u'tweet_db_id': u'440809', u'os_id': [u'9', u'5', u'2'], u'_id': ObjectId('4f99753e891dd90ca200001e')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'version': u'97', u'sentiment': u'neutral', u'url': u'http://t.co/SsQFSWjN', u'tweet': u'Report: Six of top 10 enterprise devices using Good are iOS, 97 percent of tablets are iPad http://t.co/SsQFSWjN', u'tweet_db_id': u'440811', u'os_id': u'9', u'_id': ObjectId('4f99753e891dd90ca200001d')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u'@tobint @GeertvanHorrik not just security... UI as well looking at ios over the last few years .....', u'tweet_db_id': u'440812', u'os_id': u'9', u'_id': ObjectId('4f99753d891dd90ca200001c')}
+
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/dE8w6SjS', u'tweet': u'LabTech Adds Complete, Powerful, Integrated Mobile Device Management for Apple iOS and Google Android http://t.co/dE8w6SjS', u'company_id': u'23', u'tweet_db_id': u'440813', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f99753b891dd90ca200001a')}
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/dE8w6SjS', u'tweet': u'LabTech Adds Complete, Powerful, Integrated Mobile Device Management for Apple iOS and Google Android http://t.co/dE8w6SjS', u'company_id': u'23', u'tweet_db_id': u'440813', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f99753b891dd90ca200001b')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'version': u'6.excited', u'sentiment': u'positive', u'tweet': u"RT @Nikeshshetty: Ready for iOS 6.Excited to see the new feature's at @WWDC .Gotta see how long will it take to Jailbreak!", u'tweet_db_id': u'440814', u'os_id': u'9', u'_id': ObjectId('4f99753b891dd90ca2000019')}
+
+{u'software_name': u'ios', u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/Ozivv6aG', u'tweet': u'Is QA your "thing"? Beachhead Studios just so happens to be looking for a QA Lead. Console, iOS & Android ++ #gamejobs http://t.co/Ozivv6aG', u'tweet_db_id': u'440815', u'os_id': [u'9', u'2'], u'_id': ObjectId('4f99753a891dd90ca2000018')}
+
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/5XO4oVXL', u'tweet': u"RT @killerjack299 Apple's New Television http://t.co/5XO4oVXL #apple #TV #iOS #android", u'company_id': u'23', u'tweet_db_id': u'440831', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f99753a891dd90ca2000016')}
+{u'os_name': [u'ios', u'android'], u'sentiment': u'neutral', u'url': u'http://t.co/5XO4oVXL', u'tweet': u"RT @killerjack299 Apple's New Television http://t.co/5XO4oVXL #apple #TV #iOS #android", u'company_id': u'23', u'tweet_db_id': u'440831', u'os_id': [u'9', u'2'], u'company_name': u'apple', u'_id': ObjectId('4f99753a891dd90ca2000017')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/O0za8qBF', u'tweet': u'@jerickson425 @kctrommer @dustinmeyer @creativemagma \n\nSleepBox Alarm Clock for iOS out on iTunes Please RT!\n\nhttp://t.co/O0za8qBF', u'tweet_db_id': u'440832', u'os_id': u'9', u'_id': ObjectId('4f99753a891dd90ca2000015')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/9r6pgOQu', u'tweet': u'2012 Apple Design Awards now accepting nominations for iOS and Mac apps http://t.co/9r6pgOQu', u'company_id': u'23', u'tweet_db_id': u'440833', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997538891dd90ca2000013')}
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/9r6pgOQu', u'tweet': u'2012 Apple Design Awards now accepting nominations for iOS and Mac apps http://t.co/9r6pgOQu', u'company_id': u'23', u'tweet_db_id': u'440833', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997538891dd90ca2000014')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u"RT @zpower: if nintendo doesn't decide to sell ios games, shareholders will eventually decide for them.", u'tweet_db_id': u'440834', u'os_id': u'9', u'_id': ObjectId('4f997538891dd90ca2000012')}
+
+{u'software_name': u'ios device', u'os_name': u'ios', u'sentiment': u'positive', u'url': u'http://t.co/0AoqJtVa', u'tweet': u'How to Type With Emoji Icons on Your iOS Device: Add some cartoony fun to what you write!A picture says a thousa... http://t.co/0AoqJtVa', u'tweet_db_id': u'440835', u'os_id': u'9', u'_id': ObjectId('4f997537891dd90ca2000011')}
+
+{u'software_name': u'ios device', u'os_name': u'ios', u'sentiment': u'positive', u'url': u'http://t.co/e27FrL3S', u'tweet': u'How to Type With Emoji Icons on Your iOS Device: Add some cartoony fun to what you write!A picture says a thousa... http://t.co/e27FrL3S', u'tweet_db_id': u'440836', u'os_id': u'9', u'_id': ObjectId('4f997536891dd90ca2000010')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/uG3xgm1t', u'tweet': u'Louisiana Game Developer, Pixel Dash Studios, Releases Fans vs. Franchise for iOS Devices: BATON ROUG... http://t.co/uG3xgm1t IntraSport', u'tweet_db_id': u'440837', u'os_id': u'9', u'_id': ObjectId('4f997535891dd90ca200000f')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/6lvorA4d', u'tweet': u'New post! "Four in a Row Vs Friends now avaliable on iOS devices": http://t.co/6lvorA4d', u'tweet_db_id': u'440838', u'os_id': u'9', u'_id': ObjectId('4f997535891dd90ca200000e')}
+
+{u'os_name': u'ios', u'sentiment': u'positive', u'url': u'http://t.co/Fc0D1Z84', u'tweet': u'#nowplaying @jidho ? Love To love You Baby by Donna Summer - "Inside Stuff" with Swarsaktya on http://t.co/Fc0D1Z84 @dimassaktya @IOS_radio', u'tweet_db_id': u'440839', u'os_id': u'9', u'_id': ObjectId('4f997535891dd90ca200000d')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u"@JakeMoore It's gorgeous but not an iOS icon.", u'tweet_db_id': u'440840', u'os_id': u'9', u'_id': ObjectId('4f997535891dd90ca200000c')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'version': u'6', u'sentiment': u'positive', u'url': u'http://t.co/jdwdkR54', u'tweet': u'RT @TaimurAsad: Should The New Jailbreak Exploits Be Saved For iOS 6? Pod2g Wants You To Vote! http://t.co/jdwdkR54 via @RedmondPie', u'tweet_db_id': u'440841', u'os_id': u'9', u'_id': ObjectId('4f997535891dd90ca200000b')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'version': u'5.1', u'sentiment': u'neutral', u'tweet': u'@Wolvogamer1 ICS had it first. iOS 5.1 added it in after Android did. ;)', u'tweet_db_id': u'440842', u'os_id': u'9', u'_id': ObjectId('4f997533891dd90ca200000a')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/sFl2PxmF', u'tweet': u'Like http://t.co/sFl2PxmF', u'tweet_db_id': u'440843', u'os_id': u'9', u'_id': ObjectId('4f997533891dd90ca2000009')}
+
+{u'software_name': u'ios versions', u'os_name': u'ios', u'sentiment': u'negative', u'tweet': u"just hoping Apple would not drop numbers out of iOS versions, like 'the new iOS' =_=", u'company_id': u'23', u'tweet_db_id': u'440844', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997532891dd90ca2000007')}
+{u'software_name': u'ios versions', u'os_name': u'ios', u'sentiment': u'negative', u'tweet': u"just hoping Apple would not drop numbers out of iOS versions, like 'the new iOS' =_=", u'company_id': u'23', u'tweet_db_id': u'440844', u'os_id': u'9', u'company_name': u'apple', u'_id': ObjectId('4f997532891dd90ca2000008')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/vDYKTjxe', u'tweet': u'This Site Lets You Stream Live TV For Free On Your iPad  http://t.co/vDYKTjxe', u'tweet_db_id': u'440845', u'os_id': u'9', u'_id': ObjectId('4f997531891dd90ca2000006'), u'price': u'free'}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': u'http://t.co/olalPZfX', u'tweet': u'"Evernote-SDK-iOS" is now a CocoaPod: http://t.co/olalPZfX', u'tweet_db_id': u'440889', u'os_id': u'9', u'_id': ObjectId('4f997530891dd90ca2000005')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u'NPR iOS app request, into the ether: let me select all the stories I want, app downloads them, and I get a playlist to listen to in the car.', u'tweet_db_id': u'440890', u'os_id': u'9', u'_id': ObjectId('4f997530891dd90ca2000004')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/g40owAGq', u'http://t.co/dx7HytMg'], u'tweet': u'RT @9to5mac: http://t.co/g40owAGq streams Airplay compatible TV from all over the world to your iOS device http://t.co/dx7HytMg', u'tweet_db_id': u'440891', u'os_id': u'9', u'_id': ObjectId('4f99752e891dd90ca2000003')}
+
+{u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/MZhl7rxi', u'http://t.co/Ty0IzQMq'], u'tweet': u'RT @9to5mac: http://t.co/MZhl7rxi streams Airplay compatible TV from all over the world to your iOS device http://t.co/Ty0IzQMq', u'tweet_db_id': u'440893', u'os_id': u'9', u'_id': ObjectId('4f99752e891dd90ca2000002')}
+
+{u'software_name': u'ios', u'os_name': u'ios', u'sentiment': u'neutral', u'tweet': u'Enter this code on your iOS Ninja Saga and receive Token together! &lt;563923554&gt;', u'tweet_db_id': u'440894', u'os_id': u'9', u'_id': ObjectId('4f99752e891dd90ca2000001')}
+
+{u'software_name': u'ios device', u'os_name': u'ios', u'sentiment': u'neutral', u'url': [u'http://t.co/fwMGuY8V', u'http://t.co/M57xqUy4'], u'tweet': u'http://t.co/fwMGuY8V streams live television to your iOS device totally free of charge http://t.co/M57xqUy4', u'tweet_db_id': u'440895', u'os_id': u'9', u'_id': ObjectId('4f99752d891dd90ca2000000')}
+
+{u'software_name': u'itunes', u'_id': ObjectId('4f997ed7891dd90da3000005'), u'tweet': u'iTunes UK: 37. End of Time - Beyonc (+1)', u'tweet_db_id': u'441758'}
+
+Sounds good with jess & i in the club (; #owow RT @justinbieber: sounds good in the club - http://t.co/yvXnQwsc
+False
+
+@Arlington10 Cheap The New #iPad  http://t.co/Z4wUfVFx
+False
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997ed5891dd90da3000004'), u'tweet': u'My iTunes is loving Mr. John Mayer today... definitely no objections here )))))))', u'tweet_db_id': u'441763'}
+
+logmsgbot_: nikerabbit synchronized wmf-config/InitialiseSettings.php  'Narayamon tewiki [[bugzilla:33480|bug 33480]]'
+False
+
+@ItsMidnightRed The Wanted on Itunes
+False
+
+@SofieStangvik @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+??? ????? ???????
+http://t.co/bWwKAoKT
+????
+ELMRY9Y47R9R
+@Q8iPhone @kuwaitapple @Q8app  @dralwaleed @iTunesQ8 @i_Cydia @AppleKuwait #app_ar
+False
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997ed5891dd90da3000003'), u'tweet': u'@Andrew_3335 Ok. What iTunes version are you using?', u'tweet_db_id': u'441771'}
+
+Aero Vacation! Build the best tourist airship ever!Travel the world. http://t.co/93Q38brE
+False
+
+@AllForLayy His Stats He Avg Like 25pts 8ast 8rebs Something Like That
+False
+
+@Akita400 @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997ed5891dd90da3000002'), u'tweet': u'@SteezyMcSteelo cool...I need your magic touch on my iTunes', u'tweet_db_id': u'441779'}
+
+@WalkDatTalk go sample that new single by Frank Math Produced By Lex Luger Its All There http://t.co/ZVs113fb
+False
+
+{u'software_id': u'158', u'software_name': u'iup', u'_id': ObjectId('4f997ed5891dd90da3000001'), u'tweet': u'I must say I see quite a few sexy white boys @ IUP ... maybe I should get me one...', u'tweet_db_id': u'441781'}
+
+OMG 2 singles off of #UnderratedAlbum come out on iTunes today YEAH BUDDY @BowWow &gt;.&lt; OMFG
+False
+
+This is definitely going to make the chrome book much more useable: http://t.co/Kw9mZCn8
+False
+
+Image Properties Context Menu For Google Chrome http://t.co/HhQdUm72 #google #TechNews
+False
+
+Nice error message: "406 Not Acceptable
+Privacy was enable now, rquest can't acceptable.Please try again later." @ChromiumDev @firefox
+False
+
+RT @ShadyOlive Please RT & visit us at http://t.co/6IjHM3cU for your chance to win £50 worth of iTunes cards. Winner drawn 30/04 #shadyolive
+False
+
+@DylanC813 @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997c79891dd90d8a000007'), u'tweet': u'Got @JayClipsekc on my itunes now', u'tweet_db_id': u'441794'}
+
+{u'software_id': u'780', u'software_name': u'firefox', u'_id': ObjectId('4f997c79891dd90d8a000006'), u'tweet': u'thanks to @plagiarismtoday I am going to try FireFox as my browser. Newest update is 12.0, I was running 9.0.1. Oops.', u'tweet_db_id': u'441795'}
+
+sounds good in the club - http://t.co/wMVTChnL
+False
+
+{u'software_name': u'itunes', u'_id': ObjectId('4f997c79891dd90d8a000005'), u'tweet': u"''End Of Time'' has 3 versions on iTunes Poland. They are number 1, 44 and 145 respectively. It's going to debut at #1!", u'tweet_db_id': u'441797'}
+
+Useful Extensions for Google Chrome™ http://t.co/4lVl2uWp via @tejjicom i just changed my scrollbars to thin scrollbars
+False
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997c77891dd90d8a000004'), u'tweet': u'Anybody want a 15 iTunes gift card for 13?', u'tweet_db_id': u'441801'}
+
+@RealWizKhalifa got 2 and 3 on iTunes #tgod cuh
+False
+
+Google’s Latest TV Ad: How Chrome Can Help You Get Your Ex Back  http://t.co/0hP0Mgz1
+False
+
+Dugem wae sia RT @justinbieber: sounds good in the club - http://t.co/vnJ6sPeK
+False
+
+{u'url': u'http://t.co/QwiPjzR7', u'software_name': u'itunes', u'_id': ObjectId('4f997c77891dd90d8a000003'), u'tweet': u'#ITUNES @ToneTrump "Afghan" ft: Young Jeezy http://t.co/QwiPjzR7 #letswin!', u'tweet_db_id': u'441805'}
+
+Overrated?? “@Money_g00d “@BowWow Dropping 1st single "We In Da Club" & 2nd single featuring T-Pain today off "Underrated" on ITunes YMCMB””
+False
+
+21 by Adele is still slaying on iTunes
+False
+
+@ricapics @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+"Walk of Shame" (feat. Dave Matthews) from @jimmyfallon's UNC show is now available for download on iTunes! http://t.co/Sgeu8myF
+False
+
+@jenrine nope dear.. Posted it via google chrome and safari! But the photo doesnt show up! :(
+False
+
+sounds good in the club - http://t.co/Eon8Icoo -- Justin Bieber (@justinbieber)
+False
+
+{u'software_name': u'itunes', u'_id': ObjectId('4f997c75891dd90d8a000002'), u'tweet': u"Haven't had an #RHCP's jam in ages, got like 50 odd of their songs on iTunes, this is gunnnaaaa be heavy", u'tweet_db_id': u'441815'}
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997c73891dd90d8a000001'), u'tweet': u'ayee i peeped he got a lot of chris brown songs in his itunes library. #HeInTheRealNiggaSection', u'tweet_db_id': u'441817'}
+
+{u'software_id': u'780', u'software_name': u'firefox', u'_id': ObjectId('4f997c71891dd90d8a000000'), u'tweet': u'Computer mess-ups since 8 am: Illustrator repeatedly crashes, firefox repeatedly crashes, and now my graphics card has "failed". Seriously?', u'tweet_db_id': u'441819'}
+
+@ryanmapes @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+@mrdreamzmag go sample that new single by Frank Math Produced By Lex Luger Its All There http://t.co/ZVs113fb
+False
+
+{u'software_name': u'ios', u'os_name': u'ios', u'url': u'http://t.co/lTBTIAJL', u'price': u'free', u'tweet_db_id': u'441822', u'os_id': u'9', u'_id': ObjectId('4f997c30891dd90d6b000009'), u'tweet': u'RocketPack FREE (Games): RocketPack FREE 1.0 Device: iOS iPhone Category: Games Price: Free, Version: 1.0 (iTunes)... http://t.co/lTBTIAJL'}
+
+@TheRealDJShy Bring It to the Wall (feat. Lumidee, Pure & Chad-B) - for 0.99 cents Now on #Itunes -&gt; http://t.co/xll0tcyK &lt;---
+False
+
+{u'software_id': u'382', u'software_name': u'avg', u'_id': ObjectId('4f997c2f891dd90d6b000008'), u'tweet': u'HBD to @GamecockSoftbll stud @laurenlack4. The "Amazing Asian" is 2nd in the whole SEC in batting avg. And WE DON\'T FUDGE STATS. #othersdo', u'tweet_db_id': u'441825'}
+
+“@u_kisseli: @BarackObama hello sir ^^;;; please support our new album~ you can get it on iTunes =] http://t.co/ZRTnFGga” LMFAO!!!!
+False
+
+BUY @iknowJONATHAS 'U Got It Bad (The Voice Performance) - Single' on iTunes | http://t.co/LBCwaWub
+False
+
+{u'software_name': u'ios', u'os_name': u'ios', u'url': u'http://t.co/YveHa2K6', u'price': u'free', u'tweet_db_id': u'441832', u'os_id': u'9', u'_id': ObjectId('4f997c2e891dd90d6b000007'), u'tweet': u'wspr240 (Business): wspr240 1.0 Device: iOS iPhone Category: Business Price: Free, Version: 1.0 (iTunes)... http://t.co/YveHa2K6'}
+
+{u'software_name': u'itunes', u'url': u'http://t.co/QD9q2JRV', u'tweet': u'This song has been played for 166 times!!! The song that played the most from my itunes.#dasracist #itunes http://t.co/QD9q2JRV', u'tweet_db_id': u'441836', u'software_id': u'770', u'_id': ObjectId('4f997c2c891dd90d6b000006')}
+
+{u'software_name': u'itunes', u'_id': ObjectId('4f997c2c891dd90d6b000005'), u'tweet': u'@czheng type it into Word, save it as a PDF into iTunes then attach the fucker to a Skype chat. Cya!', u'tweet_db_id': u'441838'}
+
+??????? ????????? Google Chrome-? ????? | http://t.co/e1AHCo6y http://t.co/Ea4x15jy
+False
+
+{u'software_name': u'blender', u'_id': ObjectId('4f997c2b891dd90d6b000004'), u'tweet': u"You'll think she hopped up out the blender when u see it shake!!", u'tweet_db_id': u'441840'}
+
+GERONIMO ON HORSEBACK Real Bronze Powder Cast Native American Apache Indian Warrior Sculpture Statue: This Extre... http://t.co/orjAWA9v
+False
+
+@PlanetBefore @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+BUY @iknowJONATHAS 'THE FOREIGNER: MIXTAPE' on iTunes | http://t.co/kwgwDYiW
+False
+
+{u'software_name': u'emacs', u'url': u'http://t.co/WHUq84Ha', u'tweet': u'knu pushed to emacs-24-mac at knu/emacs http://t.co/WHUq84Ha', u'tweet_db_id': u'441846', u'software_id': u'390', u'_id': ObjectId('4f997c29891dd90d6b000002')}
+
+knu created branch master-mac at knu/emacs http://t.co/IICW5nZX
+False
+
+knu pushed to master at knu/emacs http://t.co/KTDfae90
+False
+
+{u'software_name': u'itunes', u'url': u'http://t.co/fPCtd1V8', u'tweet': u'Oh @AaronCarter when I saw u in a tv show of Spain singing this song...  http://t.co/fPCtd1V8 #iTunes', u'tweet_db_id': u'441850', u'software_id': u'770', u'_id': ObjectId('4f997c29891dd90d6b000001')}
+
+{u'software_name': u'emacs', u'url': u'http://t.co/1dLusb1K', u'tweet': u'knu created branch emacs-24 at knu/emacs http://t.co/1dLusb1K', u'tweet_db_id': u'441851', u'software_id': u'390', u'_id': ObjectId('4f997c29891dd90d6b000000')}
+
+http://t.co/Iep9wVqb oblivion keyblade tattoo
+http://t.co/wfJE1sYL oak kitchen cabinets pictures
+False
+
+BUY @iknowJONATHAS 'BIRTHDATE EP' on iTunes |  http://t.co/8Os1a2NO
+False
+
+@jd_dunlapPR @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+@DavidCastain go sample that new single by Frank Math Produced By Lex Luger Its All There http://t.co/ZVs113fb
+False
+
+@ZackyFoREVerA7X @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+@jazzmancia @dannypudi And that's why we have a podcast = ) you can download it later from iTunes.
+False
+
+{u'url': u'http://t.co/tz6ZKx7y', u'software_name': u'itunes', u'_id': ObjectId('4f997c04891dd90d4d00000e'), u'tweet': u'Download our newest club single on iTunes! "Better" by @UrbanMercury - http://t.co/tz6ZKx7y Please #Share and RT #M3RC', u'tweet_db_id': u'441869'}
+
+{u'software_name': u'itunes', u'url': u'http://t.co/mjpZa8g7', u'tweet': u'likes Pumped Up Kicks by Foster the People on Ping http://t.co/mjpZa8g7 #iTunes', u'tweet_db_id': u'441872', u'software_id': u'770', u'_id': ObjectId('4f997c02891dd90d4d00000d')}
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997c02891dd90d4d00000c'), u'tweet': u'ugh need the lonely right now but my ipod has crashed and my itunes got wiped out.....', u'tweet_db_id': u'441876'}
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997c02891dd90d4d00000b'), u'tweet': u"Mam's getting me my long awaited iTunes voucher today :D", u'tweet_db_id': u'441877'}
+
+{u'tweet': u"@aubriaco I believe Google Maps has some compatibility issues with Firefox 8. I'll pass along your feedback to my team.", u'software_name': u'firefox', u'_id': ObjectId('4f997c02891dd90d4d00000a'), u'version': u'8', u'tweet_db_id': u'441879'}
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997c00891dd90d4d000009'), u'tweet': u'@KatKozak I did really, your iTunes is the best!', u'tweet_db_id': u'441880'}
+
+Hi guys, you absolutely must join me in this cool game, http://t.co/vyGVU7ZP - WinnerCasino! It totally rocks!
+False
+
+How is BC close going go Top 20 (24) without any iTunes releases? lol Def Jam really dropped the ball on that one.
+False
+
+{u'software_name': u'itunes', u'url': u'http://t.co/ROaYTZqV', u'tweet': u'WHS 43  iTunes Parental Controls | The Wired #Homeschool http://t.co/ROaYTZqV', u'tweet_db_id': u'441884', u'software_id': u'770', u'_id': ObjectId('4f997c00891dd90d4d000008')}
+
+It looks like alphabet soup in a blender ? RT @TheXDExperience: Fantasia is tweeting. You can tell it's her because...well...
+False
+
+{u'software_name': u'blender', u'_id': ObjectId('4f997bfe891dd90d4d000007'), u'tweet': u"@7shep Only you would get distracted by buying a blender during exam time. If you don't make me a smoothie when i come and see you i may cry", u'tweet_db_id': u'441890'}
+
+@TheRealDJShy Bring It to the Wall (feat. Lumidee, Pure & Chad-B) - for 0.99 cents Now on #Itunes -&gt; http://t.co/W1PuFB2O &lt;-
+False
+
+@nerobellum_666 @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997bfd891dd90d4d000006'), u'tweet': u'spotify or itunes? I DONT KNOW.', u'tweet_db_id': u'441894'}
+
+{u'software_name': u'itunes', u'url': u'http://t.co/DOCf1y7n', u'price': u'$25', u'tweet_db_id': u'441895', u'software_id': u'770', u'_id': ObjectId('4f997bfd891dd90d4d000005'), u'tweet': u'@Benji_Kim1 Winner of a $25 iTunes Voucher sponsored by Stricken is Cheap iPad Thanks for reTweeting http://t.co/DOCf1y7n'}
+
+{u'software_name': u'avg', u'url': u'http://t.co/LZP4xnGZ', u'tweet': u'Adelaide National Deals - Loveitup: AVG Internet Security! Build a fortress around your computer in just seconds... http://t.co/LZP4xnGZ', u'tweet_db_id': u'441897', u'software_id': u'382', u'_id': ObjectId('4f997bfd891dd90d4d000004')}
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997bfd891dd90d4d000003'), u'tweet': u'@ItsMidnightRed The Wanted EP online store and itunes.', u'tweet_db_id': u'441900'}
+
+@TheRealDJShy Bring It to the Wall (feat. Lumidee, Pure & Chad-B) - for 0.99 cents Now on #Itunes -&gt; http://t.co/W1PuFB2O &lt;- RT!!
+False
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997bfd891dd90d4d000002'), u'tweet': u'I need a way to prevent songs like "Kokomo" and "It\'s 5 O\'Clock Somewhere" from coming up back-to-back on my iTunes while I\'m at work.', u'tweet_db_id': u'441904'}
+
+great!RT @justinbieber: sounds good in the club - http://t.co/EkfCVy0N
+False
+
+{u'software_name': u'itunes', u'url': u'http://t.co/bROa7dap', u'tweet': u'2012 new music! #justpurchased Yuna - Yuna - http://t.co/bROa7dap #iTunes', u'tweet_db_id': u'441909', u'software_id': u'770', u'_id': ObjectId('4f997bfc891dd90d4d000001')}
+
+{u'software_name': u'itunes', u'url': u'http://t.co/dF0ApYpK', u'tweet': u'likes Hand of Man by Django Django on Ping http://t.co/dF0ApYpK #iTunes', u'tweet_db_id': u'441912', u'software_id': u'770', u'_id': ObjectId('4f997bfc891dd90d4d000000')}
+
+{u'url': [u'http://t.co/X4Q48h4l', u'http://t.co/CUqxYlSN'], u'software_name': u'itunes', u'_id': ObjectId('4f997be0891dd90d3a00000d'), u'tweet': u"Purchase @NICKIMINAJ's Roman in Moscow (Explicit) on iTunes here ---&gt; http://t.co/X4Q48h4l (US) ?http://t.co/CUqxYlSN (UK)", u'tweet_db_id': u'441913'}
+
+My favourite new Chrome addin - double click to define https://t.co/KlyU41h5
+False
+
+@TheRealDJShy Bring It to the Wall (feat. Lumidee, Pure & Chad-B) - for 0.99 cents Now on #Itunes -&gt; http://t.co/W1PuFB2O &lt;---
+False
+
+Can't wait !  “@melissagorga: My new single "How Many Times" will be available on iTunes Sunday!!”
+False
+
+great!RT @justinbieber: sounds good in the club - http://t.co/EkfCVy0N [Like it? http://t.co/XtJybOqT ]
+False
+
+WTF is @IE doing in my TL, GTFO, Google Chrome nigga!
+False
+
+@Shelbykeigley "your a bestfriend whore." ya know what shove iup your ass #hoe :)
+False
+
+Must get free app for piano lovers out there Piano Sharp HD lite  http://t.co/wrm8UrdB
+False
+
+{u'url': u'http://t.co/gNyj96IK', u'software_name': u'itunes get', u'_id': ObjectId('4f997bde891dd90d3a00000c'), u'tweet': u'@Jazz_UkAMA RT #jalebi feat Taj-E & Bee2 Out now on iTunes. Get your Jalebi Now - Full video here - http://t.co/gNyj96IK', u'tweet_db_id': u'441924'}
+
+Google Chrome te invita a usar... dos mouses http://t.co/qI6w5rgz
+False
+
+{u'url': u'http://t.co/ujSC7Di1', u'software_name': u'itunes thanks', u'_id': ObjectId('4f997bdd891dd90d3a00000a'), u'tweet': u"It's official my first major record is being released May 1st on iTunes. Thanks to everyone that has assiste http://t.co/ujSC7Di1", u'tweet_db_id': u'441926'}
+
+@IE @reybango you can download good browser at http://t.co/25wb8rCW
+False
+
+{u'software_name': u'itunes', u'url': u'http://t.co/GgElTl8U', u'tweet': u'For You by Keith Urban from Act of Valor - iTunes: http://t.co/GgElTl8U', u'tweet_db_id': u'441933', u'software_id': u'770', u'_id': ObjectId('4f997bdb891dd90d3a000009')}
+
+Hands-on: getting work done with Google
+s new Aura interface for Chrome OS - InformationWeek - Link:  http://t.co/j7ot2j2F
+False
+
+{u'url': u'http://t.co/gNyj96IK', u'software_name': u'itunes get', u'_id': ObjectId('4f997bdb891dd90d3a000008'), u'tweet': u'@agdolla RT #jalebi feat Taj-E & Bee2 Out now on iTunes. Get your Jalebi Now - Full video here - http://t.co/gNyj96IK', u'tweet_db_id': u'441937'}
+
+{u'software_name': u'itunes', u'url': u'http://t.co/OGiRKFie', u'tweet': u'likes 27 Seconds by Rook on Ping http://t.co/OGiRKFie #iTunes', u'tweet_db_id': u'441942', u'software_id': u'770', u'_id': ObjectId('4f997bd9891dd90d3a000007')}
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997bd9891dd90d3a000006'), u'tweet': u'RT @Skeegotistical: Lol I just found Booty Me Down in my iTunes haha @awhh_kittykitty @PS_lOVEMONi', u'tweet_db_id': u'441944'}
+
+@TheRealDJShy Bring It to the Wall (feat. Lumidee, Pure & Chad-B) - for 0.99 cents Now on #Itunes --&gt; http://t.co/W1PuFB2O &lt;--
+False
+
+{u'software_name': u'itunes', u'url': u'http://t.co/eXO7GuSq', u'tweet': u'@BungalowOnline Flatshare Slamdown #flatslam Dick & Dom with @Pappystweet is now live. iTunes (cont) http://t.co/eXO7GuSq', u'tweet_db_id': u'441947', u'software_id': u'770', u'_id': ObjectId('4f997bd9891dd90d3a000005')}
+
+RT by 4pPST TODAY to enter to win signed #PowerRangers action figure! BUY Everyday Fun from iTunes http://t.co/A3XHgkw6 http://t.co/UZo7zhsC
+False
+
+Adobe's announcement of CS6 and Creative Cloud http://t.co/16rSbO1i
+False
+
+@JennyJohnsonHi5 Ha! I almost got canned for showing the head honcho's kid a frog-in-a-blender video game (only time I ever saw him smile)
+False
+
+@Sara_SWS @VAMPEVERYWHERE got Darker & more EviL! New SingLe #ICantBreathe out on iTunes!! Download it here http://t.co/aZyHQxge &lt;666
+False
+
+{u'software_name': u'balsa', u'url': u'http://t.co/hSKRXl2H', u'tweet': u'Wizard Rocket; Die Cut Balsa Fins; Altitude: 1500 ft.; 12 in. L; 0.74 in. dia.; Pack of 12: Rocket, Wizard; Mode... http://t.co/hSKRXl2H', u'tweet_db_id': u'441955', u'version': u'1500', u'software_id': u'276', u'_id': ObjectId('4f997bd9891dd90d3a000003')}
+
+{u'software_name': u'blender', u'_id': ObjectId('4f997bd8891dd90d3a000002'), u'tweet': u'@vanessavaguely i work on weeknights and my heart is also way too tender to be put into a blender. if i finish work early, i can drive out.', u'tweet_db_id': u'441956'}
+
+{u'software_id': u'770', u'software_name': u'itunes', u'_id': ObjectId('4f997bd6891dd90d3a000001'), u'tweet': u"@realmambaman oh haha good luck with it ;) i'm not fan of it at all XD i'm on fb, tweeting & raping replay button 4 Imagine on my itunes XD", u'tweet_db_id': u'441957'}
+
+{u'software_name': u'balsa', u'url': u'http://t.co/8aspUEJb', u'tweet': u'Wizard Rocket; Die Cut Balsa Fins; Altitude: 1500 ft.; 12 in. L; 0.74 in. dia.; Pack of 12: Rocket, Wizard; Mode... http://t.co/8aspUEJb', u'tweet_db_id': u'441958', u'version': u'1500', u'software_id': u'276', u'_id': ObjectId('4f997bd6891dd90d3a000000')}
+
+RT @justinbieber: sounds good in the club - http://t.co/4BIgxyKN
+False
+

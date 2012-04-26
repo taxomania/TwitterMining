@@ -20,6 +20,11 @@ class SQLConnector(object):
                               passwd=passwd,
                               db=db)
 
+    def found(self):
+        self.db.query("SELECT id, text, found FROM tweet "
+                      + "WHERE found IS NOT NULL")
+        return self.db.store_result()
+
     def load_data(self, keyword=None, max_results=15):
         query = ("SELECT id, text, sentiment FROM tweet "
                  + "WHERE tagged=FALSE ")
