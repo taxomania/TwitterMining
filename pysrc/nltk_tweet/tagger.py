@@ -209,19 +209,20 @@ class TweetTagger(object):
         if len(pos_soft) > 0:
             pos_soft = pos_soft.strip()
             if not tags.get('software_name'):
-                try:
-                    if self._binged.contains(pos_soft):
-                        if self._binged.get(pos_soft):
-                            tags.add('software_name', pos_soft)
-                    else:
+                if self._binged.contains(pos_soft):
+                    if self._binged.get(pos_soft):
+                        tags.add('software_name', pos_soft)
+                else:
+                    try:
                         bool_ = check_bing(pos_soft, self._bing)              
-                        self._binged.add(pos_soft, bool_)
+                        self._binged[pos_soft]=  bool_
                         if bool_:
                             # Insert into dictionary db?
                             tags.add('software_name', pos_soft)
-                except ServerError, e:
-                    print e
+                    except ServerError, e:
+                        print e
                     raise IncompleteTaggingError()
+
         # CHECK DB HERE? OR ABOVE
 
     def tag_by_tweet_id(self, tweet_id):
